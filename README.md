@@ -5,8 +5,8 @@ This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the Cod
 RoboVM, except it generates C code which is then compiled for the specific target.
 
 ## Usage
-For now, refernce the TestApp subproject for the Gradle setup. It's entirely untested on Windows at this point. The fat JARs created by the
-ShadowJar (*-all.jar) tasks in the JavaAPI and ByteCodeTranslator Gradle projects need to be manually copied from build/libs into the `TestApp/switch/libs` directory
+For now, reference the TestApp subproject for the Gradle setup. It's entirely untested on Windows at this point. The fat JARs created by the
+ShadowJar (*-all.jar) tasks in the JavaAPI and ByteCodeTranslator Gradle projects need to be manually copied from `build/libs` into the `TestApp/switch/libs` directory
 currently, then the TestApp switch subproject Gradle tasks can be run to run the transpiler. The `transpile` task does just that and outputs
 the C projecct into the `TestApp/switch/build/dist` directory. `run` executes the transpiler and runs the native PC backend. `deploy`
 does the same but deploys to a Switch via NXLink. Compiling for desktop is over twice as fast and allows for full IDE debugging, so it's
@@ -39,6 +39,7 @@ more convenient for development.
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
 - Exceptions thrown without a try-catch block are ignored (Maybe adding try-catch block in thread init code, in addition to main function)
+- JDK-8 is required for compiling the JavaAPI project
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)
