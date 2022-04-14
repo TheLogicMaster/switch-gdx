@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.0)
+project(dist)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_C_STANDARD 11)
+
+find_package(SDL2 REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(ZLIB REQUIRED)
+
+add_definitions(-DNOJNI)
+
+include_directories(include)
+FILE(GLOB SRCS include/*.h source/*.c source/*.cpp)
+add_executable(dist ${SRCS})
+
+target_include_directories(dist PUBLIC ${SDL2_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
+target_link_libraries(dist ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${ZLIB_LIBRARIES})

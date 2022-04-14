@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+    id "me.tatarka.retrolambda" version "3.7.1"
+}
+
+group 'com.thelogicmaster'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}

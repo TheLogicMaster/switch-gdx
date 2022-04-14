@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+group 'com.thelogicmaster'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx:1.10.0"
+    implementation 'com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.1'
+}

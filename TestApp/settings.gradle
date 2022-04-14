@@ -1,0 +1,5 @@
+rootProject.name = 'TestApp'
+include 'core'
+include 'desktop'
+include 'switch'
+

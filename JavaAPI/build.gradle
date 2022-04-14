@@ -1,0 +1,23 @@
+plugins {
+    id 'java-library'
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "com.badlogicgames.gdx:gdx:1.10.0"
+    compileOnly 'com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.1'
+    implementation('com.github.tommyettinger:RegExodus:0.1.13')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
+    }
+}
