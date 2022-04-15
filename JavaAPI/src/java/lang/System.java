@@ -25,7 +25,7 @@ package java.lang;
 
 import java.io.NSLogOutputStream;
 import java.io.PrintStream;
-import java.nio.NativeUtils;
+import com.thelogicmaster.switchgdx.NativeUtils;
 
 /**
  * The System class contains several useful class fields and methods. It cannot be instantiated.

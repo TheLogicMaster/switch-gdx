@@ -23,6 +23,8 @@
 
 package java.nio;
 
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 public class ByteBuffer extends Buffer implements Comparable<ByteBuffer> {
 
 	private final ByteBuffer owner;

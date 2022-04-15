@@ -19,12 +19,13 @@ more convenient for development.
 - GDX Native bindings
 - Buffers (Only direct buffers and ByteBuffer wrappers are supported)
 - Syncronous AssetManager (GWT)
-- Partial gdx-controllers support
+- Single controller gdx-controllers support
 - GDX Preferences
+- Default Yuzu keyboard mapping for switch pro-controller emulation
 
 ## Todo
 - Gradle libs as repo dependencies
-- System/unified logging with macros
+- Internal VM logging
 - GDX Networking
 - GDX Input
 - Finish GDX filesystem support
@@ -36,6 +37,7 @@ more convenient for development.
 - Ensure code licensing is all good (Probably noting modifications to comply with OpenJDK GPLv2)
 - Remove any unnecessary java.util.concurrent stuff
 - Replace any class stubs with generic equivalents
+- Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping)
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)

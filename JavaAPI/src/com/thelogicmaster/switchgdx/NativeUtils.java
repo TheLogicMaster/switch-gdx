@@ -1,4 +1,4 @@
-package java.nio;
+package com.thelogicmaster.switchgdx;
 
 public class NativeUtils {
 

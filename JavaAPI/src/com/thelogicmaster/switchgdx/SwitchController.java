@@ -10,7 +10,9 @@ public class SwitchController implements Controller {
 
 	private final Array<ControllerListener> listeners = new Array<>();
 	final float[] axes = new float[4];
+	final float[] prevAxes = new float[4];
 	int buttons;
+	int prevButtons;
 
 	@Override
 	public boolean getButton (int buttonCode) {

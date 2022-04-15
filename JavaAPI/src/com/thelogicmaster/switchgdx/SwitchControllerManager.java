@@ -52,9 +52,26 @@ public class SwitchControllerManager implements ControllerManager {
 	}
 
 	void update() {
+		System.arraycopy(controller.axes, 0, controller.prevAxes, 0, 4);
 		getAxes(controller.axes);
+		controller.prevButtons = controller.buttons;
 		controller.buttons = getButtons();
-		// Todo: Event callbacks
+
+		int pressed = controller.buttons & ~controller.prevButtons;
+		int released = ~controller.buttons & controller.prevButtons;
+		for (int i = 0; i < 32; i++) {
+			if ((pressed & 1 << i) != 0)
+				for (ControllerListener listener: listeners)
+					listener.buttonDown(controller, i);
+			if ((released & 1 << i) != 0)
+				for (ControllerListener listener: listeners)
+					listener.buttonUp(controller, i);
+		}
+
+		for (int i = 0; i < 4; i++)
+			if (controller.axes[i] != controller.prevAxes[i])
+				for (ControllerListener listener: listeners)
+					listener.axisMoved(controller, i, controller.axes[i]);
 	}
 
 	static SwitchControllerManager getInstance () {

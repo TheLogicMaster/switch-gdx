@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -161,7 +162,7 @@ public class TestApp implements ApplicationListener {
 		camera.position.set(10f, 10f, 10f);
 		camera.lookAt(0, 0, 0);
 		camera.near = 1f;
-		camera.far = 30f;
+		camera.far = 300f;
 		camera.update();
 
 		ModelBuilder modelBuilder = new ModelBuilder();
@@ -216,6 +217,36 @@ public class TestApp implements ApplicationListener {
 		Gdx.gl.glLinkProgram(shader);
 
 //		System.out.println("Shader: " + shader + " (" + vertexShader + ", " + fragmentShader + ")");
+
+//		Controllers.addListener(new ControllerListener() {
+//			@Override
+//			public void connected (Controller controller) {
+//
+//			}
+//
+//			@Override
+//			public void disconnected (Controller controller) {
+//
+//			}
+//
+//			@Override
+//			public boolean buttonDown (Controller controller, int buttonCode) {
+//				System.out.println("Button Pressed: " + buttonCode);
+//				return false;
+//			}
+//
+//			@Override
+//			public boolean buttonUp (Controller controller, int buttonCode) {
+//				System.out.println("Button Released: " + buttonCode);
+//				return false;
+//			}
+//
+//			@Override
+//			public boolean axisMoved (Controller controller, int axisCode, float value) {
+//				System.out.println("Joystick Moved: " + axisCode + " --- " + value);
+//				return false;
+//			}
+//		});
 	}
 
 	@Override
@@ -228,19 +259,21 @@ public class TestApp implements ApplicationListener {
 	public void render () {
 		Controller controller = Controllers.getCurrent();
 
-		Vector3 horizontal = camera.direction.cpy().crs(camera.up).nor().scl(controller.getAxis(2) / 200000);
-		Vector3 vertical = camera.direction.cpy().nor().scl(controller.getAxis(3) / 200000);
-		camera.translate(horizontal.add(vertical));
+		if (controller != null) {
+			Vector3 horizontal = camera.direction.cpy().crs(camera.up).nor().scl(controller.getAxis(2) / 3);
+			Vector3 vertical = camera.direction.cpy().nor().scl(controller.getAxis(3) / 3);
+			camera.translate(horizontal.add(vertical));
 
-		if (controller.getButton(0))
-			camera.translate(0, 0.1f, 0);
-		else if (controller.getButton(1))
-			camera.translate(0, -0.1f, 0);
+			if (controller.getButton(0))
+				camera.translate(0, 0.1f, 0);
+			else if (controller.getButton(1))
+				camera.translate(0, -0.1f, 0);
 
-		camera.direction.rotate(camera.up, controller.getAxis(0) / -200000);
-		camera.direction.rotate(camera.direction.cpy().crs(camera.up).nor(), controller.getAxis(1) / 200000);
+			camera.direction.rotate(camera.up, controller.getAxis(0) * -1);
+			camera.direction.rotate(camera.direction.cpy().crs(camera.up).nor(), controller.getAxis(1));
 
-		camera.update();
+			camera.update();
+		}
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 1, 1);
