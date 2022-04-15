@@ -24,7 +24,7 @@ public class SwitchPreferences implements Preferences {
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(file.read());
-			properties.loadFromXML(in);
+			properties.load(in);
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
@@ -132,17 +132,17 @@ public class SwitchPreferences implements Preferences {
 	@Override
 	public Map<String, ?> get () {
 		Map<String, Object> map = new HashMap<String, Object>();
-		for (Map.Entry<Object, Object> val : properties.entrySet()) {
+		for (Map.Entry<?, ?> val : properties.entrySet()) {
 			if (val.getValue() instanceof Boolean)
-				map.put((String)val.getKey(), (Boolean)Boolean.parseBoolean((String)val.getValue()));
+				map.put((String)val.getKey(), Boolean.parseBoolean((String)val.getValue()));
 			if (val.getValue() instanceof Integer)
-				map.put((String)val.getKey(), (Integer)Integer.parseInt((String)val.getValue()));
+				map.put((String)val.getKey(), Integer.parseInt((String)val.getValue()));
 			if (val.getValue() instanceof Long)
-				map.put((String)val.getKey(), (Long)Long.parseLong((String)val.getValue()));
+				map.put((String)val.getKey(), Long.parseLong((String)val.getValue()));
 			if (val.getValue() instanceof String)
-				map.put((String)val.getKey(), (String)val.getValue());
+				map.put((String)val.getKey(), val.getValue());
 			if (val.getValue() instanceof Float)
-				map.put((String)val.getKey(), (Float)Float.parseFloat((String)val.getValue()));
+				map.put((String)val.getKey(), Float.parseFloat((String)val.getValue()));
 		}
 
 		return map;
@@ -163,7 +163,7 @@ public class SwitchPreferences implements Preferences {
 		OutputStream out = null;
 		try {
 			out = new BufferedOutputStream(file.write(false));
-			properties.storeToXML(out, null);
+			properties.store(out, null);
 		} catch (Exception ex) {
 			throw new GdxRuntimeException("Error writing preferences: " + file, ex);
 		} finally {

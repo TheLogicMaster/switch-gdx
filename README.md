@@ -20,6 +20,7 @@ more convenient for development.
 - Buffers (Only direct buffers and ByteBuffer wrappers are supported)
 - Syncronous AssetManager (GWT)
 - Partial gdx-controllers support
+- GDX Preferences
 
 ## Todo
 - Gradle libs as repo dependencies

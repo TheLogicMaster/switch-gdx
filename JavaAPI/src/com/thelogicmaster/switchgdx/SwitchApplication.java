@@ -27,7 +27,7 @@ public class SwitchApplication implements Application {
 	private boolean running;
 	private ApplicationLogger applicationLogger;
 	private int logLevel = LOG_INFO;
-	private ObjectMap<String, Preferences> preferences = new ObjectMap<>();
+	private final ObjectMap<String, Preferences> preferences = new ObjectMap<>();
 	private final ApplicationListener listener;
 	private final Array<LifecycleListener> lifecycleListeners = new Array<>();
 	private final Array<Runnable> runnables = new Array<>();
@@ -197,8 +197,11 @@ public class SwitchApplication implements Application {
 	public Preferences getPreferences (String name) {
 		if (preferences.containsKey(name))
 			return preferences.get(name);
-		else
-			return preferences.put(name, new SwitchPreferences(files.local(name + ".prefs")));
+		else {
+			Preferences prefs = new SwitchPreferences(files.local(name + ".prefs"));
+			preferences.put(name, prefs);
+			return prefs;
+		}
 	}
 
 	@Override

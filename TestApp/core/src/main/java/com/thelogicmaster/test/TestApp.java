@@ -2,6 +2,7 @@ package com.thelogicmaster.test;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
@@ -30,9 +31,14 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.UBJsonReader;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -111,6 +117,20 @@ public class TestApp implements ApplicationListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		file = new File("test2.txt");
+		try {
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+			writer.write("test2\n");
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Preferences prefs = Gdx.app.getPreferences("Test");
+		Gdx.app.log("Pref Test", prefs.getString("value", "Value not set"));
+		prefs.putString("value", "Value set");
+		prefs.flush();
 
 		FileHandle fileHandle = Gdx.files.internal("test.png");
 		System.out.println("test.png path: " + fileHandle.file().getPath());

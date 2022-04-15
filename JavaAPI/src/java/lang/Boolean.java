@@ -21,6 +21,10 @@
  * need additional information or have any questions.
  */
 
+/*
+ * Modified by TheLogicMaster at 4/14/22
+ */
+
 package java.lang;
 /**
  * The Boolean class wraps a value of the primitive type boolean in an object. An object of type Boolean contains a single field whose type is boolean.
@@ -68,6 +72,10 @@ public final class Boolean implements Comparable<Boolean> {
      */
     public int hashCode(){
         return 0;
+    }
+
+    public static String toString(boolean b) {
+        return b ? "true" : "false";
     }
 
     /**

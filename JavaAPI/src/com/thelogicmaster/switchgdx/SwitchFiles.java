@@ -51,7 +51,7 @@ public class SwitchFiles implements Files {
 
 	@Override
 	public String getLocalStoragePath () {
-		return "local";
+		return "";
 	}
 
 	@Override
