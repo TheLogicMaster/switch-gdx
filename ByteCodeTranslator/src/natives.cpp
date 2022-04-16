@@ -19,6 +19,13 @@ extern "C" {
 #include "java_io_FileInputStream.h"
 #include "java_io_FileOutputStream.h"
 #include "java_lang_String.h"
+#include "com_thelogicmaster_switchgdx_SwitchAudio.h"
+#include "com_thelogicmaster_switchgdx_SwitchMusic.h"
+#include "com_thelogicmaster_switchgdx_SwitchSound.h"
+#include "com_badlogic_gdx_utils_GdxRuntimeException.h"
+
+#include <SDL.h>
+#include <SDL_mixer.h>
 
 #ifdef __SWITCH__
 # include <switch.h>
@@ -32,7 +39,6 @@ extern "C" {
 # include <unistd.h>
 #else
 # define GL_GLEXT_PROTOTYPES
-# include <SDL.h>
 # include <SDL_opengl.h>
 #endif
 
@@ -81,6 +87,14 @@ void userAppExit() {
 }
 #endif
 
+void onMusicFinished() {
+    com_thelogicmaster_switchgdx_SwitchAudio_onMusicFinished__(getThreadLocalData());
+}
+
+void onSoundFinished(int channel) {
+    com_thelogicmaster_switchgdx_SwitchAudio_onSoundFinished___int(getThreadLocalData(), channel);
+}
+
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THREAD_STATE) {
     for (int i = 0; i < 16; i++)
         touches[i * 3] = -1;
@@ -125,8 +139,10 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
     context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttributeList);
     eglMakeCurrent(display, surface, surface, context);
     gladLoadGL();
+
+    SDL_Init(SDL_INIT_AUDIO);
 #else
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
     window = SDL_CreateWindow("TestApp", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -136,6 +152,12 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
     SDL_GL_CreateContext(window);
     SDL_GL_SetSwapInterval(1);
 #endif
+
+    Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG);
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096);
+    Mix_AllocateChannels(16);
+    Mix_HookMusicFinished(onMusicFinished);
+    Mix_ChannelFinished(onSoundFinished);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_dispose__(CODENAME_ONE_THREAD_STATE) {
@@ -148,6 +170,9 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_dispose__(CODENAME_ONE_
             eglDestroySurface(display, surface);
         eglTerminate(display);
     }
+
+    Mix_Quit();
+    SDL_Quit();
 
     romfsExit();
 #endif
@@ -276,6 +301,105 @@ JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchApplication_update___R_boolean(C
     SDL_GL_SwapWindow(window);
     return true;
 #endif
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_create___java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_OBJECT file) {
+    auto music = Mix_LoadMUS(toNativeString(threadStateData, file));
+    if (!music) {
+        auto exception = __NEW_com_badlogic_gdx_utils_GdxRuntimeException(threadStateData);
+        com_badlogic_gdx_utils_GdxRuntimeException___INIT____(threadStateData, exception);
+        throwException(threadStateData, exception);
+        return;
+    }
+    ((obj__com_thelogicmaster_switchgdx_SwitchMusic *)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchMusic_handle = (JAVA_LONG)music;
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_start___boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_BOOLEAN looping) {
+    Mix_PlayMusic((Mix_Music*)((obj__com_thelogicmaster_switchgdx_SwitchMusic*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchMusic_handle, looping ? -1 : 1);
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_resume__(CODENAME_ONE_THREAD_STATE) {
+    Mix_ResumeMusic();
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_pause0__(CODENAME_ONE_THREAD_STATE) {
+    Mix_PauseMusic();
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_stop0__(CODENAME_ONE_THREAD_STATE) {
+    Mix_HaltMusic();
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_setVolume0___float(CODENAME_ONE_THREAD_STATE, JAVA_FLOAT volume) {
+    Mix_VolumeMusic((int)(volume * MIX_MAX_VOLUME));
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_setPosition0___float(CODENAME_ONE_THREAD_STATE, JAVA_FLOAT position) {
+    Mix_RewindMusic();
+    Mix_SetMusicPosition(position);
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_dispose0__(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+    auto &handle = ((obj__com_thelogicmaster_switchgdx_SwitchMusic*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchMusic_handle;
+    if (!handle)
+        return;
+    Mix_FreeMusic((Mix_Music *)handle);
+    handle = 0;
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_create___java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_OBJECT file) {
+    auto sound = Mix_LoadWAV(toNativeString(threadStateData, file));
+    if (!sound) {
+        auto exception = __NEW_com_badlogic_gdx_utils_GdxRuntimeException(threadStateData);
+        com_badlogic_gdx_utils_GdxRuntimeException___INIT____(threadStateData, exception);
+        throwException(threadStateData, exception);
+        return;
+    }
+    ((obj__com_thelogicmaster_switchgdx_SwitchSound *)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle = (JAVA_LONG)sound;
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_dispose0__(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+    auto &handle = ((obj__com_thelogicmaster_switchgdx_SwitchSound*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle;
+    if (!handle)
+        return;
+    Mix_FreeChunk((Mix_Chunk *)handle);
+    handle = 0;
+}
+
+JAVA_INT com_thelogicmaster_switchgdx_SwitchSound_play0___boolean_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_BOOLEAN looping) {
+    return Mix_PlayChannel(-1, (Mix_Chunk *)((obj__com_thelogicmaster_switchgdx_SwitchSound*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle, looping ? -1 : 1);
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_stop0___int(CODENAME_ONE_THREAD_STATE, JAVA_INT channel) {
+    Mix_HaltChannel(channel);
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_pause0___int(CODENAME_ONE_THREAD_STATE, JAVA_INT channel) {
+    Mix_Pause(channel);
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_resume0___int(CODENAME_ONE_THREAD_STATE, JAVA_INT channel) {
+    Mix_Resume(channel);
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_setPitch0___int_float(CODENAME_ONE_THREAD_STATE, JAVA_INT channel, JAVA_FLOAT pitch) {
+    // Todo: Custom pitch changing effect based on: https://gist.github.com/hydren/ea794e65e95c7713c00c88f74b71f8b1
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_setVolume0___int_float(CODENAME_ONE_THREAD_STATE, JAVA_INT channel, JAVA_FLOAT volume) {
+    Mix_Volume(channel, (int)(volume * MIX_MAX_VOLUME));
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_setPan0___int_float(CODENAME_ONE_THREAD_STATE, JAVA_INT channel, JAVA_FLOAT pan) {
+    uint8_t left, right;
+    if (pan <= 0) {
+        left = 255;
+        right = (uint8_t)((1 + pan) * 255);
+    } else {
+        left = (uint8_t)((1 - pan) * 255);
+        right = 255;
+    }
+    Mix_SetPanning(channel, left, right);
 }
 
 JAVA_BOOLEAN com_thelogicmaster_switchgdx_NativeUtils_isSwitch___R_boolean(CODENAME_ONE_THREAD_STATE) {

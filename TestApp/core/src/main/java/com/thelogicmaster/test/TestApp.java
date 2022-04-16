@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
@@ -97,10 +99,13 @@ public class TestApp implements ApplicationListener {
 	private Texture pixmapTexture;
 
 	private Environment environment;
-	PerspectiveCamera camera;
-	Model model, robot;
-	ModelInstance modelInstance, robotInstance;
-	ModelBatch modelBatch;
+	private PerspectiveCamera camera;
+	private Model model, robot;
+	private ModelInstance modelInstance, robotInstance;
+	private ModelBatch modelBatch;
+
+	private Music music;
+	private Sound sound;
 
 	private boolean running = true;
 
@@ -186,6 +191,13 @@ public class TestApp implements ApplicationListener {
 		robotInstance.transform.set(new Vector3(7, 5 ,-5), new Quaternion(), new Vector3(4, 4, 4));
 
 		modelBatch = new ModelBatch();
+
+		music = Gdx.audio.newMusic(Gdx.files.internal("test.mp3"));
+		music.setLooping(true);
+		music.play();
+
+		sound = Gdx.audio.newSound(Gdx.files.internal("test.wav"));
+		sound.loop();
 
 //		new Thread(() -> {
 //			while (running) {
@@ -356,6 +368,8 @@ public class TestApp implements ApplicationListener {
 		spriteBatch.dispose();
 		modelBatch.dispose();
 		model.dispose();
+		music.dispose();
+		sound.dispose();
 //		robot.dispose();
 		assets.dispose();
 	}

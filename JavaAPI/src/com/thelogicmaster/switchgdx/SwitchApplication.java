@@ -63,6 +63,7 @@ public class SwitchApplication implements Application {
 
 		while (running && update()) {
 			graphics.update();
+			audio.update(graphics.getDeltaTime());
 			input.update();
 			controllerManager.update();
 			executeRunnables();

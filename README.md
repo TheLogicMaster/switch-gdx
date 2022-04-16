@@ -24,6 +24,7 @@ more convenient for development.
 - Default Yuzu keyboard mapping for switch pro-controller emulation
 - GDX Input multitouch with PC touch emulation
 - System language/locale
+- Basic GDX Audio support (SDL_mixer)
 
 ## Todo
 - Gradle libs as repo dependencies
@@ -44,6 +45,8 @@ more convenient for development.
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
 - Exceptions thrown without a try-catch block are ignored (Maybe adding try-catch block in thread init code, in addition to main function)
 - JDK-8 is required for compiling the JavaAPI project
+- Concurrent access to files is more limited on Switch where it might normally work on PC, so ensure files are closed properly
+- Sound effects are limited to OGG and WAV, Music supports MP3, OGG, and WAV
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)

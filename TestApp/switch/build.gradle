@@ -80,6 +80,7 @@ task transpile(dependsOn: 'build') {
             from ({ zipTree("$projectDir/libs/ByteCodeTranslator.jar") }) {
                 include "CMakeLists.txt"
                 include "Makefile"
+                include "*.cmake"
             }
             into "$buildDir/dist"
         }
