@@ -2,6 +2,7 @@ package com.thelogicmaster.test;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controller;
@@ -247,6 +248,26 @@ public class TestApp implements ApplicationListener {
 //				return false;
 //			}
 //		});
+
+//		Gdx.input.setInputProcessor(new InputAdapter() {
+//			@Override
+//			public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+//				System.out.println("Touch down: (" + screenX + ", " + screenY + "): " + pointer);
+//				return false;
+//			}
+//
+//			@Override
+//			public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+//				System.out.println("Touch up: (" + screenX + ", " + screenY + "): " + pointer);
+//				return false;
+//			}
+//
+//			@Override
+//			public boolean touchDragged (int screenX, int screenY, int pointer) {
+//				System.out.println("Touch dragged: (" + screenX + ", " + screenY + "): " + pointer);
+//				return false;
+//			}
+//		});
 	}
 
 	@Override
@@ -274,6 +295,8 @@ public class TestApp implements ApplicationListener {
 
 			camera.update();
 		}
+
+//		System.out.println("getX: " + Gdx.input.getX() + ", getY: " + Gdx.input.getY() + ", touched: " + Gdx.input.isTouched() + ", justTouched: " + Gdx.input.justTouched());
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 1, 1);

@@ -15,6 +15,13 @@ public class SwitchGraphics extends AbstractGraphics {
 	private final GLVersion glVersion;
 	private final String extensions;
 
+	private float time;
+	private float deltaTime;
+	private long frameId = -1;
+	private int frames;
+	private long previousTime;
+	private int fps;
+
 	public SwitchGraphics () {
 		Gdx.gl = Gdx.gl20 = new SwitchGL();
 
@@ -26,6 +33,19 @@ public class SwitchGraphics extends AbstractGraphics {
 		extensions = Gdx.gl.glGetString(GL20.GL_EXTENSIONS);
 
 		bufferFormat = new BufferFormat(8, 8, 8, 8, 24, 8, 0, false);
+	}
+
+	void update() {
+		long timestamp = System.currentTimeMillis();
+		deltaTime = (timestamp - previousTime) / 1000.f;
+		previousTime = timestamp;
+		time += deltaTime;
+		frameId++;
+		if (time > 1) {
+			fps = frames;
+			time = 0;
+			frames = 0;
+		}
 	}
 
 	@Override
@@ -91,17 +111,17 @@ public class SwitchGraphics extends AbstractGraphics {
 
 	@Override
 	public long getFrameId () {
-		return 0;
+		return frameId;
 	}
 
 	@Override
 	public float getDeltaTime () {
-		return 1 / 60f;
+		return deltaTime;
 	}
 
 	@Override
 	public int getFramesPerSecond () {
-		return 60;
+		return fps;
 	}
 
 	@Override

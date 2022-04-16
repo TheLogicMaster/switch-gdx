@@ -5,8 +5,98 @@ import com.badlogic.gdx.InputProcessor;
 
 public class SwitchInput implements Input {
 
+	private static final int MAX_TOUCHES = 16;
+
 	private InputProcessor inputProcessor;
 	private long currentEventTimeStamp;
+	private final int[] touchData = new int[MAX_TOUCHES * 3];
+	private final int[] previousTouchData = new int[MAX_TOUCHES * 3];
+	private final int[] rawTouchIds = new int[MAX_TOUCHES];
+	private final int[] touchX = new int[MAX_TOUCHES];
+	private final int[] touchY = new int[MAX_TOUCHES];
+	private final int[] deltaX = new int[MAX_TOUCHES];
+	private final int[] deltaY = new int[MAX_TOUCHES];
+	private final boolean[] touched = new boolean[MAX_TOUCHES];
+	private boolean wasJustTouched;
+
+	public SwitchInput () {
+		for (int i = 0; i < MAX_TOUCHES; i++) {
+			previousTouchData[i * 3] = -1;
+			rawTouchIds[i] = -1;
+		}
+	}
+
+	void update() {
+		currentEventTimeStamp = System.currentTimeMillis();
+		wasJustTouched = false;
+		getTouchData(touchData);
+
+		// Todo: There's probably a better way to optimize this
+
+		for (int i = 0; i < MAX_TOUCHES; i++) {
+			int rawIndex = touchData[i * 3];
+			if (rawIndex == -1)
+				continue;
+			int previousIndex = -1;
+			for (int j = 0; j < MAX_TOUCHES; j++)
+				if (previousTouchData[j * 3] == rawIndex) {
+					previousIndex = j;
+					break;
+				}
+			if (previousIndex == -1) {
+				wasJustTouched = true;
+				for (int j = 0; j < MAX_TOUCHES; j++)
+					if (rawTouchIds[j] == -1) {
+						touchX[j] = touchData[i * 3 + 1];
+						touchY[j] = touchData[i * 3 + 2];
+						touched[j] = true;
+						rawTouchIds[j] = rawIndex;
+						if (inputProcessor != null)
+							inputProcessor.touchDown(touchData[i * 3 + 1], touchData[i * 3 + 2], j, 0);
+						break;
+					}
+			} else if (touchData[i * 3 + 1] != previousTouchData[previousIndex * 3 + 1] || touchData[i * 3 + 2] != previousTouchData[previousIndex * 3 + 2]) {
+				for (int j = 0; j < MAX_TOUCHES; j++)
+					if (rawTouchIds[j] == rawIndex) {
+						deltaX[j] = touchData[i * 3 + 1] - touchX[j];
+						deltaY[j] = touchData[i * 3 + 2] - touchY[j];
+						touchX[j] = touchData[i * 3 + 1];
+						touchY[j] = touchData[i * 3 + 2];
+						if (inputProcessor != null)
+							inputProcessor.touchDragged(touchData[i * 3 + 1], touchData[i * 3 + 2], j);
+						break;
+					}
+			}
+		}
+
+		for (int i = 0; i < MAX_TOUCHES; i++) {
+			int rawPreviousIndex = previousTouchData[i * 3];
+			if (rawPreviousIndex == -1)
+				continue;
+			int index = -1;
+			for (int j = 0; j < MAX_TOUCHES; j++)
+				if (touchData[j * 3] == rawPreviousIndex) {
+					index = j;
+					break;
+				}
+			if (index == -1) {
+				for (int j = 0; j < MAX_TOUCHES; j++)
+					if (rawTouchIds[j] == rawPreviousIndex) {
+						touchX[j] = previousTouchData[i * 3 + 1];
+						touchY[j] = previousTouchData[i * 3 + 2];
+						deltaX[j] = 0;
+						deltaY[j] = 0;
+						touched[j] = false;
+						rawTouchIds[j] = -1;
+						if (inputProcessor != null)
+							inputProcessor.touchUp(previousTouchData[i * 3 + 1], previousTouchData[i * 3 + 2], j, 0);
+						break;
+					}
+			}
+		}
+
+		System.arraycopy(touchData, 0, previousTouchData, 0, MAX_TOUCHES * 3);
+	}
 
 	@Override
 	public float getAccelerometerX () {
@@ -40,62 +130,62 @@ public class SwitchInput implements Input {
 
 	@Override
 	public int getMaxPointers () {
-		return 0;
+		return MAX_TOUCHES;
 	}
 
 	@Override
 	public int getX () {
-		return 0;
+		return touchX[0];
 	}
 
 	@Override
 	public int getX (int pointer) {
-		return 0;
+		return touchX[pointer];
 	}
 
 	@Override
 	public int getDeltaX () {
-		return 0;
+		return deltaX[0];
 	}
 
 	@Override
 	public int getDeltaX (int pointer) {
-		return 0;
+		return deltaX[pointer];
 	}
 
 	@Override
 	public int getY () {
-		return 0;
+		return touchY[0];
 	}
 
 	@Override
 	public int getY (int pointer) {
-		return 0;
+		return touchY[pointer];
 	}
 
 	@Override
 	public int getDeltaY () {
-		return 0;
+		return deltaY[0];
 	}
 
 	@Override
 	public int getDeltaY (int pointer) {
-		return 0;
+		return deltaY[pointer];
 	}
 
 	@Override
 	public boolean isTouched () {
-		return false;
+		return touched[0];
 	}
 
 	@Override
 	public boolean justTouched () {
-		return false;
+		return wasJustTouched;
 	}
 
 	@Override
 	public boolean isTouched (int pointer) {
-		return false;
+		return touched[pointer];
 	}
 
 	@Override
@@ -110,12 +200,12 @@ public class SwitchInput implements Input {
 
 	@Override
 	public boolean isButtonPressed (int button) {
-		return false;
+		return button == 0 && isTouched();
 	}
 
 	@Override
 	public boolean isButtonJustPressed (int button) {
-		return false;
+		return button == 0 && justTouched();
 	}
 
 	@Override
@@ -227,8 +317,6 @@ public class SwitchInput implements Input {
 	@Override
 	public boolean isPeripheralAvailable (Peripheral peripheral) {
 		switch (peripheral) {
-		case Vibrator:
-		case OnscreenKeyboard:
 		case MultitouchScreen:
 			return true;
 		default:
@@ -260,4 +348,6 @@ public class SwitchInput implements Input {
 	public void setCursorPosition (int x, int y) {
 
 	}
+
+	private static native void getTouchData(int[] touchData);
 }

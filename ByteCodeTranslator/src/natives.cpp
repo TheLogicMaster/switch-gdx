@@ -36,6 +36,8 @@ extern "C" {
 # include <SDL_opengl.h>
 #endif
 
+static int touches[16 * 3];
+
 #ifdef __SWITCH__
 static EGLDisplay display;
 static EGLContext context;
@@ -47,7 +49,6 @@ static int nxlinkSock = -1;
 #else
 static SDL_Window *window;
 static int buttons;
-static int prevButtons;
 static float joysticks[4];
 #endif
 
@@ -81,9 +82,14 @@ void userAppExit() {
 #endif
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THREAD_STATE) {
+    for (int i = 0; i < 16; i++)
+        touches[i * 3] = -1;
+
 #ifdef __SWITCH__
     padConfigureInput(1, HidNpadStyleSet_NpadStandard);
     padInitializeDefault(&pad);
+
+    hidInitializeTouchScreen();
 
     Result result = romfsInit();
     if (R_FAILED(result))
@@ -215,16 +221,42 @@ JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchApplication_update___R_boolean(C
     u64 kDown = padGetButtonsDown(&pad);
     if (kDown & HidNpadButton_Plus)
         return false;
+
+    HidTouchScreenState touchState;
+    if (hidGetTouchScreenStates(&touchState, 1)) {
+        for (int i = 0; i < 16; i++)
+            if (i < touchState.count) {
+                touches[i * 3 + 0] = touchState.touches[i].finger_id;
+                touches[i * 3 + 1] = touchState.touches[i].x;
+                touches[i * 3 + 2] = touchState.touches[i].y;
+            } else {
+                touches[i * 3 + 0] = -1;
+                touches[i * 3 + 1] = 0;
+                touches[i * 3 + 2] = 0;
+            }
+    }
+
     eglSwapBuffers(display, surface);
     return appletMainLoop();
 #else
     SDL_Event event;
-    prevButtons = buttons;
     int axis;
     while (SDL_PollEvent(&event))
         switch (event.type) {
             case SDL_QUIT:
                 return false;
+            case SDL_MOUSEMOTION:
+                touches[1] = event.motion.x;
+                touches[2] = event.motion.y;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                touches[0] = 0;
+                touches[1] = event.button.x;
+                touches[2] = event.button.y;
+                break;
+            case SDL_MOUSEBUTTONUP:
+                touches[0] = -1;
+                break;
             case SDL_KEYDOWN:
                 buttons |= keyToButton(event.key.keysym.scancode);
                 axis = keyToAxis(event.key.keysym.scancode);
@@ -724,6 +756,10 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchControllerManager_getAxes___float_1
 #else
     memcpy(array, joysticks, sizeof(joysticks));
 #endif
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_getTouchData___int_1ARRAY(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT touchData) {
+    memcpy((void *) ((JAVA_ARRAY) touchData)->data, touches, sizeof(touches));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_getTextInput___com_badlogic_gdx_Input_TextInputListener_java_lang_String_java_lang_String_java_lang_String_com_badlogic_gdx_Input_OnscreenKeyboardType(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_OBJECT __cn1Arg1, JAVA_OBJECT __cn1Arg2, JAVA_OBJECT __cn1Arg3, JAVA_OBJECT __cn1Arg4, JAVA_OBJECT __cn1Arg5) {

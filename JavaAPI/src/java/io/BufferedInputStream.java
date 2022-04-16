@@ -463,7 +463,6 @@ class BufferedInputStream extends FilterInputStream {
      * @exception  IOException  if an I/O error occurs.
      */
     public void close() throws IOException {
-        in = null;
         if (in != null)
             in.close();
         in = null;

@@ -62,6 +62,8 @@ public class SwitchApplication implements Application {
 		listener.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		while (running && update()) {
+			graphics.update();
+			input.update();
 			controllerManager.update();
 			executeRunnables();
 			listener.render();
