@@ -34,6 +34,10 @@
 #include <sys/param.h>
 #include <zlib.h>
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 // Todo: Proper logging
 #define NSLog(...)
 
@@ -1560,20 +1564,15 @@ JAVA_OBJECT java_util_HashMap_findNonNullKeyEntry___java_lang_Object_int_int_R_j
     return (JAVA_OBJECT)m;
 }
 
-// Todo: Fix
 JAVA_OBJECT java_util_Locale_getOSLanguage___R_java_lang_String(CODENAME_ONE_THREAD_STATE) {
-    return fromNativeString(threadStateData, "English?");
-//    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-//    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
-//    NSArray* languages = [defs objectForKey:@"AppleLanguages"];
-//    NSString* language_ = [languages objectAtIndex:0];
-//    JAVA_OBJECT language = fromNSString(threadStateData, language_);
-//    [pool release];
-//    return language;
+#ifdef __SWITCH__
+    u64 languageCode;
+    setGetSystemLanguage(&languageCode);
+    return fromNativeString(threadStateData, (char *)&languageCode);
+#else
+    return fromNativeString(threadStateData, "en-US");
+#endif
 }
-
-/*JAVA_OBJECT java_util_Locale_getOSCountry___R_java_lang_String(CODENAME_ONE_THREAD_STATE) {
-}*/
 
 // Todo: Fix
 JAVA_OBJECT java_text_DateFormat_format___java_util_Date_java_lang_StringBuffer_R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_OBJECT __cn1Arg1, JAVA_OBJECT __cn1Arg2) {

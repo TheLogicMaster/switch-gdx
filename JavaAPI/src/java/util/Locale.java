@@ -48,7 +48,7 @@ public class Locale {
             language = language.substring(0, pos);
         }
         if (country == null) {
-            country = "US";//getOSCountry();
+            country = "US";
         }
     }
 
@@ -84,7 +84,6 @@ public class Locale {
     }
 
     private static native String getOSLanguage();
-    //private static native String getOSCountry();
 
     public enum Category {
 

@@ -89,6 +89,8 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
     padConfigureInput(1, HidNpadStyleSet_NpadStandard);
     padInitializeDefault(&pad);
 
+    setInitialize();
+
     hidInitializeTouchScreen();
 
     Result result = romfsInit();
@@ -435,7 +437,7 @@ JAVA_VOID java_io_FileOutputStream_writeBytes___byte_1ARRAY_int_int_boolean(CODE
         throwIOException(threadStateData, "File closed");
     if (append)
         fseek(f, 0, SEEK_END);
-    auto written = fwrite((char *) ((JAVA_ARRAY) b)->data + off, 1, len, f);
+    auto written = (int)fwrite((char *) ((JAVA_ARRAY) b)->data + off, 1, len, f);
     if (written != len)
         throwIOException(threadStateData, nullptr);
 }

@@ -44,6 +44,7 @@ import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Locale;
 
 public class TestApp implements ApplicationListener {
 
@@ -108,6 +109,8 @@ public class TestApp implements ApplicationListener {
 		System.out.println("Hello World!");
 
 		System.out.println("os.arch: " + System.getProperty("os.arch"));
+
+		System.out.println("Language: " + Locale.getDefault().getLanguage() + ", Country: " + Locale.getDefault().getCountry());
 
 		File file = new File("test.txt");
 		System.out.println("test.txt exists: " + file.exists());

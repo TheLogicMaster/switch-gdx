@@ -22,22 +22,23 @@ more convenient for development.
 - Single controller gdx-controllers support
 - GDX Preferences
 - Default Yuzu keyboard mapping for switch pro-controller emulation
+- GDX Input multitouch with PC touch emulation
+- System language/locale
 
 ## Todo
 - Gradle libs as repo dependencies
 - Internal VM logging
 - GDX Networking
-- GDX Input
 - Finish GDX filesystem support
 - Possibly GDX threading stuff
 - GL30?
 - More complete Reflection support
 - Incremental compilation, if possible, to cut down on compilation times
 - Switch wrapper buffers to use memory directly since it's always aligned, rather than the super inefficient byte by byte implementation
-- Ensure code licensing is all good (Probably noting modifications to comply with OpenJDK GPLv2)
+- Ensure code licensing is all good (Probably noting modifications to comply with GPLv2)
 - Remove any unnecessary java.util.concurrent stuff
 - Replace any class stubs with generic equivalents
-- Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping)
+- Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
