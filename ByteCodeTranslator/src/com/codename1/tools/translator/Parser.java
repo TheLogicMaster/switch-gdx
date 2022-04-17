@@ -466,7 +466,7 @@ public class Parser extends ClassVisitor {
         File[] mFiles = outputDirectory.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
-                return file.getName().endsWith(".c");
+                return file.getName().endsWith(".c") || file.getName().endsWith(".cpp");
             }
         });
         nativeSources = new String[mFiles.length];

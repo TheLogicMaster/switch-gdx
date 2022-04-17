@@ -79,6 +79,8 @@ public class ByteCodeClass {
 
 
     private static Set<String> arrayTypes = new TreeSet<String>();
+
+    private static final Set<String> nonOptimized = new HashSet<>();
     
     private ByteCodeClass baseClassObject;
     private List<ByteCodeClass> baseInterfacesObject;
@@ -187,6 +189,10 @@ public class ByteCodeClass {
             if (bc.marked) {
                 continue;
             }
+            if (nonOptimized.contains(bc.clsName)) {
+                bc.markDependent(lst);
+                continue;
+            }
             if (bc.isEliminated()) {
                 continue;
             }
@@ -227,10 +233,6 @@ public class ByteCodeClass {
                 continue;
             }
             if(bc.clsName.equals("java_lang_Float")) {
-                bc.markDependent(lst);
-                continue;
-            }
-            if(bc.clsName.equals("java_nio_DoubleBuffer")) {
                 bc.markDependent(lst);
                 continue;
             }
@@ -438,7 +440,9 @@ public class ByteCodeClass {
         }
     }
 
-
+    public static void addNonOptimized(String clazz) {
+        nonOptimized.add(clazz);
+    }
 
     public String generateCCode(List<ByteCodeClass> allClasses) {
 

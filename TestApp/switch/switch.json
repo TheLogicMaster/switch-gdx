@@ -1,5 +1,6 @@
 {
-    "reflection": [
-        "com.badlogic.gdx.graphics.g3d.model.Node"
+    "nonOptimized": [
+        "com.badlogic.gdx.graphics.g3d.model.Node",
+        "java.nio.DoubleBuffer"
     ]
 }

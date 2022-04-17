@@ -206,12 +206,14 @@ public class ByteCodeTranslator {
 //        File nativeMethods = new File(dest, "nativeMethods.c");
 //        copy(ByteCodeTranslator.class.getResourceAsStream("/nativeMethods.c"), new FileOutputStream(nativeMethods));
 
-        // Todo: Prevent optimizations of classes in config
         if (args.length == 3) {
             JSONObject config = new JSONObject(new String(Files.readAllBytes(Paths.get(args[2]))));
-            JSONArray reflection = config.getJSONArray("reflection");
-            for (Object o: reflection)
-                ByteCodeClass.addArrayType(((String)o).replace('.', '_'), 1);
+            JSONArray reflection = config.getJSONArray("nonOptimized");
+            for (Object o: reflection) {
+                String name = ((String)o).replace('.', '_');
+                ByteCodeClass.addArrayType(name, 1);
+                ByteCodeClass.addNonOptimized(name);
+            }
         }
 
         Parser.writeOutput(dest);

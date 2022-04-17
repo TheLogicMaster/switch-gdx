@@ -51,7 +51,6 @@ more convenient for development.
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
-- SpriteBatch doesn't render
 
 ## Bugs Fixed
 - For exceptions, local variable restoreTo* must be volatile, presumably as a result of setjmp
