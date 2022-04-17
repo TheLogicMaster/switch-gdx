@@ -230,6 +230,10 @@ public class ByteCodeClass {
                 bc.markDependent(lst);
                 continue;
             }
+            if(bc.clsName.equals("java_nio_DoubleBuffer")) {
+                bc.markDependent(lst);
+                continue;
+            }
             if(bc.clsName.equals("java_text_DateFormat")) {
                 bc.markDependent(lst);
                 continue;

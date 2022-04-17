@@ -561,7 +561,7 @@ JAVA_VOID java_io_FileOutputStream_writeBytes___byte_1ARRAY_int_int_boolean(CODE
         throwIOException(threadStateData, "File closed");
     if (append)
         fseek(f, 0, SEEK_END);
-    auto written = (int)fwrite((char *) ((JAVA_ARRAY) b)->data + off, 1, len, f);
+    auto written = fwrite((char *) ((JAVA_ARRAY) b)->data + off, 1, len, f);
     if (written != len)
         throwIOException(threadStateData, nullptr);
 }
@@ -573,6 +573,23 @@ JAVA_VOID java_io_FileOutputStream_close0__(CODENAME_ONE_THREAD_STATE, JAVA_OBJE
     if (fclose(f))
         throwIOException(threadStateData, nullptr);
     ((obj__java_io_FileOutputStream *) __cn1ThisObject)->java_io_FileOutputStream_file = 0;
+}
+
+void *getBufferAddress(JAVA_OBJECT buffer) {
+    int typeSize;
+    if (instanceofFunction(cn1_class_id_java_nio_ByteBuffer, buffer->__codenameOneParentClsReference->classId))
+        typeSize = sizeof(JAVA_ARRAY_BYTE);
+    else if (instanceofFunction(cn1_class_id_java_nio_ShortBuffer, buffer->__codenameOneParentClsReference->classId))
+        typeSize = sizeof(JAVA_ARRAY_SHORT);
+    else if (instanceofFunction(cn1_class_id_java_nio_IntBuffer, buffer->__codenameOneParentClsReference->classId))
+        typeSize = sizeof(JAVA_ARRAY_INT);
+    else if (instanceofFunction(cn1_class_id_java_nio_FloatBuffer, buffer->__codenameOneParentClsReference->classId))
+        typeSize = sizeof(JAVA_ARRAY_FLOAT);
+    else if (instanceofFunction(cn1_class_id_java_nio_LongBuffer, buffer->__codenameOneParentClsReference->classId))
+        typeSize = sizeof(JAVA_ARRAY_LONG);
+    else if (instanceofFunction(cn1_class_id_java_nio_DoubleBuffer, buffer->__codenameOneParentClsReference->classId))
+        typeSize = sizeof(JAVA_ARRAY_DOUBLE);
+    return (char*)((obj__java_nio_Buffer *) buffer)->java_nio_Buffer_address + typeSize * ((obj__java_nio_Buffer *) buffer)->java_nio_Buffer_position;
 }
 
 JAVA_VOID com_badlogic_gdx_utils_BufferUtils_freeMemory___java_nio_ByteBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT buffer) {
@@ -929,11 +946,11 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glColorMask___boolean_boolean_bo
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glCompressedTexImage2D___int_int_int_int_int_int_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT level, JAVA_INT internalformat, JAVA_INT width, JAVA_INT height, JAVA_INT border, JAVA_INT imageSize, JAVA_OBJECT data) {
-    glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, (void *) ((obj__java_nio_Buffer *) data)->java_nio_Buffer_address);
+    glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, (void *) getBufferAddress(data));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glCompressedTexSubImage2D___int_int_int_int_int_int_int_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT level, JAVA_INT xoffset, JAVA_INT yoffset, JAVA_INT width, JAVA_INT height, JAVA_INT format, JAVA_INT imageSize, JAVA_OBJECT data) {
-    glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, (void *) ((obj__java_nio_Buffer *) data)->java_nio_Buffer_address);
+    glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, (void *) getBufferAddress(data));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glCopyTexImage2D___int_int_int_int_int_int_int_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT level, JAVA_INT internalformat, JAVA_INT x, JAVA_INT y, JAVA_INT width, JAVA_INT height, JAVA_INT border) {
@@ -949,7 +966,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glCullFace___int(CODENAME_ONE_TH
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteTextures___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT textures) {
-    glDeleteTextures(n, (GLuint *) ((obj__java_nio_IntBuffer *) textures)->java_nio_Buffer_address);
+    glDeleteTextures(n, (GLuint *) getBufferAddress(textures));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteTexture___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT texture) {
@@ -977,7 +994,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDrawArrays___int_int_int(CODEN
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDrawElements___int_int_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT mode, JAVA_INT count, JAVA_INT type, JAVA_OBJECT indices) {
-    glDrawElements(mode, count, type, (void *) ((obj__java_nio_Buffer *) indices)->java_nio_Buffer_address);
+    glDrawElements(mode, count, type, (void *) getBufferAddress(indices));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glEnable___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT cap) {
@@ -997,7 +1014,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glFrontFace___int(CODENAME_ONE_T
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGenTextures___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT textures) {
-    glGenTextures(n, (GLuint *) ((obj__java_nio_IntBuffer *) textures)->java_nio_Buffer_address);
+    glGenTextures(n, (GLuint *) getBufferAddress(textures));
 }
 
 JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGenTexture___R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
@@ -1011,7 +1028,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGetError___R_int(CODENAME_ONE_T
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetIntegerv___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetIntegerv(pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetIntegerv(pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchGL_glGetString___int_R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT name) {
@@ -1035,7 +1052,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glPolygonOffset___float_float(CO
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glReadPixels___int_int_int_int_int_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT x, JAVA_INT y, JAVA_INT width, JAVA_INT height, JAVA_INT format, JAVA_INT type, JAVA_OBJECT pixels) {
-    glReadPixels(x, y, width, height, format, type, (void *) ((obj__java_nio_Buffer *) pixels)->java_nio_Buffer_address);
+    glReadPixels(x, y, width, height, format, type, (void *) getBufferAddress(pixels));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glScissor___int_int_int_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT x, JAVA_INT y, JAVA_INT width, JAVA_INT height) {
@@ -1055,7 +1072,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glStencilOp___int_int_int(CODENA
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glTexImage2D___int_int_int_int_int_int_int_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT level, JAVA_INT internalformat, JAVA_INT width, JAVA_INT height, JAVA_INT border, JAVA_INT format, JAVA_INT type, JAVA_OBJECT pixels) {
-    glTexImage2D(target, level, internalformat, width, height, border, format, type, (void *) ((obj__java_nio_Buffer *) pixels)->java_nio_Buffer_address);
+    glTexImage2D(target, level, internalformat, width, height, border, format, type, (void *) getBufferAddress(pixels));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glTexParameterf___int_int_float(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT pname, JAVA_FLOAT param) {
@@ -1063,7 +1080,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glTexParameterf___int_int_float(
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glTexSubImage2D___int_int_int_int_int_int_int_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT level, JAVA_INT xoffset, JAVA_INT yoffset, JAVA_INT width, JAVA_INT height, JAVA_INT format, JAVA_INT type, JAVA_OBJECT pixels) {
-    glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (void *) ((obj__java_nio_Buffer *) pixels)->java_nio_Buffer_address);
+    glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (void *) getBufferAddress(pixels));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glViewport___int_int_int_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT x, JAVA_INT y, JAVA_INT width, JAVA_INT height) {
@@ -1107,11 +1124,11 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glBlendFuncSeparate___int_int_in
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glBufferData___int_int_java_nio_Buffer_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT size, JAVA_OBJECT buffer, JAVA_INT usage) {
-    glBufferData(target, size, (void *) ((obj__java_nio_Buffer *) buffer)->java_nio_Buffer_address, usage);
+    glBufferData(target, size, (void *) getBufferAddress(buffer), usage);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glBufferSubData___int_int_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT offset, JAVA_INT size, JAVA_OBJECT data) {
-    glBufferSubData(target, offset, size, (void *) ((obj__java_nio_Buffer *) data)->java_nio_Buffer_address);
+    glBufferSubData(target, offset, size, (void *) getBufferAddress(data));
 }
 
 JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glCheckFramebufferStatus___int_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target) {
@@ -1135,7 +1152,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteBuffer___int(CODENAME_ON
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteBuffers___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT buffers) {
-    glDeleteBuffers(n, (GLuint *) ((obj__java_nio_IntBuffer *) buffers)->java_nio_Buffer_address);
+    glDeleteBuffers(n, (GLuint *) getBufferAddress(buffers));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteFramebuffer___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT framebuffer) {
@@ -1143,7 +1160,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteFramebuffer___int(CODENA
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteFramebuffers___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT framebuffers) {
-    glDeleteFramebuffers(n, (GLuint *) ((obj__java_nio_IntBuffer *) framebuffers)->java_nio_Buffer_address);
+    glDeleteFramebuffers(n, (GLuint *) getBufferAddress(framebuffers));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteProgram___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program) {
@@ -1155,7 +1172,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteRenderbuffer___int(CODEN
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteRenderbuffers___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT renderbuffers) {
-    glDeleteRenderbuffers(n, (GLuint *) ((obj__java_nio_IntBuffer *) renderbuffers)->java_nio_Buffer_address);
+    glDeleteRenderbuffers(n, (GLuint *) getBufferAddress(renderbuffers));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDeleteShader___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT shader) {
@@ -1193,7 +1210,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGenBuffer___R_int(CODENAME_ONE_
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGenBuffers___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT buffers) {
-    glGenBuffers(n, (GLuint *) ((obj__java_nio_IntBuffer *) buffers)->java_nio_Buffer_address);
+    glGenBuffers(n, (GLuint *) getBufferAddress(buffers));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGenerateMipmap___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target) {
@@ -1207,7 +1224,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGenFramebuffer___R_int(CODENAME
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGenFramebuffers___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT framebuffers) {
-    glGenFramebuffers(n, (GLuint *) ((obj__java_nio_IntBuffer *) framebuffers)->java_nio_Buffer_address);
+    glGenFramebuffers(n, (GLuint *) getBufferAddress(framebuffers));
 }
 
 JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGenRenderbuffer___R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
@@ -1217,23 +1234,23 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGenRenderbuffer___R_int(CODENAM
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGenRenderbuffers___int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT renderbuffers) {
-    glGenRenderbuffers(n, (GLuint *) ((obj__java_nio_IntBuffer *) renderbuffers)->java_nio_Buffer_address);
+    glGenRenderbuffers(n, (GLuint *) getBufferAddress(renderbuffers));
 }
 
 JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchGL_glGetActiveAttrib___int_int_java_nio_IntBuffer_java_nio_IntBuffer_R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program, JAVA_INT index, JAVA_OBJECT size, JAVA_OBJECT type) {
     char buffer[64];
-    glGetActiveAttrib(program, index, 63, nullptr, (GLint *) ((obj__java_nio_IntBuffer *) size)->java_nio_Buffer_address, (GLenum *) ((obj__java_nio_IntBuffer *) type)->java_nio_Buffer_address, buffer);
+    glGetActiveAttrib(program, index, 63, nullptr, (GLint *) getBufferAddress(size), (GLenum *) getBufferAddress(type), buffer);
     return fromNativeString(threadStateData, buffer);
 }
 
 JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchGL_glGetActiveUniform___int_int_java_nio_IntBuffer_java_nio_IntBuffer_R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program, JAVA_INT index, JAVA_OBJECT size, JAVA_OBJECT type) {
     char buffer[64];
-    glGetActiveUniform(program, index, 63, nullptr, (GLint *) ((obj__java_nio_IntBuffer *) size)->java_nio_Buffer_address, (GLenum *) ((obj__java_nio_IntBuffer *) type)->java_nio_Buffer_address, buffer);
+    glGetActiveUniform(program, index, 63, nullptr, (GLint *) getBufferAddress(size), (GLenum *) getBufferAddress(type), buffer);
     return fromNativeString(threadStateData, buffer);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetAttachedShaders___int_int_java_nio_Buffer_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program, JAVA_INT maxcount, JAVA_OBJECT count, JAVA_OBJECT shaders) {
-    glGetAttachedShaders(program, maxcount, (GLsizei *) ((obj__java_nio_Buffer *) count)->java_nio_Buffer_address, (GLuint *) ((obj__java_nio_IntBuffer *) shaders)->java_nio_Buffer_address);
+    glGetAttachedShaders(program, maxcount, (GLsizei *) getBufferAddress(count), (GLuint *) getBufferAddress(shaders));
 }
 
 JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGetAttribLocation___int_java_lang_String_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program, JAVA_OBJECT name) {
@@ -1241,23 +1258,23 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGetAttribLocation___int_java_la
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetBooleanv___int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetBooleanv(pname, (GLboolean *) ((obj__java_nio_Buffer *) params)->java_nio_Buffer_address);
+    glGetBooleanv(pname, (GLboolean *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetBufferParameteriv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetBufferParameteriv(target, pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetBufferParameteriv(target, pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetFloatv___int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetFloatv(pname, (GLfloat *) ((obj__java_nio_FloatBuffer *) params)->java_nio_Buffer_address);
+    glGetFloatv(pname, (GLfloat *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetFramebufferAttachmentParameteriv___int_int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT attachment, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetFramebufferAttachmentParameteriv(target, attachment, pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetFramebufferAttachmentParameteriv(target, attachment, pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetProgramiv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetProgramiv(program, pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetProgramiv(program, pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchGL_glGetProgramInfoLog___int_R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program) {
@@ -1267,11 +1284,11 @@ JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchGL_glGetProgramInfoLog___int_R_ja
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetRenderbufferParameteriv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetRenderbufferParameteriv(target, pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetRenderbufferParameteriv(target, pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetShaderiv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT shader, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetShaderiv(shader, pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetShaderiv(shader, pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchGL_glGetShaderInfoLog___int_R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program) {
@@ -1281,23 +1298,23 @@ JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchGL_glGetShaderInfoLog___int_R_jav
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetShaderPrecisionFormat___int_int_java_nio_IntBuffer_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT shadertype, JAVA_INT precisiontype, JAVA_OBJECT range, JAVA_OBJECT precision) {
-    glGetShaderPrecisionFormat(shadertype, precisiontype, (GLint *) ((obj__java_nio_IntBuffer *) range)->java_nio_Buffer_address, (GLint *) ((obj__java_nio_IntBuffer *) precision)->java_nio_Buffer_address);
+    glGetShaderPrecisionFormat(shadertype, precisiontype, (GLint *) getBufferAddress(range), (GLint *) getBufferAddress(precision));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetTexParameterfv___int_int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetTexParameterfv(target, pname, (GLfloat *) ((obj__java_nio_FloatBuffer *) params)->java_nio_Buffer_address);
+    glGetTexParameterfv(target, pname, (GLfloat *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetTexParameteriv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetTexParameteriv(target, pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetTexParameteriv(target, pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetUniformfv___int_int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program, JAVA_INT location, JAVA_OBJECT params) {
-    glGetUniformfv(program, location, (GLfloat *) ((obj__java_nio_FloatBuffer *) params)->java_nio_Buffer_address);
+    glGetUniformfv(program, location, (GLfloat *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetUniformiv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program, JAVA_INT location, JAVA_OBJECT params) {
-    glGetUniformiv(program, location, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetUniformiv(program, location, (GLint *) getBufferAddress(params));
 }
 
 JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGetUniformLocation___int_java_lang_String_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT program, JAVA_OBJECT name) {
@@ -1305,15 +1322,15 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchGL_glGetUniformLocation___int_java_l
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetVertexAttribfv___int_int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT index, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetVertexAttribfv(index, pname, (GLfloat *) ((obj__java_nio_FloatBuffer *) params)->java_nio_Buffer_address);
+    glGetVertexAttribfv(index, pname, (GLfloat *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetVertexAttribiv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT index, JAVA_INT pname, JAVA_OBJECT params) {
-    glGetVertexAttribiv(index, pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glGetVertexAttribiv(index, pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glGetVertexAttribPointerv___int_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT index, JAVA_INT pname, JAVA_OBJECT pointer) {
-    glGetVertexAttribPointerv(index, pname, (void **) ((obj__java_nio_Buffer *) pointer)->java_nio_Buffer_address);
+    glGetVertexAttribPointerv(index, pname, (void **) getBufferAddress(pointer));
 }
 
 JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchGL_glIsBuffer___int_R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT buffer) {
@@ -1361,7 +1378,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glSampleCoverage___float_boolean
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glShaderBinary___int_java_nio_IntBuffer_int_java_nio_Buffer_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT n, JAVA_OBJECT shaders, JAVA_INT binaryformat, JAVA_OBJECT binary, JAVA_INT length) {
-    glShaderBinary(n, (GLuint *) ((obj__java_nio_IntBuffer *) shaders)->java_nio_Buffer_address, binaryformat, (void *) ((obj__java_nio_Buffer *) binary)->java_nio_Buffer_address, length);
+    glShaderBinary(n, (GLuint *) getBufferAddress(shaders), binaryformat, (void *) getBufferAddress(binary), length);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glShaderSource___int_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT shader, JAVA_OBJECT sourceObject) {
@@ -1382,7 +1399,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glStencilOpSeparate___int_int_in
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glTexParameterfv___int_int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT pname, JAVA_OBJECT params) {
-    glTexParameterfv(target, pname, (GLfloat *) ((obj__java_nio_FloatBuffer *) params)->java_nio_Buffer_address);
+    glTexParameterfv(target, pname, (GLfloat *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glTexParameteri___int_int_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT pname, JAVA_INT param) {
@@ -1390,7 +1407,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glTexParameteri___int_int_int(CO
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glTexParameteriv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT target, JAVA_INT pname, JAVA_OBJECT params) {
-    glTexParameteriv(target, pname, (GLint *) ((obj__java_nio_IntBuffer *) params)->java_nio_Buffer_address);
+    glTexParameteriv(target, pname, (GLint *) getBufferAddress(params));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform1f___int_float(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_FLOAT x) {
@@ -1398,7 +1415,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform1f___int_float(CODENAME
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform1fv___int_int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v) {
-    glUniform1fv(location, count, (GLfloat *) ((obj__java_nio_FloatBuffer *) v)->java_nio_Buffer_address);
+    glUniform1fv(location, count, (GLfloat *) getBufferAddress(v));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform1fv___int_int_float_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v, JAVA_INT offset) {
@@ -1410,7 +1427,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform1i___int_int(CODENAME_O
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform1iv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v) {
-    glUniform1iv(location, count, (GLint *) ((obj__java_nio_IntBuffer *) v)->java_nio_Buffer_address);
+    glUniform1iv(location, count, (GLint *) getBufferAddress(v));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform1iv___int_int_int_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v, JAVA_INT offset) {
@@ -1422,7 +1439,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform2f___int_float_float(CO
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform2fv___int_int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v) {
-    glUniform2fv(location, count, (GLfloat *) ((obj__java_nio_FloatBuffer *) v)->java_nio_Buffer_address);
+    glUniform2fv(location, count, (GLfloat *) getBufferAddress(v));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform2fv___int_int_float_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v, JAVA_INT offset) {
@@ -1434,7 +1451,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform2i___int_int_int(CODENA
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform2iv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v) {
-    glUniform2iv(location, count, (GLint *) ((obj__java_nio_IntBuffer *) v)->java_nio_Buffer_address);
+    glUniform2iv(location, count, (GLint *) getBufferAddress(v));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform2iv___int_int_int_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v, JAVA_INT offset) {
@@ -1446,7 +1463,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform3f___int_float_float_fl
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform3fv___int_int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v) {
-    glUniform3fv(location, count, (GLfloat *) ((obj__java_nio_FloatBuffer *) v)->java_nio_Buffer_address);
+    glUniform3fv(location, count, (GLfloat *) getBufferAddress(v));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform3fv___int_int_float_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v, JAVA_INT offset) {
@@ -1458,7 +1475,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform3i___int_int_int_int(CO
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform3iv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v) {
-    glUniform3iv(location, count, (GLint *) ((obj__java_nio_IntBuffer *) v)->java_nio_Buffer_address);
+    glUniform3iv(location, count, (GLint *) getBufferAddress(v));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform3iv___int_int_int_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v, JAVA_INT offset) {
@@ -1470,7 +1487,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform4f___int_float_float_fl
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform4fv___int_int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v) {
-    glUniform4fv(location, count, (GLfloat *) ((obj__java_nio_FloatBuffer *) v)->java_nio_Buffer_address);
+    glUniform4fv(location, count, (GLfloat *) getBufferAddress(v));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform4fv___int_int_float_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v, JAVA_INT offset) {
@@ -1482,7 +1499,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform4i___int_int_int_int_in
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform4iv___int_int_java_nio_IntBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v) {
-    glUniform4iv(location, count, (GLint *) ((obj__java_nio_IntBuffer *) v)->java_nio_Buffer_address);
+    glUniform4iv(location, count, (GLint *) getBufferAddress(v));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform4iv___int_int_int_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_OBJECT v, JAVA_INT offset) {
@@ -1490,7 +1507,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniform4iv___int_int_int_1ARRA
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniformMatrix2fv___int_int_boolean_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_BOOLEAN transpose, JAVA_OBJECT value) {
-    glUniformMatrix2fv(location, count, transpose, (GLfloat *) ((obj__java_nio_FloatBuffer *) value)->java_nio_Buffer_address);
+    glUniformMatrix2fv(location, count, transpose, (GLfloat *) getBufferAddress(value));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniformMatrix2fv___int_int_boolean_float_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_BOOLEAN transpose, JAVA_OBJECT value, JAVA_INT offset) {
@@ -1498,7 +1515,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniformMatrix2fv___int_int_boo
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniformMatrix3fv___int_int_boolean_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_BOOLEAN transpose, JAVA_OBJECT value) {
-    glUniformMatrix3fv(location, count, transpose, (GLfloat *) ((obj__java_nio_FloatBuffer *) value)->java_nio_Buffer_address);
+    glUniformMatrix3fv(location, count, transpose, (GLfloat *) getBufferAddress(value));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniformMatrix3fv___int_int_boolean_float_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_BOOLEAN transpose, JAVA_OBJECT value, JAVA_INT offset) {
@@ -1506,7 +1523,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniformMatrix3fv___int_int_boo
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniformMatrix4fv___int_int_boolean_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_BOOLEAN transpose, JAVA_OBJECT value) {
-    glUniformMatrix4fv(location, count, transpose, (GLfloat *) ((obj__java_nio_FloatBuffer *) value)->java_nio_Buffer_address);
+    glUniformMatrix4fv(location, count, transpose, (GLfloat *) getBufferAddress(value));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glUniformMatrix4fv___int_int_boolean_float_1ARRAY_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT location, JAVA_INT count, JAVA_BOOLEAN transpose, JAVA_OBJECT value, JAVA_INT offset) {
@@ -1526,7 +1543,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib1f___int_float(COD
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib1fv___int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT indx, JAVA_OBJECT values) {
-    glVertexAttrib1fv(indx, (GLfloat *) ((obj__java_nio_FloatBuffer *) values)->java_nio_Buffer_address);
+    glVertexAttrib1fv(indx, (GLfloat *) getBufferAddress(values));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib2f___int_float_float(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT indx, JAVA_FLOAT x, JAVA_FLOAT y) {
@@ -1534,7 +1551,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib2f___int_float_flo
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib2fv___int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT indx, JAVA_OBJECT values) {
-    glVertexAttrib2fv(indx, (GLfloat *) ((obj__java_nio_FloatBuffer *) values)->java_nio_Buffer_address);
+    glVertexAttrib2fv(indx, (GLfloat *) getBufferAddress(values));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib3f___int_float_float_float(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT indx, JAVA_FLOAT x, JAVA_FLOAT y, JAVA_FLOAT z) {
@@ -1542,7 +1559,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib3f___int_float_flo
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib3fv___int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT indx, JAVA_OBJECT values) {
-    glVertexAttrib3fv(indx, (GLfloat *) ((obj__java_nio_FloatBuffer *) values)->java_nio_Buffer_address);
+    glVertexAttrib3fv(indx, (GLfloat *) getBufferAddress(values));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib4f___int_float_float_float_float(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT indx, JAVA_FLOAT x, JAVA_FLOAT y, JAVA_FLOAT z, JAVA_FLOAT w) {
@@ -1550,11 +1567,11 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib4f___int_float_flo
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttrib4fv___int_java_nio_FloatBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT indx, JAVA_OBJECT values) {
-    glVertexAttrib4fv(indx, (GLfloat *) ((obj__java_nio_FloatBuffer *) values)->java_nio_Buffer_address);
+    glVertexAttrib4fv(indx, (GLfloat *) getBufferAddress(values));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttribPointer___int_int_int_boolean_int_java_nio_Buffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT index, JAVA_INT size, JAVA_INT type, JAVA_BOOLEAN normalized, JAVA_INT stride, JAVA_OBJECT ptr) {
-    glVertexAttribPointer(index, size, type, normalized, stride, (void *) ((obj__java_nio_Buffer *) ptr)->java_nio_Buffer_address);
+    glVertexAttribPointer(index, size, type, normalized, stride, getBufferAddress(ptr));
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttribPointer___int_int_int_boolean_int_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT index, JAVA_INT size, JAVA_INT type, JAVA_BOOLEAN normalized, JAVA_INT stride, JAVA_INT ptr) {

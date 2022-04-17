@@ -151,7 +151,7 @@ public class TestApp implements ApplicationListener {
 		shapeRenderer = new ShapeRenderer();
 
 		spriteBatch = new SpriteBatch();
-		spriteBatch.disableBlending();
+//		spriteBatch.disableBlending();
 
 		texture = new Texture("test.png");
 //		texture.getTextureData().prepare();
