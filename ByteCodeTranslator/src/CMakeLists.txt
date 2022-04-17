@@ -10,6 +10,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(Threads REQUIRED)
 
 add_definitions(-DNOJNI)
 
@@ -17,5 +18,12 @@ include_directories(include)
 FILE(GLOB SRCS include/*.h source/*.c source/*.cpp)
 add_executable(dist ${SRCS})
 
+if(THREADS_HAVE_PTHREAD_ARG)
+  target_compile_options(dist PUBLIC "-pthread")
+endif()
+
 target_include_directories(dist PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
 target_link_libraries(dist ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${ZLIB_LIBRARIES})
+if(CMAKE_THREAD_LIBS_INIT)
+  target_link_libraries(dist "${CMAKE_THREAD_LIBS_INIT}")
+endif()

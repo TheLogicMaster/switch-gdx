@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -97,6 +98,7 @@ public class TestApp implements ApplicationListener {
 	private ShapeRenderer shapeRenderer;
 	private Pixmap pixmap;
 	private Texture pixmapTexture;
+	private BitmapFont font;
 
 	private Environment environment;
 	private PerspectiveCamera camera;
@@ -164,6 +166,8 @@ public class TestApp implements ApplicationListener {
 		pixmap.setColor(Color.BROWN);
 		pixmap.fillCircle(64, 64, 32);
 		pixmapTexture = new Texture(pixmap);
+
+		font = new BitmapFont();
 
 		environment = new Environment();
 		environment.add(new DirectionalLight().setDirection(-0.3f, -0.1f, -1).setColor(Color.WHITE));
@@ -324,6 +328,7 @@ public class TestApp implements ApplicationListener {
 		spriteBatch.begin();
 		spriteBatch.draw(texture, 0, 0);
 		spriteBatch.draw(pixmapTexture, 1000, 100);
+		font.draw(spriteBatch, "Test Text", 100, 100);
 		spriteBatch.end();
 
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -372,5 +377,6 @@ public class TestApp implements ApplicationListener {
 		sound.dispose();
 //		robot.dispose();
 		assets.dispose();
+		font.dispose();
 	}
 }

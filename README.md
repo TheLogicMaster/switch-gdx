@@ -47,6 +47,7 @@ more convenient for development.
 - JDK-8 is required for compiling the JavaAPI project
 - Concurrent access to files is more limited on Switch where it might normally work on PC, so ensure files are closed properly
 - Sound effects are limited to OGG and WAV, Music supports MP3, OGG, and WAV
+- Only one Music instance can be played at a time
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)
