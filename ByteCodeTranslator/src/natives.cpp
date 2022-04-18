@@ -315,7 +315,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_create___java_lang_String(COD
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_start___boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_BOOLEAN looping) {
-    Mix_PlayMusic((Mix_Music*)((obj__com_thelogicmaster_switchgdx_SwitchMusic*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchMusic_handle, looping ? -1 : 1);
+    Mix_PlayMusic((Mix_Music*)((obj__com_thelogicmaster_switchgdx_SwitchMusic*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchMusic_handle, looping ? -1 : 0);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_resume__(CODENAME_ONE_THREAD_STATE) {
@@ -367,7 +367,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_dispose0__(CODENAME_ONE_THREA
 }
 
 JAVA_INT com_thelogicmaster_switchgdx_SwitchSound_play0___boolean_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_BOOLEAN looping) {
-    return Mix_PlayChannel(-1, (Mix_Chunk *)((obj__com_thelogicmaster_switchgdx_SwitchSound*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle, looping ? -1 : 1);
+    return Mix_PlayChannel(-1, (Mix_Chunk *)((obj__com_thelogicmaster_switchgdx_SwitchSound*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle, looping ? -1 : 0);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_stop0___int(CODENAME_ONE_THREAD_STATE, JAVA_INT channel) {

@@ -139,14 +139,14 @@ public class TestApp implements ApplicationListener {
 			e.printStackTrace();
 		}
 
-		file = new File("test2.txt");
-		try {
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-			writer.write("test2\n");
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		file = new File("test2.txt");
+//		try {
+//			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+//			writer.write("test2\n");
+//			writer.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
 		Preferences prefs = Gdx.app.getPreferences("Test");
 		Gdx.app.log("Pref Test", prefs.getString("value", "Value not set"));
@@ -189,6 +189,7 @@ public class TestApp implements ApplicationListener {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				System.out.println("Button pressed");
+				sound.play();
 			}
 		});
 		table.add(button).width(100);
@@ -227,8 +228,8 @@ public class TestApp implements ApplicationListener {
 		music.setLooping(true);
 		music.play();
 
-		sound = Gdx.audio.newSound(Gdx.files.internal("test.wav"));
-		sound.loop();
+		sound = Gdx.audio.newSound(Gdx.files.internal("drumstick.wav"));
+//		sound.loop();
 
 //		new Thread(() -> {
 //			while (running) {
