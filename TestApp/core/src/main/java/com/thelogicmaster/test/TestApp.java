@@ -33,6 +33,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.UBJsonReader;
 
@@ -99,6 +106,8 @@ public class TestApp implements ApplicationListener {
 	private Pixmap pixmap;
 	private Texture pixmapTexture;
 	private BitmapFont font;
+
+	Stage stage;
 
 	private Environment environment;
 	private PerspectiveCamera camera;
@@ -168,6 +177,24 @@ public class TestApp implements ApplicationListener {
 		pixmapTexture = new Texture(pixmap);
 
 		font = new BitmapFont();
+
+		stage = new Stage();
+
+		Table table = new Table();
+		table.setDebug(true);
+		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+		textButtonStyle.font = font;
+		TextButton button = new TextButton("Button", textButtonStyle);
+		button.addListener(new ChangeListener() {
+			@Override
+			public void changed (ChangeEvent event, Actor actor) {
+				System.out.println("Button pressed");
+			}
+		});
+		table.add(button).width(100);
+		table.setFillParent(true);
+		stage.addActor(table);
+		Gdx.input.setInputProcessor(stage);
 
 		environment = new Environment();
 		environment.add(new DirectionalLight().setDirection(-0.3f, -0.1f, -1).setColor(Color.WHITE));
@@ -325,10 +352,12 @@ public class TestApp implements ApplicationListener {
 		modelBatch.render(robotInstance);
 		modelBatch.end();
 
+		stage.draw();
+
 		spriteBatch.begin();
 		spriteBatch.draw(texture, 0, 0);
 		spriteBatch.draw(pixmapTexture, 1000, 100);
-		font.draw(spriteBatch, "Test Text", 100, 100);
+		font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond() + " FPS, delta: " + Gdx.graphics.getDeltaTime(), 100, 100);
 		spriteBatch.end();
 
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -378,5 +407,6 @@ public class TestApp implements ApplicationListener {
 //		robot.dispose();
 		assets.dispose();
 		font.dispose();
+		stage.dispose();
 	}
 }

@@ -165,8 +165,8 @@ public class ByteCodeTranslator {
     public static void main(String[] args) throws Exception {
 //        System.setProperty("optimizer", "off");
 
-        if(args.length != 2 && args.length != 3) {
-            System.out.println("Usage: <input directory> <output directory> ?<config>");
+        if(args.length != 3 && args.length != 4) {
+            System.out.println("Usage: <input directory> <output directory> <config> <main class>");
             System.exit(1);
             return;
         }
@@ -194,6 +194,9 @@ public class ByteCodeTranslator {
 
         System.out.println("srcRoot is: " + dest.getAbsolutePath() );
 
+        if (args.length == 4)
+            BytecodeMethod.setMainClass(args[3].replace('.', '_'));
+
         b.execute(sources, dest);
 
 //        File cn1Globals = new File(dest, "cn1_globals.h");
@@ -206,14 +209,12 @@ public class ByteCodeTranslator {
 //        File nativeMethods = new File(dest, "nativeMethods.c");
 //        copy(ByteCodeTranslator.class.getResourceAsStream("/nativeMethods.c"), new FileOutputStream(nativeMethods));
 
-        if (args.length == 3) {
-            JSONObject config = new JSONObject(new String(Files.readAllBytes(Paths.get(args[2]))));
-            JSONArray reflection = config.getJSONArray("nonOptimized");
-            for (Object o: reflection) {
-                String name = ((String)o).replace('.', '_');
-                ByteCodeClass.addArrayType(name, 1);
-                ByteCodeClass.addNonOptimized(name);
-            }
+        JSONObject config = new JSONObject(new String(Files.readAllBytes(Paths.get(args[2]))));
+        JSONArray reflection = config.getJSONArray("nonOptimized");
+        for (Object o: reflection) {
+            String name = ((String)o).replace('.', '_');
+            ByteCodeClass.addArrayType(name, 1);
+            ByteCodeClass.addNonOptimized(name);
         }
 
         Parser.writeOutput(dest);

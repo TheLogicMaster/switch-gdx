@@ -34,7 +34,7 @@ public class ReflectionPool<T> extends Pool<T> {
 
 	protected T newObject () {
 		try {
-			return type.newInstance();
+			return (T)type.newInstance();
 		} catch (Exception ex) {
 			throw new GdxRuntimeException("Unable to create new instance: " + type.getName(), ex);
 		}

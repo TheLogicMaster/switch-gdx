@@ -102,6 +102,7 @@ public class BytecodeMethod implements SignatureSet {
     private String desc;
     private boolean eliminated;
 
+    private static String mainClass;
     
     static boolean optimizerOn;
     
@@ -1132,11 +1133,15 @@ public class BytecodeMethod implements SignatureSet {
         this.methodOffset = methodOffset;
     }
 
+    public static void setMainClass(String clazz) {
+        mainClass = clazz;
+    }
+
     /**
      * @return the staticMethod
      */
     public boolean isMain() {
-        return staticMethod && methodName.equals("main") && arguments.size() == 1 && arguments.get(0).getArrayDimensions() == 1;
+        return (mainClass == null || mainClass.equals(clsName)) && staticMethod && methodName.equals("main") && arguments.size() == 1 && arguments.get(0).getArrayDimensions() == 1;
     }
     
     public boolean isDefaultConstructor() {

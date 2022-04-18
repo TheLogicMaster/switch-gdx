@@ -40,6 +40,8 @@ more convenient for development.
 - Remove any unnecessary java.util.concurrent stuff
 - Replace any class stubs with generic equivalents
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
+- jnigen integration?
+- Map GDX Input controller button keys to default controller
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
@@ -48,10 +50,12 @@ more convenient for development.
 - Concurrent access to files is more limited on Switch where it might normally work on PC, so ensure files are closed properly
 - Sound effects are limited to OGG and WAV, Music supports MP3, OGG, and WAV
 - Only one Music instance can be played at a time
+- Classes references with reflection must be included in switch.json
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
+- Audio loop issue (Probably change 1 to 0)
 
 ## Bugs Fixed
 - For exceptions, local variable restoreTo* must be volatile, presumably as a result of setjmp

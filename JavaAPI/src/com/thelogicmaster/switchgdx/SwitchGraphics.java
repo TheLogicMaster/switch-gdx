@@ -41,6 +41,7 @@ public class SwitchGraphics extends AbstractGraphics {
 		previousTime = timestamp;
 		time += deltaTime;
 		frameId++;
+		frames++;
 		if (time > 1) {
 			fps = frames;
 			time = 0;

@@ -144,6 +144,10 @@ public final class Math {
 
 	public native static double atan (double d);
 
+	public native static double asin (double a);
+
+	public native static double atan2 (double a, double b);
+
 	public native static double log(double a);
 
 	/**
