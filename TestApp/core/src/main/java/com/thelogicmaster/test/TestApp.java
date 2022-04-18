@@ -2,6 +2,7 @@ package com.thelogicmaster.test;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
@@ -314,6 +315,18 @@ public class TestApp implements ApplicationListener {
 //				System.out.println("Touch dragged: (" + screenX + ", " + screenY + "): " + pointer);
 //				return false;
 //			}
+//
+//			@Override
+//			public boolean keyDown (int keycode) {
+//				System.out.println("Key down: " + keycode);
+//				return false;
+//			}
+//
+//			@Override
+//			public boolean keyUp (int keycode) {
+//				System.out.println("Key up: " + keycode);
+//				return false;
+//			}
 //		});
 	}
 
@@ -332,9 +345,9 @@ public class TestApp implements ApplicationListener {
 			Vector3 vertical = camera.direction.cpy().nor().scl(controller.getAxis(3) / 3);
 			camera.translate(horizontal.add(vertical));
 
-			if (controller.getButton(0))
+			if (controller.getButton(0) || Gdx.input.isKeyPressed(Input.Keys.BUTTON_THUMBL))
 				camera.translate(0, 0.1f, 0);
-			else if (controller.getButton(1))
+			else if (controller.getButton(1) || Gdx.input.isKeyJustPressed(Input.Keys.BUTTON_THUMBR))
 				camera.translate(0, -0.1f, 0);
 
 			camera.direction.rotate(camera.up, controller.getAxis(0) * -1);

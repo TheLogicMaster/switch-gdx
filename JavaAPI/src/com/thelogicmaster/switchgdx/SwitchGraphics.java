@@ -56,7 +56,7 @@ public class SwitchGraphics extends AbstractGraphics {
 
 	@Override
 	public GL20 getGL20 () {
-		return Gdx.gl;
+		return Gdx.gl20;
 	}
 
 	@Override
@@ -66,7 +66,8 @@ public class SwitchGraphics extends AbstractGraphics {
 
 	@Override
 	public void setGL20 (GL20 gl20) {
-
+		Gdx.gl = gl20;
+		Gdx.gl20 = gl20;
 	}
 
 	@Override

@@ -909,10 +909,6 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_getTextInput___com_badlogic_g
 
 }
 
-JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_setOnscreenKeyboardVisible___boolean_com_badlogic_gdx_Input_OnscreenKeyboardType(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_BOOLEAN __cn1Arg1, JAVA_OBJECT __cn1Arg2) {
-
-}
-
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glActiveTexture___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT texture) {
     glActiveTexture(texture);
 }

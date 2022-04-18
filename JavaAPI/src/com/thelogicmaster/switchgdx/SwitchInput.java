@@ -2,10 +2,16 @@ package com.thelogicmaster.switchgdx;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.controllers.Controllers;
 
 public class SwitchInput implements Input {
 
 	private static final int MAX_TOUCHES = 16;
+	private static final int[] SWITCH_KEYS = new int[] {
+		Keys.BUTTON_A, Keys.BUTTON_B, Keys.BUTTON_X, Keys.BUTTON_Y,
+		Keys.DPAD_UP, Keys.DPAD_DOWN, Keys.DPAD_LEFT, Keys.DPAD_RIGHT,
+		Keys.BUTTON_THUMBL, Keys.BUTTON_THUMBR, Keys.BUTTON_SELECT, Keys.BUTTON_START
+	};
 
 	private InputProcessor inputProcessor;
 	private long currentEventTimeStamp;
@@ -96,6 +102,14 @@ public class SwitchInput implements Input {
 		}
 
 		System.arraycopy(touchData, 0, previousTouchData, 0, MAX_TOUCHES * 3);
+
+		for (int key: SWITCH_KEYS) {
+			int button = keyToButton(key);
+			if (((SwitchController)Controllers.getCurrent()).getButtonPressed(button) && inputProcessor != null)
+				inputProcessor.keyDown(key);
+			if (((SwitchController)Controllers.getCurrent()).getButtonReleased(button) && inputProcessor != null)
+				inputProcessor.keyUp(key);
+		}
 	}
 
 	@Override
@@ -210,12 +224,14 @@ public class SwitchInput implements Input {
 
 	@Override
 	public boolean isKeyPressed (int key) {
-		return false;
+		int button = keyToButton(key);
+		return button != -1 && Controllers.getCurrent().getButton(button);
 	}
 
 	@Override
 	public boolean isKeyJustPressed (int key) {
-		return false;
+		int button = keyToButton(key);
+		return button != -1 && ((SwitchController)Controllers.getCurrent()).getButtonPressed(button);
 	}
 
 	@Override
@@ -228,11 +244,13 @@ public class SwitchInput implements Input {
 
 	@Override
 	public void setOnscreenKeyboardVisible (boolean visible) {
-		setOnscreenKeyboardVisible(visible, OnscreenKeyboardType.Default);
+
 	}
 
 	@Override
-	public native void setOnscreenKeyboardVisible (boolean visible, OnscreenKeyboardType type);
+	public void setOnscreenKeyboardVisible (boolean visible, OnscreenKeyboardType type) {
+
+	}
 
 	@Override
 	public void vibrate (int milliseconds) {
@@ -347,6 +365,37 @@ public class SwitchInput implements Input {
 	@Override
 	public void setCursorPosition (int x, int y) {
 
+	}
+
+	private static int keyToButton(int key) {
+		switch (key) {
+		case Keys.BUTTON_A:
+			return 0;
+		case Keys.BUTTON_B:
+			return 1;
+		case Keys.BUTTON_X:
+			return 2;
+		case Keys.BUTTON_Y:
+			return 3;
+		case Keys.BUTTON_START:
+			return 11;
+		case Keys.BUTTON_SELECT:
+			return 10;
+		case Keys.DPAD_UP:
+			return 13;
+		case Keys.DPAD_RIGHT:
+			return 14;
+		case Keys.DPAD_DOWN:
+			return 15;
+		case Keys.DPAD_LEFT:
+			return 16;
+		case Keys.BUTTON_THUMBL:
+			return 4;
+		case Keys.BUTTON_THUMBR:
+			return 5;
+		default:
+			return -1;
+		}
 	}
 
 	private static native void getTouchData(int[] touchData);
