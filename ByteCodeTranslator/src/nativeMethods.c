@@ -23,6 +23,7 @@
 #include "java_lang_StringToReal.h"
 #include "java_lang_System.h"
 #include "java_util_zip_Inflater.h"
+#include "java_lang_reflect_Field.h"
 
 #include <pthread.h>
 #include <unistd.h>
@@ -984,6 +985,20 @@ JAVA_BOOLEAN java_lang_Class_isAnonymousClass___R_boolean(CODENAME_ONE_THREAD_ST
     return clz->isAnonymous;
 }
 
+JAVA_OBJECT java_lang_Class_getDeclaredFields___R_java_lang_reflect_Field_1ARRAY(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT cls) {
+    struct clazz* clz = (struct clazz*)cls;
+    JAVA_OBJECT fields = __NEW_ARRAY_java_lang_reflect_Field(threadStateData, clz->fieldCount);
+    JAVA_ARRAY array = (JAVA_ARRAY)fields;
+    for (int i = 0; i < clz->fieldCount; i++) {
+        JAVA_OBJECT field = __NEW_java_lang_reflect_Field(threadStateData);
+        struct Field fieldStruct = clz->fields[i];
+        java_lang_reflect_Field___INIT_____int_java_lang_Class_java_lang_Class_java_lang_String_int(threadStateData, field, i, (JAVA_OBJECT)clz,
+                (JAVA_OBJECT)fieldStruct.type, fromNativeString(threadStateData, fieldStruct.name), fieldStruct.modifiers);
+        ((JAVA_OBJECT *)array->data)[i] = field;
+    }
+    return (JAVA_OBJECT)fields;
+}
+
 JAVA_BOOLEAN java_lang_Class_isAnnotation___R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT cls) {
     struct clazz* clz = (struct clazz*)cls;
     return clz->isAnnotation;
@@ -998,6 +1013,111 @@ JAVA_OBJECT java_lang_Class_newInstanceImpl___R_java_lang_Object(CODENAME_ONE_TH
     struct clazz* clz = (struct clazz*)cls;
     newInstanceFunctionPointer f = clz->newInstanceFp;
     return f(threadStateData);
+}
+
+JAVA_OBJECT java_lang_Class_getSuperclass___R_java_lang_Class(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  cls) {
+    struct clazz* clz = (struct clazz*)cls;
+    return (JAVA_OBJECT)clz->baseClass;
+}
+
+JAVA_OBJECT java_lang_reflect_Field_get___java_lang_Object_R_java_lang_Object(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT fieldObj, JAVA_OBJECT object) {
+    struct obj__java_lang_reflect_Field* field = (struct obj__java_lang_reflect_Field*)fieldObj;
+    struct Field *fieldStruct = &(((struct clazz *)field->java_lang_reflect_Field_declaringClass)->fields)[field->java_lang_reflect_Field_index];
+
+    if (fieldStruct->type == &class__java_lang_Byte) {
+        if (object == JAVA_NULL)
+            return java_lang_Byte_valueOf___byte_R_java_lang_Byte(threadStateData, ((JAVA_BYTE (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
+        else
+            return java_lang_Byte_valueOf___byte_R_java_lang_Byte(threadStateData, ((JAVA_BYTE (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
+    } else if (fieldStruct->type == &class__java_lang_Character) {
+        if (object == JAVA_NULL)
+            return java_lang_Character_valueOf___char_R_java_lang_Character(threadStateData, ((JAVA_CHAR (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
+        else
+            return java_lang_Character_valueOf___char_R_java_lang_Character(threadStateData, ((JAVA_CHAR (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
+    } else if (fieldStruct->type == &class__java_lang_Short) {
+        if (object == JAVA_NULL)
+            return java_lang_Short_valueOf___short_R_java_lang_Short(threadStateData, ((JAVA_SHORT (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
+        else
+            return java_lang_Short_valueOf___short_R_java_lang_Short(threadStateData, ((JAVA_SHORT (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
+    } else if (fieldStruct->type == &class__java_lang_Integer) {
+        if (object == JAVA_NULL)
+            return java_lang_Integer_valueOf___int_R_java_lang_Integer(threadStateData, ((JAVA_INT (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
+        else
+            return java_lang_Integer_valueOf___int_R_java_lang_Integer(threadStateData, ((JAVA_INT (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
+    } else if (fieldStruct->type == &class__java_lang_Long) {
+        if (object == JAVA_NULL)
+            return java_lang_Long_valueOf___long_R_java_lang_Long(threadStateData, ((JAVA_LONG (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
+        else
+            return java_lang_Long_valueOf___long_R_java_lang_Long(threadStateData, ((JAVA_LONG (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
+    } else if (fieldStruct->type == &class__java_lang_Boolean) {
+        if (object == JAVA_NULL)
+            return java_lang_Boolean_valueOf___boolean_R_java_lang_Boolean(threadStateData, ((JAVA_BOOLEAN (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
+        else
+            return java_lang_Boolean_valueOf___boolean_R_java_lang_Boolean(threadStateData, ((JAVA_BOOLEAN (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
+    } else if (fieldStruct->type == &class__java_lang_Float) {
+        if (object == JAVA_NULL)
+            return java_lang_Float_valueOf___float_R_java_lang_Float(threadStateData, ((JAVA_FLOAT (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
+        else
+            return java_lang_Float_valueOf___float_R_java_lang_Float(threadStateData, ((JAVA_FLOAT (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
+    } else if (fieldStruct->type == &class__java_lang_Double) {
+        if (object == JAVA_NULL)
+            return java_lang_Double_valueOf___double_R_java_lang_Double(threadStateData, ((JAVA_DOUBLE (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
+        else
+            return java_lang_Double_valueOf___double_R_java_lang_Double(threadStateData, ((JAVA_DOUBLE (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
+    } else
+        return object == JAVA_NULL ? ((JAVA_OBJECT (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData) : ((JAVA_OBJECT (*)(JAVA_OBJECT)) fieldStruct->getter)(object);
+}
+
+JAVA_VOID java_lang_reflect_Field_set___java_lang_Object_java_lang_Object(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT fieldObj, JAVA_OBJECT object, JAVA_OBJECT value) {
+    struct obj__java_lang_reflect_Field* field = (struct obj__java_lang_reflect_Field*)fieldObj;
+    struct Field *fieldStruct = &(((struct clazz *)field->java_lang_reflect_Field_declaringClass)->fields)[field->java_lang_reflect_Field_index];
+
+    if (fieldStruct->type == &class__java_lang_Byte) {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_BYTE, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Byte *)value)->java_lang_Byte_value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_BYTE))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Byte *)value)->java_lang_Byte_value);
+    } else if (fieldStruct->type == &class__java_lang_Character) {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_CHAR, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Character *)value)->java_lang_Character_value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_CHAR))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Character *)value)->java_lang_Character_value);
+    } else if (fieldStruct->type == &class__java_lang_Short) {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_SHORT, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Short *)value)->java_lang_Short_value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_SHORT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Short *)value)->java_lang_Short_value);
+    } else if (fieldStruct->type == &class__java_lang_Integer) {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_INT, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Integer *)value)->java_lang_Integer_value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_INT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Integer *)value)->java_lang_Integer_value);
+    } else if (fieldStruct->type == &class__java_lang_Long) {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_LONG, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Long *)value)->java_lang_Long_value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_LONG))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Long *)value)->java_lang_Long_value);
+    } else if (fieldStruct->type == &class__java_lang_Boolean) {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_BOOLEAN, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Boolean *)value)->java_lang_Boolean_value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_BOOLEAN))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Boolean *)value)->java_lang_Boolean_value);
+    } else if (fieldStruct->type == &class__java_lang_Float) {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_FLOAT, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Float *)value)->java_lang_Float_value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_FLOAT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Float *)value)->java_lang_Float_value);
+    } else if (fieldStruct->type == &class__java_lang_Double) {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_DOUBLE, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Double *)value)->java_lang_Double_value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_DOUBLE))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Double *)value)->java_lang_Double_value);
+    } else {
+        if (object != JAVA_NULL)
+            ((void (*)(struct ThreadLocalData *, JAVA_OBJECT, JAVA_OBJECT))fieldStruct->setter)(threadStateData, value, object);
+        else if (fieldStruct->setter)
+            ((void (*)(struct ThreadLocalData *, JAVA_OBJECT))fieldStruct->setter)(threadStateData, value);
+    }
 }
 
 JAVA_OBJECT java_lang_Enum_valueOf___java_lang_Class_java_lang_String_R_java_lang_Enum(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT cls, JAVA_OBJECT value) {

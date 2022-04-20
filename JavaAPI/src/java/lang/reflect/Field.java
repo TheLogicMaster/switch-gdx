@@ -25,6 +25,8 @@
 
 package java.lang.reflect;
 
+import java.lang.annotation.Annotation;
+
 /**
  * A {@code Field} provides information about, and dynamic access to, a
  * single field of a class or an interface.  The reflected field may
@@ -44,15 +46,28 @@ package java.lang.reflect;
  * @author Kenneth Russell
  * @author Nakul Saraiya
  */
-public final
-class Field {
+public final class Field {
+
+    private final int index;
+    private final Class<?> declaringClass;
+    private final Class<?> type;
+    private final String name;
+    private final int modifiers;
+
+    private Field(int index, Class<?> declaringClass, Class<?> type, String name, int modifiers) {
+        this.index = index;
+        this.declaringClass = declaringClass;
+        this.type = type;
+        this.name = name;
+        this.modifiers = modifiers;
+    }
 
     public Class<?> getDeclaringClass() {
-        return null;
+        return declaringClass;
     }
 
     public String getName() {
-        return null;
+        return name;
     }
 
     public boolean isAccessible() {
@@ -76,19 +91,20 @@ class Field {
     }
 
     public Class<?> getType() {
-        return null;
+        return type;
     }
 
     public Type getGenericType() {
-        return null;
+        return getType(); // Doesn't support generics...
     }
 
-    public Object get(Object obj) throws IllegalArgumentException, IllegalAccessException {
-        return null;
-    }
+    // Todo: type checking?
+    public native Object get(Object obj) throws IllegalArgumentException, IllegalAccessException;
 
-    public void set(Object obj, Object value) throws IllegalArgumentException, IllegalAccessException {
+    public native void set(Object obj, Object value) throws IllegalArgumentException, IllegalAccessException;
 
+    public Annotation[] getDeclaredAnnotations() {
+        return new Annotation[0];
     }
 
     public boolean isAnnotationPresent(Class<?> annotation) {

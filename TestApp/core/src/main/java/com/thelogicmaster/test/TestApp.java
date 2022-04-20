@@ -38,11 +38,14 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.UBJsonReader;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Field;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -109,6 +112,7 @@ public class TestApp implements ApplicationListener {
 	private BitmapFont font;
 
 	Stage stage;
+	Skin skin;
 
 	private Environment environment;
 	private PerspectiveCamera camera;
@@ -120,6 +124,9 @@ public class TestApp implements ApplicationListener {
 	private Sound sound;
 
 	private boolean running = true;
+
+	private int reflectionValue;
+	private static TestApp reflectionValue2;
 
 	@Override
 	public void create () {
@@ -179,6 +186,8 @@ public class TestApp implements ApplicationListener {
 
 		font = new BitmapFont();
 
+//		skin = new Skin(Gdx.files.internal("tests-skin.json"));
+
 		stage = new Stage();
 
 		Table table = new Table();
@@ -186,6 +195,7 @@ public class TestApp implements ApplicationListener {
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 		textButtonStyle.font = font;
 		TextButton button = new TextButton("Button", textButtonStyle);
+//		TextButton button = new TextButton("Button", skin);
 		button.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
@@ -229,7 +239,7 @@ public class TestApp implements ApplicationListener {
 		music.setLooping(true);
 		music.play();
 
-		sound = Gdx.audio.newSound(Gdx.files.internal("drumstick.wav"));
+		sound = Gdx.audio.newSound(Gdx.files.internal("test.wav"));
 //		sound.loop();
 
 //		new Thread(() -> {
@@ -264,6 +274,19 @@ public class TestApp implements ApplicationListener {
 		Gdx.gl.glAttachShader(shader, vertexShader);
 		Gdx.gl.glAttachShader(shader, fragmentShader);
 		Gdx.gl.glLinkProgram(shader);
+
+		try {
+			Field field = ClassReflection.getField(getClass(), "reflectionValue");
+			System.out.println("Old reflection value: " + field.get(this));
+			field.set(this, 1);
+			System.out.println("New reflection value: " + field.get(this));
+			field = ClassReflection.getField(getClass(), "reflectionValue2");
+			System.out.println("Old reflection  value 2: " + field.get(null));
+			field.set(null, this);
+			System.out.println("New reflection  value 2: " + field.get(null));
+		} catch (Exception e) {
+			System.out.println("Reflection test failed: " + e.getMessage());
+		}
 
 //		System.out.println("Shader: " + shader + " (" + vertexShader + ", " + fragmentShader + ")");
 
@@ -422,5 +445,6 @@ public class TestApp implements ApplicationListener {
 		assets.dispose();
 		font.dispose();
 		stage.dispose();
+//		skin.dispose();
 	}
 }

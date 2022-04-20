@@ -41,7 +41,7 @@ public final class Boolean implements Comparable<Boolean> {
      */
     public static final java.lang.Boolean TRUE = new Boolean(true);
 
-    public static final Class<Boolean> TYPE = boolean.class;
+    public static final Class<Boolean> TYPE = Boolean.class;
 
     private boolean value;
     

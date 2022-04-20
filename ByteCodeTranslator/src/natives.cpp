@@ -3,10 +3,14 @@
 #include <fcntl.h>
 #include <csignal>
 #include <fstream>
+#include <filesystem>
+#include <vector>
 #include "gdx_buffer_utils.h"
 #include "gdx_matrix4.h"
 #include "gdx2d.h"
 #include "etc1_utils.h"
+
+namespace fs = std::filesystem;
 
 extern "C" {
 #include "cn1_globals.h"
@@ -450,6 +454,20 @@ JAVA_VOID com_thelogicmaster_switchgdx_NativeUtils_putByte___long_byte(CODENAME_
     *(JAVA_ARRAY_BYTE *) address = (JAVA_ARRAY_BYTE) value;
 }
 
+JAVA_BOOLEAN java_io_File_createFile___java_lang_String_R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT path) {
+    auto nativePath = toNativeString(threadStateData, ((obj__java_io_File *) path)->java_io_File_path);
+    std::ifstream test(nativePath);
+    if (test.good())
+        return false;
+    test.close();
+    std::ofstream file(nativePath);
+    return file.good();
+}
+
+JAVA_BOOLEAN java_io_File_delete___R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+    return !remove(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path));
+}
+
 JAVA_BOOLEAN java_io_File_exists___R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
     std::ifstream f(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path));
     return f.good();
@@ -459,6 +477,32 @@ JAVA_BOOLEAN java_io_File_isDirectory___R_boolean(CODENAME_ONE_THREAD_STATE, JAV
     struct stat s;
     stat(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path), &s);
     return S_ISDIR(s.st_mode);
+}
+
+JAVA_LONG java_io_File_lastModified___R_long(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+    struct stat s;
+    stat(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path), &s);
+    return s.st_mtim.tv_sec;
+}
+
+JAVA_LONG java_io_File_length___R_long(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+    struct stat s;
+    stat(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path), &s);
+    return s.st_size;
+}
+
+JAVA_OBJECT java_io_File_list___R_java_lang_String_1ARRAY(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+    std::vector<JAVA_OBJECT> collected;
+    for (const auto & entry : fs::directory_iterator(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path)))
+        collected.emplace_back(newStringFromCString(threadStateData, entry.path().c_str()));
+    auto array = __NEW_ARRAY_java_lang_String(threadStateData, (int)collected.size());
+    for (int i = 0; i < (int)collected.size(); i++)
+        ((JAVA_OBJECT *)((JAVA_ARRAY)array)->data)[i] = collected[i];
+    return array;
+}
+
+JAVA_BOOLEAN java_io_File_mkdir___R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+    return !mkdir(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path), 0777);
 }
 
 void throwIOException(CODENAME_ONE_THREAD_STATE, const char *reason) {
@@ -561,7 +605,7 @@ JAVA_VOID java_io_FileOutputStream_writeBytes___byte_1ARRAY_int_int_boolean(CODE
         throwIOException(threadStateData, "File closed");
     if (append)
         fseek(f, 0, SEEK_END);
-    auto written = fwrite((char *) ((JAVA_ARRAY) b)->data + off, 1, len, f);
+    auto written = (int)fwrite((char *) ((JAVA_ARRAY) b)->data + off, 1, len, f);
     if (written != len)
         throwIOException(threadStateData, nullptr);
 }
@@ -589,6 +633,8 @@ void *getBufferAddress(JAVA_OBJECT buffer) {
         typeSize = sizeof(JAVA_ARRAY_LONG);
     else if (instanceofFunction(cn1_class_id_java_nio_DoubleBuffer, buffer->__codenameOneParentClsReference->classId))
         typeSize = sizeof(JAVA_ARRAY_DOUBLE);
+    else
+        typeSize = 1;
     return (char*)((obj__java_nio_Buffer *) buffer)->java_nio_Buffer_address + typeSize * ((obj__java_nio_Buffer *) buffer)->java_nio_Buffer_position;
 }
 

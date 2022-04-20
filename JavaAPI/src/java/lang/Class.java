@@ -28,6 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Instances of the class Class represent classes and interfaces in a running
@@ -267,18 +268,28 @@ public final class Class<T> implements java.lang.reflect.Type {
      * Returns all annotations present on this element.
      */
     public Annotation[] getAnnotations() {
-        return null;
+        return new Annotation[0];
     }
 
     /**
      * Returns all annotations that are directly present on this element.
      */
     public Annotation[] getDeclaredAnnotations() {
-        return null;
+        return new Annotation[0];
     }
 
-    public Field getDeclaredField(String name) {
-        return null;
+    public Field getDeclaredField(String name) throws NoSuchFieldException  {
+        for (Field field: getDeclaredFields())
+            if (field.getName().equals(name))
+                return field;
+        throw new NoSuchFieldException(name);
+    }
+
+    public Field getField(String name) throws NoSuchFieldException {
+        for (Field field: getFields())
+            if (field.getName().equals(name))
+                return field;
+        throw new NoSuchFieldException(name);
     }
 
     /**
@@ -333,12 +344,17 @@ public final class Class<T> implements java.lang.reflect.Type {
      */
     public native boolean isAnonymousClass();    
     
-    public Field[] getDeclaredFields() {
-        return null;
-    }
+    public native Field[] getDeclaredFields();
 
+    // No concept of visibility in this implementation
     public Field[] getFields() {
-        return null;
+        Field[] declaredFields = getDeclaredFields();
+        if (getSuperclass() == null)
+            return declaredFields;
+        Field[] superFields = getSuperclass().getFields();
+        Field[] fields = Arrays.copyOf(declaredFields, declaredFields.length + superFields.length);
+        System.arraycopy(superFields, 0, fields, declaredFields.length, superFields.length);
+        return fields;
     }
 
     public Constructor getDeclaredConstructor(Class<?> ... types) {
@@ -349,10 +365,7 @@ public final class Class<T> implements java.lang.reflect.Type {
         return null;
     }
 
-
-    public Class<?> getSuperclass() {
-        return null;
-    }
+    public native Class<?> getSuperclass();
 
     Object[] getEnumConstants() {
         return null;

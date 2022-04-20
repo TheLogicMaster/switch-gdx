@@ -45,6 +45,7 @@ public class ByteCodeField {
     private boolean finalField;
     private Object value;
     private boolean privateField;
+    private int modifiers;
     
     public ByteCodeField(String clsName, int access, String name, String desc, String signature, Object value) {
         this.clsName = clsName;
@@ -53,6 +54,7 @@ public class ByteCodeField {
         if(value != null && value instanceof String) {
             Parser.addToConstantPool((String)value);
         }
+        modifiers = access;
         staticField = (access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC;
         finalField = (access & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL;
         fieldName = name.replace('$', '_');
@@ -103,6 +105,14 @@ public class ByteCodeField {
                 primitiveType = Character.TYPE;
                 break;
         }
+    }
+
+    public int getModifiers() {
+        return modifiers;
+    }
+
+    public Class<?> getPrimitiveType() {
+        return primitiveType;
     }
 
     public String getFieldName() {

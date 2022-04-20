@@ -1,7 +1,8 @@
 {
     "nonOptimized": [
-        "com.badlogic.gdx.graphics.g3d.model.Node",
         "java.nio.DoubleBuffer",
+        "java.lang.reflect.Field",
+        "com.badlogic.gdx.graphics.g3d.model.Node",
         "com.badlogic.gdx.scenes.scene2d.Stage.TouchFocus"
     ]
 }

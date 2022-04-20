@@ -76,7 +76,7 @@ public final class Float extends Number implements Comparable<Float> {
      */
     public static final float POSITIVE_INFINITY=1f/0f;
 
-    public static final Class<Float> TYPE = float.class;
+    public static final Class<Float> TYPE = Float.class;
 
     private float value;
     

@@ -144,6 +144,17 @@ struct clazz {
     JAVA_BOOLEAN isAnnotation;
     
     struct clazz* arrayClass;  // <----- The array type for a class.  if clazz=Object, then class->arrayClass=Object[]
+
+    int fieldCount;
+    struct Field *fields;
+};
+
+struct Field {
+    const char *name;
+    const struct clazz *type;
+    int modifiers;
+    void *getter;
+    void *setter;
 };
 
 #define EMPTY_INTERFACES ((const struct clazz**)0)

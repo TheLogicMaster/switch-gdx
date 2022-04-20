@@ -30,7 +30,7 @@ package java.lang;
  */
 public final class Long extends Number implements Comparable<Long> {
 
-	public static Class<Long> TYPE = long.class;
+	public static Class<Long> TYPE = Long.class;
 
 	/**
 	 * The largest value of type long.

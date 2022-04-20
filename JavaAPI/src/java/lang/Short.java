@@ -39,7 +39,7 @@ public final class Short extends Number implements Comparable<Short> {
      */
     public static final short MIN_VALUE=-32768;
 
-    public static final Class<Short> TYPE = short.class;
+    public static final Class<Short> TYPE = Short.class;
 
     private short value;
     

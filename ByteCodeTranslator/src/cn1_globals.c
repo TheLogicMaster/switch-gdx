@@ -873,7 +873,11 @@ JAVA_BOOLEAN removeObjectFromHeapCollection(CODENAME_ONE_THREAD_STATE, JAVA_OBJE
         }
         return JAVA_FALSE;
     }
+
     o->__heapPosition = -1;
+
+    if (!allObjectsInHeap)
+        return JAVA_FALSE;
 
     allObjectsInHeap[pos] = JAVA_NULL;
 

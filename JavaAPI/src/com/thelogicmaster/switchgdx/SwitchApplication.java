@@ -87,7 +87,8 @@ public class SwitchApplication implements Application {
 		if (executedRunnables.size == 0)
 			return;
 		do
-			executedRunnables.pop().run(); while (executedRunnables.size > 0);
+			executedRunnables.pop().run();
+		while (executedRunnables.size > 0);
 	}
 
 	@Override

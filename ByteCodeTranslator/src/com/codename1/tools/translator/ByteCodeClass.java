@@ -23,6 +23,7 @@
 
 package com.codename1.tools.translator;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -460,7 +461,62 @@ public class ByteCodeClass {
             b.append(s);
             b.append(".h\"\n");
         }
-        
+
+        b.append("#include \"java_lang_Short.h\"\n");
+        b.append("#include \"java_lang_Integer.h\"\n");
+        b.append("#include \"java_lang_Byte.h\"\n");
+        b.append("#include \"java_lang_Character.h\"\n");
+        b.append("#include \"java_lang_Boolean.h\"\n");
+        b.append("#include \"java_lang_Float.h\"\n");
+        b.append("#include \"java_lang_Double.h\"\n");
+        b.append("#include \"java_lang_Long.h\"\n");
+
+        b.append('\n');
+
+        b.append("struct Field fields_for_").append(clsName).append("[] = {\n");
+        for (ByteCodeField field: fields) {
+            b.append("\t{");
+            b.append('"').append(field.getFieldName()).append('"');
+            if (field.getType() == null) {
+                b.append(", &class__java_lang_");
+                switch (field.getPrimitiveType().getName()) {
+                    case "int":
+                        b.append("Integer");
+                        break;
+                    case "short":
+                        b.append("Short");
+                        break;
+                    case "byte":
+                        b.append("Byte");
+                        break;
+                    case "char":
+                        b.append("Character");
+                        break;
+                    case "long":
+                        b.append("Long");
+                        break;
+                    case "float":
+                        b.append("Float");
+                        break;
+                    case "double":
+                        b.append("Double");
+                        break;
+                    case "boolean":
+                        b.append("Boolean");
+                        break;
+                }
+            } else
+                b.append(", &class__").append(field.getType());
+            b.append(", ").append(field.getModifiers());
+            b.append(", get_").append(field.isStaticField() ? "static" : "field").append("_").append(clsName).append("_").append(field.getFieldName());
+            if (field.isStaticField() && field.isFinal() && field.getValue() != null && !writableFields.contains(field.getFieldName()))
+                b.append(", 0");
+            else
+                b.append(", set_").append(field.isStaticField() ? "static" : "field").append("_").append(clsName).append("_").append(field.getFieldName());
+            b.append("},\n");
+        }
+        b.append("};\n\n");
+
         b.append("const struct clazz *base_interfaces_for_");
         b.append(clsName);
         b.append("[] = {");
@@ -473,7 +529,7 @@ public class ByteCodeClass {
             b.append("&class__");
             b.append(ints.replace('/', '_').replace('$', '_'));
         }
-        b.append("};\n");
+        b.append("};\n\n");
         
         
         // class struct, contains vtable, static fields and meta data (class name), type info etc.
@@ -568,7 +624,11 @@ public class ByteCodeClass {
                 .append(isAnnotation?"JAVA_TRUE":"0")
                 .append(", ")
                 .append(getArrayClazz(1));
-        
+
+        // fieldCount
+        b.append(", ").append(fields.size());
+        // fields
+        b.append(", fields_for_").append(clsName);
         
         b.append("};\n\n");
 
