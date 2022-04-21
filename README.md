@@ -37,16 +37,17 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - GDX Input button keys mapped to default controller
 - System language/locale
 - Basic GDX Audio support (SDL_mixer)
+- Field Reflection
+- Scene2d Skins
 
 ## Todo
 - Gradle libs as repo dependencies
 - Internal VM logging
 - GDX Networking
-- Finish GDX filesystem support
 - Possibly GDX threading stuff
 - GL30?
-- More complete Reflection support
-- Incremental compilation, if possible, to cut down on compilation times
+- Reflection method support
+- Incremental compilation, if possible, to cut down on compilation times (Something like rsync to only copy changed files into dist)
 - Switch wrapper buffers to use memory directly since it's always aligned, rather than the super inefficient byte by byte implementation
 - Ensure code licensing is all good (Probably noting modifications to comply with GPLv2)
 - Remove any unnecessary java.util.concurrent stuff
@@ -80,7 +81,6 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
-- Skin loading fails because of relative path resolution
 
 ## Bugs Fixed
 - For exceptions, local variable restoreTo* must be volatile, presumably as a result of setjmp

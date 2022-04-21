@@ -79,15 +79,15 @@ public final class Field {
     }
 
     public int getModifiers() {
-        return 0;
+        return modifiers;
     }
 
     public boolean isEnumConstant() {
-        return false;
+        return (modifiers & Modifier.ENUM) != 0;
     }
 
     public boolean isSynthetic() {
-        return false;
+        return Modifier.isSynthetic(modifiers);
     }
 
     public Class<?> getType() {

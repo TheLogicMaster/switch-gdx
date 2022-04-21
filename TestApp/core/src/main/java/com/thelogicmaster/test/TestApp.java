@@ -43,6 +43,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.UBJsonReader;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
@@ -128,6 +129,16 @@ public class TestApp implements ApplicationListener {
 	private int reflectionValue;
 	private static TestApp reflectionValue2;
 
+	private static class SerializationTest {
+		private int a;
+		private transient int b;
+
+		@Override
+		public String toString () {
+			return "(" + a + ", " + b + ")";
+		}
+	};
+
 	@Override
 	public void create () {
 		System.out.println("Hello World!");
@@ -186,7 +197,7 @@ public class TestApp implements ApplicationListener {
 
 		font = new BitmapFont();
 
-//		skin = new Skin(Gdx.files.internal("tests-skin.json"));
+		skin = new Skin(Gdx.files.internal("test-skin.json"));
 
 		stage = new Stage();
 
@@ -194,8 +205,8 @@ public class TestApp implements ApplicationListener {
 		table.setDebug(true);
 		TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
 		textButtonStyle.font = font;
-		TextButton button = new TextButton("Button", textButtonStyle);
-//		TextButton button = new TextButton("Button", skin);
+//		TextButton button = new TextButton("Button", textButtonStyle);
+		TextButton button = new TextButton("Button", skin);
 		button.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
@@ -281,12 +292,20 @@ public class TestApp implements ApplicationListener {
 			field.set(this, 1);
 			System.out.println("New reflection value: " + field.get(this));
 			field = ClassReflection.getField(getClass(), "reflectionValue2");
-			System.out.println("Old reflection  value 2: " + field.get(null));
+			System.out.println("Old reflection value 2: " + field.get(null));
 			field.set(null, this);
-			System.out.println("New reflection  value 2: " + field.get(null));
+			System.out.println("New reflection value 2: " + field.get(null));
 		} catch (Exception e) {
 			System.out.println("Reflection test failed: " + e.getMessage());
 		}
+
+//		SerializationTest test = new SerializationTest();
+//		test.a = 1;
+//		test.b = 2;
+//		Json json = new Json();
+//		String serialized = json.toJson(test);
+//		System.out.println("Serialized test: " + test + " -> " + serialized);
+//		System.out.println("Deserialized: " + json.fromJson(SerializationTest.class, serialized));
 
 //		System.out.println("Shader: " + shader + " (" + vertexShader + ", " + fragmentShader + ")");
 
