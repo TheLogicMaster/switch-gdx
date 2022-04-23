@@ -38,11 +38,23 @@ public class ByteCodeMethodArg {
     public ByteCodeMethodArg(String type, int dim) {
         this.type = type.replace('/', '_').replace('$', '_');
         arrayDimensions = dim;
+
+        // Ensure that all array types used in methods are created
+        if (dim > 0)
+            ByteCodeClass.addArrayType(type, dim);
     }
 
     public ByteCodeMethodArg(Class type, int dim) {
         this.primitiveType = type;
         arrayDimensions = dim;
+    }
+
+    public String getType () {
+        return type;
+    }
+
+    public Class getPrimitiveType () {
+        return primitiveType;
     }
 
     public char getQualifier() {
@@ -86,6 +98,17 @@ public class ByteCodeMethodArg {
             bl.append(arrayDimensions);
             bl.append("ARRAY");
         }
+    }
+
+    public void appendClassType(StringBuilder b) {
+        b.append("&class");
+        if (arrayDimensions > 0)
+            b.append("_array").append(arrayDimensions);
+        b.append("__");
+        if (primitiveType == null)
+            b.append(type);
+        else
+            b.append(Util.getCType(primitiveType));
     }
 
     @Override

@@ -24,16 +24,20 @@
 #include "java_lang_System.h"
 #include "java_util_zip_Inflater.h"
 #include "java_lang_reflect_Field.h"
+#include "java_lang_reflect_Method.h"
+#include "java_lang_Class.h"
 
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <math.h>
 #include <ctype.h>
+#include <inttypes.h>
 #include <string.h>
 #include <assert.h>
 #include <sys/param.h>
 #include <zlib.h>
+#include <ffi.h>
 
 #ifdef __SWITCH__
 #include <switch.h>
@@ -783,10 +787,10 @@ JAVA_OBJECT java_lang_Long_toString___long_int_R_java_lang_String(CODENAME_ONE_T
     char str[256];
     switch(radix) {
         case 10:
-            sprintf(str, "%lld", d);
+            sprintf(str, "%" PRId64, d);
             return newStringFromCString(threadStateData, str);
         case 16:
-            sprintf(str, "%llx", d);
+            sprintf(str, "%" PRIx64, d);
             return newStringFromCString(threadStateData, str);
     }
     ltostr(str, d, radix);
@@ -999,6 +1003,24 @@ JAVA_OBJECT java_lang_Class_getDeclaredFields___R_java_lang_reflect_Field_1ARRAY
     return (JAVA_OBJECT)fields;
 }
 
+JAVA_OBJECT java_lang_Class_getDeclaredMethods___R_java_lang_reflect_Method_1ARRAY(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT cls) {
+    struct clazz* clz = (struct clazz*)cls;
+    JAVA_OBJECT methods = __NEW_ARRAY_java_lang_reflect_Method(threadStateData, clz->methodCount);
+    JAVA_ARRAY array = (JAVA_ARRAY)methods;
+    for (int i = 0; i < clz->methodCount; i++) {
+        JAVA_OBJECT method = __NEW_java_lang_reflect_Method(threadStateData);
+        struct Method methodStruct = clz->methods[i];
+        JAVA_OBJECT argsObj = __NEW_ARRAY_java_lang_Class(threadStateData, methodStruct.paramCount);
+        JAVA_ARRAY args = (JAVA_ARRAY)argsObj;
+        for (int j = 0; j < methodStruct.paramCount; j++)
+            ((struct clazz **)args->data)[j] = methodStruct.paramTypes[j];
+        java_lang_reflect_Method___INIT_____int_java_lang_Class_java_lang_Class_1ARRAY_java_lang_Class_java_lang_String_int(threadStateData, method, i,
+            (JAVA_OBJECT)clz, argsObj, (JAVA_OBJECT)methodStruct.returnType, fromNativeString(threadStateData, methodStruct.name), methodStruct.modifiers);
+        ((JAVA_OBJECT *)array->data)[i] = method;
+    }
+    return (JAVA_OBJECT)methods;
+}
+
 JAVA_BOOLEAN java_lang_Class_isAnnotation___R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT cls) {
     struct clazz* clz = (struct clazz*)cls;
     return clz->isAnnotation;
@@ -1024,42 +1046,42 @@ JAVA_OBJECT java_lang_reflect_Field_get___java_lang_Object_R_java_lang_Object(CO
     struct obj__java_lang_reflect_Field* field = (struct obj__java_lang_reflect_Field*)fieldObj;
     struct Field *fieldStruct = &(((struct clazz *)field->java_lang_reflect_Field_declaringClass)->fields)[field->java_lang_reflect_Field_index];
 
-    if (fieldStruct->type == &class__java_lang_Byte) {
+    if (fieldStruct->type == &class__JAVA_BYTE) {
         if (object == JAVA_NULL)
             return java_lang_Byte_valueOf___byte_R_java_lang_Byte(threadStateData, ((JAVA_BYTE (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
         else
             return java_lang_Byte_valueOf___byte_R_java_lang_Byte(threadStateData, ((JAVA_BYTE (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
-    } else if (fieldStruct->type == &class__java_lang_Character) {
+    } else if (fieldStruct->type == &class__JAVA_CHAR) {
         if (object == JAVA_NULL)
             return java_lang_Character_valueOf___char_R_java_lang_Character(threadStateData, ((JAVA_CHAR (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
         else
             return java_lang_Character_valueOf___char_R_java_lang_Character(threadStateData, ((JAVA_CHAR (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
-    } else if (fieldStruct->type == &class__java_lang_Short) {
+    } else if (fieldStruct->type == &class__JAVA_SHORT) {
         if (object == JAVA_NULL)
             return java_lang_Short_valueOf___short_R_java_lang_Short(threadStateData, ((JAVA_SHORT (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
         else
             return java_lang_Short_valueOf___short_R_java_lang_Short(threadStateData, ((JAVA_SHORT (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
-    } else if (fieldStruct->type == &class__java_lang_Integer) {
+    } else if (fieldStruct->type == &class__JAVA_INT) {
         if (object == JAVA_NULL)
             return java_lang_Integer_valueOf___int_R_java_lang_Integer(threadStateData, ((JAVA_INT (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
         else
             return java_lang_Integer_valueOf___int_R_java_lang_Integer(threadStateData, ((JAVA_INT (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
-    } else if (fieldStruct->type == &class__java_lang_Long) {
+    } else if (fieldStruct->type == &class__JAVA_LONG) {
         if (object == JAVA_NULL)
             return java_lang_Long_valueOf___long_R_java_lang_Long(threadStateData, ((JAVA_LONG (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
         else
             return java_lang_Long_valueOf___long_R_java_lang_Long(threadStateData, ((JAVA_LONG (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
-    } else if (fieldStruct->type == &class__java_lang_Boolean) {
+    } else if (fieldStruct->type == &class__JAVA_BOOLEAN) {
         if (object == JAVA_NULL)
             return java_lang_Boolean_valueOf___boolean_R_java_lang_Boolean(threadStateData, ((JAVA_BOOLEAN (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
         else
             return java_lang_Boolean_valueOf___boolean_R_java_lang_Boolean(threadStateData, ((JAVA_BOOLEAN (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
-    } else if (fieldStruct->type == &class__java_lang_Float) {
+    } else if (fieldStruct->type == &class__JAVA_FLOAT) {
         if (object == JAVA_NULL)
             return java_lang_Float_valueOf___float_R_java_lang_Float(threadStateData, ((JAVA_FLOAT (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
         else
             return java_lang_Float_valueOf___float_R_java_lang_Float(threadStateData, ((JAVA_FLOAT (*)(JAVA_OBJECT)) fieldStruct->getter)(object));
-    } else if (fieldStruct->type == &class__java_lang_Double) {
+    } else if (fieldStruct->type == &class__JAVA_DOUBLE) {
         if (object == JAVA_NULL)
             return java_lang_Double_valueOf___double_R_java_lang_Double(threadStateData, ((JAVA_DOUBLE (*)(struct ThreadLocalData *)) fieldStruct->getter)(threadStateData));
         else
@@ -1072,42 +1094,42 @@ JAVA_VOID java_lang_reflect_Field_set___java_lang_Object_java_lang_Object(CODENA
     struct obj__java_lang_reflect_Field* field = (struct obj__java_lang_reflect_Field*)fieldObj;
     struct Field *fieldStruct = &(((struct clazz *)field->java_lang_reflect_Field_declaringClass)->fields)[field->java_lang_reflect_Field_index];
 
-    if (fieldStruct->type == &class__java_lang_Byte) {
+    if (fieldStruct->type == &class__JAVA_BYTE) {
         if (object != JAVA_NULL)
             ((void (*)(struct ThreadLocalData *, JAVA_BYTE, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Byte *)value)->java_lang_Byte_value, object);
         else if (fieldStruct->setter)
             ((void (*)(struct ThreadLocalData *, JAVA_BYTE))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Byte *)value)->java_lang_Byte_value);
-    } else if (fieldStruct->type == &class__java_lang_Character) {
+    } else if (fieldStruct->type == &class__JAVA_CHAR) {
         if (object != JAVA_NULL)
             ((void (*)(struct ThreadLocalData *, JAVA_CHAR, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Character *)value)->java_lang_Character_value, object);
         else if (fieldStruct->setter)
             ((void (*)(struct ThreadLocalData *, JAVA_CHAR))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Character *)value)->java_lang_Character_value);
-    } else if (fieldStruct->type == &class__java_lang_Short) {
+    } else if (fieldStruct->type == &class__JAVA_SHORT) {
         if (object != JAVA_NULL)
             ((void (*)(struct ThreadLocalData *, JAVA_SHORT, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Short *)value)->java_lang_Short_value, object);
         else if (fieldStruct->setter)
             ((void (*)(struct ThreadLocalData *, JAVA_SHORT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Short *)value)->java_lang_Short_value);
-    } else if (fieldStruct->type == &class__java_lang_Integer) {
+    } else if (fieldStruct->type == &class__JAVA_INT) {
         if (object != JAVA_NULL)
             ((void (*)(struct ThreadLocalData *, JAVA_INT, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Integer *)value)->java_lang_Integer_value, object);
         else if (fieldStruct->setter)
             ((void (*)(struct ThreadLocalData *, JAVA_INT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Integer *)value)->java_lang_Integer_value);
-    } else if (fieldStruct->type == &class__java_lang_Long) {
+    } else if (fieldStruct->type == &class__JAVA_LONG) {
         if (object != JAVA_NULL)
             ((void (*)(struct ThreadLocalData *, JAVA_LONG, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Long *)value)->java_lang_Long_value, object);
         else if (fieldStruct->setter)
             ((void (*)(struct ThreadLocalData *, JAVA_LONG))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Long *)value)->java_lang_Long_value);
-    } else if (fieldStruct->type == &class__java_lang_Boolean) {
+    } else if (fieldStruct->type == &class__JAVA_BOOLEAN) {
         if (object != JAVA_NULL)
             ((void (*)(struct ThreadLocalData *, JAVA_BOOLEAN, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Boolean *)value)->java_lang_Boolean_value, object);
         else if (fieldStruct->setter)
             ((void (*)(struct ThreadLocalData *, JAVA_BOOLEAN))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Boolean *)value)->java_lang_Boolean_value);
-    } else if (fieldStruct->type == &class__java_lang_Float) {
+    } else if (fieldStruct->type == &class__JAVA_FLOAT) {
         if (object != JAVA_NULL)
             ((void (*)(struct ThreadLocalData *, JAVA_FLOAT, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Float *)value)->java_lang_Float_value, object);
         else if (fieldStruct->setter)
             ((void (*)(struct ThreadLocalData *, JAVA_FLOAT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Float *)value)->java_lang_Float_value);
-    } else if (fieldStruct->type == &class__java_lang_Double) {
+    } else if (fieldStruct->type == &class__JAVA_DOUBLE) {
         if (object != JAVA_NULL)
             ((void (*)(struct ThreadLocalData *, JAVA_DOUBLE, JAVA_OBJECT))fieldStruct->setter)(threadStateData, ((struct obj__java_lang_Double *)value)->java_lang_Double_value, object);
         else if (fieldStruct->setter)
@@ -1118,6 +1140,101 @@ JAVA_VOID java_lang_reflect_Field_set___java_lang_Object_java_lang_Object(CODENA
         else if (fieldStruct->setter)
             ((void (*)(struct ThreadLocalData *, JAVA_OBJECT))fieldStruct->setter)(threadStateData, value);
     }
+}
+
+ffi_type *javaTypeToFFI(JAVA_OBJECT type) {
+    struct clazz *cls = (struct clazz *)type;
+    if (cls == &class__JAVA_BOOLEAN || cls == &class__JAVA_BYTE || cls == &class__JAVA_CHAR || cls == &class__JAVA_INT)
+        return &ffi_type_sint;
+    else if (cls == &class__JAVA_LONG)
+        return &ffi_type_sint64;
+    else if (cls == &class__JAVA_FLOAT)
+        return &ffi_type_float;
+    else if (cls == &class__JAVA_DOUBLE)
+        return &ffi_type_double;
+    else if (cls == &class__JAVA_VOID)
+        return &ffi_type_void;
+    else
+        return &ffi_type_pointer;
+}
+
+// Todo: Runtime checks, check signature for statics rather than object being NULL
+JAVA_OBJECT java_lang_reflect_Method_invoke___java_lang_Object_java_lang_Object_1ARRAY_R_java_lang_Object(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT methodObj, JAVA_OBJECT object, JAVA_OBJECT paramsObj) {
+    JAVA_ARRAY params = (JAVA_ARRAY)paramsObj;
+    JAVA_OBJECT *paramValues = (JAVA_OBJECT *)params->data;
+    struct obj__java_lang_reflect_Method *method = (struct obj__java_lang_reflect_Method *)methodObj;
+    JAVA_ARRAY paramTypeArray = (JAVA_ARRAY)method->java_lang_reflect_Method_parameterTypes;
+    struct Method *methodStruct = &(((struct clazz *)method->java_lang_reflect_Method_declaringClass)->methods)[method->java_lang_reflect_Method_index];
+
+    JAVA_LONG argValues[paramTypeArray->length];
+    memset(argValues, 0, sizeof(JAVA_LONG) * paramTypeArray->length);
+    int argOffset = object == JAVA_NULL ? 1 : 2;
+    ffi_type *argTypes[paramTypeArray->length + argOffset];
+    void *args[paramTypeArray->length + argOffset];
+
+    argTypes[0] = &ffi_type_pointer;
+    args[0] = &threadStateData;
+    if (object != JAVA_NULL) {
+        argTypes[1] = &ffi_type_pointer;
+        args[1] = &object;
+    }
+
+    for (int i = 0; i < paramTypeArray->length; i++) {
+        JAVA_OBJECT type = ((JAVA_OBJECT *)paramTypeArray->data)[i];
+        struct clazz *cls = (struct clazz *)type;
+        argTypes[i + argOffset] = javaTypeToFFI(type);
+        args[i + argOffset] = &argValues[i];
+
+        if (cls == &class__JAVA_BOOLEAN)
+            *(JAVA_BOOLEAN *)&argValues[i] = ((struct obj__java_lang_Boolean *)paramValues[i])->java_lang_Boolean_value;
+        else if (cls == &class__JAVA_BYTE)
+            *(JAVA_BYTE *)&argValues[i] = ((struct obj__java_lang_Byte *)paramValues[i])->java_lang_Byte_value;
+        else if (cls == &class__JAVA_CHAR)
+            *(JAVA_CHAR *)&argValues[i] = ((struct obj__java_lang_Character *)paramValues[i])->java_lang_Character_value;
+        else if (cls == &class__JAVA_SHORT)
+            *(JAVA_SHORT *)&argValues[i] = ((struct obj__java_lang_Short *)paramValues[i])->java_lang_Short_value;
+        else if (cls == &class__JAVA_INT)
+            *(JAVA_INT *)&argValues[i] = ((struct obj__java_lang_Integer *)paramValues[i])->java_lang_Integer_value;
+        else if (cls == &class__JAVA_LONG)
+            *(JAVA_LONG *)&argValues[i] = ((struct obj__java_lang_Long *)paramValues[i])->java_lang_Long_value;
+        else if (cls == &class__JAVA_FLOAT)
+            *(JAVA_FLOAT *)&argValues[i] = ((struct obj__java_lang_Float *)paramValues[i])->java_lang_Float_value;
+        else if (cls == &class__JAVA_DOUBLE)
+            *(JAVA_DOUBLE *)&argValues[i] = ((struct obj__java_lang_Double *)paramValues[i])->java_lang_Double_value;
+        else
+            *(JAVA_OBJECT *)&argValues[i] = paramValues[i];
+    }
+
+    ffi_cif cif;
+    ffi_arg returnValue;
+    ffi_status result = ffi_prep_cif(&cif, FFI_DEFAULT_ABI, paramTypeArray->length + argOffset, javaTypeToFFI(method->java_lang_reflect_Method_returnType), argTypes);
+    if (result == FFI_OK)
+        ffi_call(&cif, (void*)methodStruct->func, &returnValue, args);
+    else {
+        // Todo: Exception for internal error
+    }
+
+    struct clazz *cls = (struct clazz *)method->java_lang_reflect_Method_returnType;
+    if (cls == &class__JAVA_BOOLEAN)
+        return java_lang_Boolean_valueOf___boolean_R_java_lang_Boolean(threadStateData, *(JAVA_BOOLEAN *)&returnValue);
+    else if (cls == &class__JAVA_BYTE)
+        return java_lang_Byte_valueOf___byte_R_java_lang_Byte(threadStateData, *(JAVA_BYTE *)&returnValue);
+    else if (cls == &class__JAVA_CHAR)
+        return java_lang_Character_valueOf___char_R_java_lang_Character(threadStateData, *(JAVA_CHAR *)&returnValue);
+    else if (cls == &class__JAVA_SHORT)
+        return java_lang_Short_valueOf___short_R_java_lang_Short(threadStateData, *(JAVA_SHORT *)&returnValue);
+    else if (cls == &class__JAVA_INT)
+        return java_lang_Integer_valueOf___int_R_java_lang_Integer(threadStateData, *(JAVA_INT *)&returnValue);
+    else if (cls == &class__JAVA_LONG)
+        return java_lang_Long_valueOf___long_R_java_lang_Long(threadStateData, *(JAVA_LONG *)&returnValue);
+    else if (cls == &class__JAVA_FLOAT)
+        return java_lang_Float_valueOf___float_R_java_lang_Float(threadStateData, *(JAVA_FLOAT *)&returnValue);
+    else if (cls == &class__JAVA_DOUBLE)
+        return java_lang_Double_valueOf___double_R_java_lang_Double(threadStateData, *(JAVA_DOUBLE *)&returnValue);
+    else if (cls == &class__JAVA_VOID)
+        return JAVA_NULL;
+    else
+        return *(JAVA_OBJECT *)&returnValue;
 }
 
 JAVA_OBJECT java_lang_Enum_valueOf___java_lang_Class_java_lang_String_R_java_lang_Enum(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT cls, JAVA_OBJECT value) {
@@ -1136,7 +1253,7 @@ JAVA_OBJECT java_lang_Object_toString___R_java_lang_String(CODENAME_ONE_THREAD_S
         struct clazz* cls = obj->__codenameOneParentClsReference;
         const char* className = cls->clsName;
         char s[strlen(className) + 32];
-        sprintf(s, "%s@%llX", className, ((JAVA_LONG)obj));
+        sprintf(s, "%s@%" PRIx64, className, ((JAVA_LONG)obj));
         return newStringFromCString(threadStateData, s);
     }
 }
@@ -1870,7 +1987,7 @@ JAVA_VOID java_lang_String_getChars___int_int_char_1ARRAY_int(CODENAME_ONE_THREA
 }
 
 JAVA_LONG java_util_zip_Inflater_init___boolean_R_long(CODENAME_ONE_THREAD_STATE, JAVA_BOOLEAN nowrap) {
-    z_streamp stream = (z_streamp)malloc(sizeof(z_streamp));
+    z_streamp stream = (z_streamp)calloc(sizeof(z_stream), 1);
     inflateInit(stream);
     return (JAVA_LONG)stream;
 }

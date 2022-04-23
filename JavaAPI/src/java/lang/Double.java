@@ -22,6 +22,9 @@
  */
 
 package java.lang;
+
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 /**
  * The Double class wraps a value of the primitive type double in an object. An object of type Double contains a single field whose type is double.
  * In addition, this class provides several methods for converting a double to a String and a String to a double, as well as other constants and methods useful when dealing with a double.
@@ -29,7 +32,7 @@ package java.lang;
  */
 public final class Double extends Number implements Comparable<Double> {
     
-    public static final Class<Double> TYPE = Double.class;
+    public static final Class<Double> TYPE = (Class<Double>)NativeUtils.getPrimitive("double");
     /**
      * The largest positive finite value of type double. It is equal to the value returned by Double.longBitsToDouble(0x7fefffffffffffffL)
      * See Also:Constant Field Values

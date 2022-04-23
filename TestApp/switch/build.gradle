@@ -47,7 +47,8 @@ task transpile(dependsOn: 'build') {
                     "$projectDir/libs/ByteCodeTranslator.jar",
                     "$buildDir/transpiler_input",
                     "$buildDir/transpiler_output",
-                    "$projectDir/switch.json"
+                    "$projectDir/switch.json",
+                    "com.thelogicmaster.test.SwitchLauncher"
             ]
         }
 

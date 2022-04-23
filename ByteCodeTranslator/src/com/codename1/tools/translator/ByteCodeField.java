@@ -125,6 +125,17 @@ public class ByteCodeField {
         }
         return Util.getCType(primitiveType);
     }
+
+    public void appendClassType(StringBuilder b) {
+        b.append("&class");
+        if (arrayDimensions > 0)
+            b.append("_array").append(arrayDimensions);
+        b.append("__");
+        if (primitiveType == null)
+            b.append(type);
+        else
+            b.append(Util.getCType(primitiveType));
+    }
     
     public List<String> getDependentClasses() {
         return dependentClasses;

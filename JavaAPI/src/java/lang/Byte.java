@@ -22,13 +22,16 @@
  */
 
 package java.lang;
+
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 /**
  * The Byte class is the standard wrapper for byte values.
  * Since: JDK1.1, CLDC 1.0
  */
 public final class Byte extends Number implements Comparable<Byte> {
     
-    public static final Class<Byte> TYPE = Byte.class;
+    public static final Class<Byte> TYPE = (Class<Byte>)NativeUtils.getPrimitive("byte");
     public static final int SIZE = 8;
     
     /**

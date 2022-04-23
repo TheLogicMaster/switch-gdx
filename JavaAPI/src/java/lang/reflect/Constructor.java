@@ -47,4 +47,8 @@ public class Constructor {
     public Object newInstance(Object ... initargs) {
         return null;
     }
+
+    public Class<?>[] getParameterTypes() {
+        return null;
+    }
 }

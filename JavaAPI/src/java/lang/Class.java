@@ -365,6 +365,32 @@ public final class Class<T> implements java.lang.reflect.Type {
         return null;
     }
 
+    public Method getDeclaredMethod(String name, Class<?> ... types) throws NoSuchMethodException {
+        for (Method method: getDeclaredMethods())
+            if (method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), types))
+                return method;
+        throw new NoSuchMethodException();
+    }
+
+    public Method getMethod(String name, Class<?> ... types) throws NoSuchMethodException {
+        for (Method method: getMethods())
+            if (method.getName().equals(name) && Arrays.equals(method.getParameterTypes(), types))
+                return method;
+        throw new NoSuchMethodException();
+    }
+
+    public native Method[] getDeclaredMethods();
+
+    public Method[] getMethods() {
+        Method[] declaredMethods = getDeclaredMethods();
+        if (getSuperclass() == null)
+            return declaredMethods;
+        Method[] superMethods = getSuperclass().getMethods();
+        Method[] methods = Arrays.copyOf(declaredMethods, declaredMethods.length + superMethods.length);
+        System.arraycopy(superMethods, 0, methods, declaredMethods.length, superMethods.length);
+        return methods;
+    }
+
     public native Class<?> getSuperclass();
 
     Object[] getEnumConstants() {

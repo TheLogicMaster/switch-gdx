@@ -44,7 +44,7 @@ typedef int                JAVA_CHAR;
 typedef int                JAVA_BYTE;
 typedef int                JAVA_SHORT;
 typedef int                JAVA_INT;
-typedef long long          JAVA_LONG;
+typedef int64_t            JAVA_LONG;
 typedef float              JAVA_FLOAT;
 typedef double             JAVA_DOUBLE;
 
@@ -53,7 +53,7 @@ typedef char              JAVA_ARRAY_BOOLEAN;
 typedef unsigned short    JAVA_ARRAY_CHAR;
 typedef short             JAVA_ARRAY_SHORT;
 typedef int               JAVA_ARRAY_INT;
-typedef long long         JAVA_ARRAY_LONG;
+typedef int64_t           JAVA_ARRAY_LONG;
 typedef float             JAVA_ARRAY_FLOAT;
 typedef double            JAVA_ARRAY_DOUBLE;
 
@@ -106,7 +106,7 @@ struct clazz {
     // these first  fields aren't really used but they allow us to treat a clazz as an object
     struct clazz *__codenameOneParentClsReference;
     int __codenameOneReferenceCount;
-    
+
     void* __codenameOneThreadData;
     int __codenameOneGcMark;
     void* __ownerThread;
@@ -115,46 +115,58 @@ struct clazz {
     void* finalizerFunction;
     void* releaseFieldsFunction;
     void* markFunction;
-    
+
     JAVA_BOOLEAN initialized;
     int classId;
     const char* clsName;
     const JAVA_BOOLEAN isArray;
-    
+
     // array type dimensions
     int dimensions;
-    
+
     // array internal type
     struct clazz* arrayType;  // <---- The component type for an array class. 0 for scalars.
     JAVA_BOOLEAN primitiveType;
-    
+
     const struct clazz* baseClass;
     const struct clazz** baseInterfaces;
     const int baseInterfaceCount;
-    
+
     void* newInstanceFp;
-    
+
     // virtual method table lookup
     void** vtable;
-    
+
     void* enumValueOfFp;
     JAVA_BOOLEAN isSynthetic;
     JAVA_BOOLEAN isInterface;
     JAVA_BOOLEAN isAnonymous;
     JAVA_BOOLEAN isAnnotation;
-    
+
     struct clazz* arrayClass;  // <----- The array type for a class.  if clazz=Object, then class->arrayClass=Object[]
 
     int fieldCount;
     struct Field *fields;
+
+    int methodCount;
+    struct Method *methods;
 };
 
 struct Field {
     const char *name;
-    const struct clazz *type;
+    struct clazz *type;
     int modifiers;
     void *getter;
     void *setter;
+};
+
+struct Method {
+    const char *name;
+    int paramCount;
+    struct clazz **paramTypes;
+    struct clazz *returnType;
+    int modifiers;
+    void *func;
 };
 
 #define EMPTY_INTERFACES ((const struct clazz**)0)
@@ -374,7 +386,7 @@ typedef struct clazz*       JAVA_CLASS;
 
 #define BC_L2D() SP[-1].data.d = (JAVA_DOUBLE)SP[-1].data.l
 
-#define BC_I2F() SP[-1].data.f = (JAVA_FLOAT)SP[-1].data.i 
+#define BC_I2F() SP[-1].data.f = (JAVA_FLOAT)SP[-1].data.i
 
 #define BC_F2I() SP[-1].data.i = (JAVA_INT)SP[-1].data.f
 
@@ -533,7 +545,7 @@ typedef struct clazz*       JAVA_CLASS;
         (*SP).data.l = plong; (*SP).type = CN1_TYPE_LONG; \
         SP++; \
     } \
-    SP[-1].type = SP[-2].type; 
+    SP[-1].type = SP[-2].type;
 
 #define BC_DUP2()  \
 if(SP[-1].type == CN1_TYPE_LONG || SP[-1].type == CN1_TYPE_DOUBLE) {\
@@ -660,10 +672,13 @@ extern int instanceofFunction(int sourceClass, int destId);
 #define GET_CLASS_ID(JavaObj) (*(*JavaObj).__codenameOneParentClsReference).classId
 
 #define BC_INSTANCEOF(typeOfInstanceOf) { \
-    if(SP[-1].data.o != JAVA_NULL) { \
+    if(SP[-1].data.o != JAVA_NULL && SP[-1].data.o->__codenameOneParentClsReference) { \
         int tmpInstanceOfId = GET_CLASS_ID(SP[-1].data.o); \
         SP[-1].type = CN1_TYPE_INVALID; \
         SP[-1].data.i = instanceofFunction( typeOfInstanceOf, tmpInstanceOfId ); \
+    } else { \
+        SP[-1].type = CN1_TYPE_INVALID; \
+        SP[-1].data.i = JAVA_FALSE; \
     } \
     SP[-1].type = CN1_TYPE_INT; \
 }
@@ -758,7 +773,7 @@ extern int instanceofFunction(int sourceClass, int destId);
 // indicates a try/catch block currently in frame
 struct TryBlock {
     jmp_buf destination;
-    
+
     // -1 for all exceptions
     JAVA_INT exceptionClass;
 
@@ -784,7 +799,7 @@ struct ThreadLocalData {
     struct TryBlock* blocks;
     int tryBlockOffset;
     JAVA_OBJECT exception;
-    
+
     JAVA_BOOLEAN lightweightThread;
     JAVA_BOOLEAN threadActive;
     JAVA_BOOLEAN threadBlockedByGC;
@@ -794,7 +809,7 @@ struct ThreadLocalData {
     // used by the GC to traverse the objects pointed to by this thread
     struct elementStruct* threadObjectStack;
     int threadObjectStackOffset;
-    
+
     // allocations are stored here and then copied to the big memory pool during
     // the mark sweep
     void** pendingHeapAllocations;
@@ -806,7 +821,7 @@ struct ThreadLocalData {
     int* callStackLine;
     int* callStackMethod;
     int callStackOffset;
-    
+
     char* utf8Buffer;
     int utf8BufferSize;
     JAVA_BOOLEAN threadKilled;      // we don't expect to see this in the GC
@@ -823,7 +838,7 @@ struct ThreadLocalData {
     threadStateData->callStackMethod[threadStateData->callStackOffset] = methodIdNumber; \
     threadStateData->callStackOffset++; \
 } \
-const int currentCodenameOneCallStackOffset = threadStateData->callStackOffset; 
+const int currentCodenameOneCallStackOffset = threadStateData->callStackOffset;
 */
 
 #define CODENAME_ONE_THREAD_STATE struct ThreadLocalData* threadStateData
@@ -913,8 +928,8 @@ extern JAVA_BOOLEAN throwArrayIndexOutOfBoundsException_R_boolean(CODENAME_ONE_T
         #define CHECK_ARRAY_ACCESS_EXPR(array, bounds) ((array == JAVA_NULL) ? throwException_R_boolean(threadStateData, __NEW_INSTANCE_java_lang_NullPointerException(threadStateData)) : (bounds < 0 || bounds >= ((JAVA_ARRAY)array)->length) ? throwArrayIndexOutOfBoundsException_R_boolean(threadStateData, bounds) : JAVA_TRUE)
         #define CHECK_ARRAY_ACCESS_WITH_ARGS(array, bounds) if(array == JAVA_NULL) { NSLog(@"Throwing NullPointerException!"); throwException(threadStateData, __NEW_INSTANCE_java_lang_NullPointerException(threadStateData)); } \
             if(bounds < 0 || bounds >= ((JAVA_ARRAY)array)->length) { THROW_ARRAY_INDEX_EXCEPTION(bounds); }
-           
-    #else 
+
+    #else
         #define CHECK_ARRAY_ACCESS(array_pos, bounds) if(SP[-array_pos].data.o == JAVA_NULL) { THROW_NULL_POINTER_EXCEPTION(); }
         #define CHECK_ARRAY_ACCESS_EXPR(array, bounds) ((array == JAVA_NULL) ? throwException_R_boolean(threadStateData, __NEW_INSTANCE_java_lang_NullPointerException(threadStateData)) : JAVA_TRUE)
         #define CHECK_ARRAY_ACCESS_WITH_ARGS(array, bounds) if(array == JAVA_NULL) { THROW_NULL_POINTER_EXCEPTION(); }
@@ -922,9 +937,9 @@ extern JAVA_BOOLEAN throwArrayIndexOutOfBoundsException_R_boolean(CODENAME_ONE_T
 #else
     #define CHECK_NPE_TOP_OF_STACK()
     #define CHECK_NPE_AT_STACK(pos)
-    #define CHECK_ARRAY_ACCESS(array_pos, bounds) 
+    #define CHECK_ARRAY_ACCESS(array_pos, bounds)
     #define CHECK_ARRAY_ACCESS_EXPR(array, bounds) JAVA_TRUE
-    #define CHECK_ARRAY_ACCESS_WITH_ARGS(array, bounds) 
+    #define CHECK_ARRAY_ACCESS_WITH_ARGS(array, bounds)
 #endif
 
 #ifdef CN1_INCLUDE_ARRAY_BOUND_CHECKS
@@ -985,6 +1000,16 @@ extern void lockCriticalSection();
 extern void unlockCriticalSection();
 extern void lockThreadHeapMutex();
 extern void unlockThreadHeapMutex();
+
+extern struct clazz class__JAVA_BOOLEAN;
+extern struct clazz class__JAVA_CHAR;
+extern struct clazz class__JAVA_BYTE;
+extern struct clazz class__JAVA_SHORT;
+extern struct clazz class__JAVA_INT;
+extern struct clazz class__JAVA_LONG;
+extern struct clazz class__JAVA_FLOAT;
+extern struct clazz class__JAVA_DOUBLE;
+extern struct clazz class__JAVA_VOID;
 
 extern struct clazz class_array1__JAVA_BOOLEAN;
 extern struct clazz class_array2__JAVA_BOOLEAN;

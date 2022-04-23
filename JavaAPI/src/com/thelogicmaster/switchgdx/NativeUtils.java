@@ -23,4 +23,6 @@ public class NativeUtils {
 	public static native void putByte(long address, byte value);
 
 	public static native boolean isSwitch();
+
+	public static native Class<?> getPrimitive(String name);
 }

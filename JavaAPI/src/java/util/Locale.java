@@ -29,8 +29,104 @@ package java.util;
  */
 public class Locale {
     private static Locale defaultLocale;
+
+    /** Useful constant for language.
+     */
+    static public final Locale ENGLISH = new Locale("en", "");
+
+    /** Useful constant for language.
+     */
+    static public final Locale FRENCH = new Locale("fr", "");
+
+    /** Useful constant for language.
+     */
+    static public final Locale GERMAN = new Locale("de", "");
+
+    /** Useful constant for language.
+     */
+    static public final Locale ITALIAN = new Locale("it", "");
+
+    /** Useful constant for language.
+     */
+    static public final Locale JAPANESE = new Locale("ja", "");
+
+    /** Useful constant for language.
+     */
+    static public final Locale KOREAN = new Locale("ko", "");
+
+    /** Useful constant for language.
+     */
+    static public final Locale CHINESE = new Locale("zh", "");
+
+    /** Useful constant for language.
+     */
+    static public final Locale SIMPLIFIED_CHINESE = new Locale("zh", "CN");
+
+    /** Useful constant for language.
+     */
+    static public final Locale TRADITIONAL_CHINESE = new Locale("zh", "TW");
+
+    /** Useful constant for country.
+     */
+    static public final Locale FRANCE = new Locale("fr", "FR");
+
+    /** Useful constant for country.
+     */
+    static public final Locale GERMANY = new Locale("de", "DE");
+
+    /** Useful constant for country.
+     */
+    static public final Locale ITALY = new Locale("it", "IT");
+
+    /** Useful constant for country.
+     */
+    static public final Locale JAPAN = new Locale("ja", "JP");
+
+    /** Useful constant for country.
+     */
+    static public final Locale KOREA = new Locale("ko", "KR");
+
+    /** Useful constant for country.
+     */
+    static public final Locale CHINA = SIMPLIFIED_CHINESE;
+
+    /** Useful constant for country.
+     */
+    static public final Locale PRC = SIMPLIFIED_CHINESE;
+
+    /** Useful constant for country.
+     */
+    static public final Locale TAIWAN = TRADITIONAL_CHINESE;
+
+    /** Useful constant for country.
+     */
+    static public final Locale UK = new Locale("en", "GB");
+
+    /** Useful constant for country.
+     */
+    static public final Locale US = new Locale("en", "US");
+
+    /** Useful constant for country.
+     */
+    static public final Locale CANADA = new Locale("en", "CA");
+
+    /** Useful constant for country.
+     */
+    static public final Locale CANADA_FRENCH = new Locale("fr", "CA");
+
+    /**
+     * Useful constant for the root locale.  The root locale is the locale whose
+     * language, country, and variant are empty ("") strings.  This is regarded
+     * as the base locale of all locales, and is used as the language/country
+     * neutral locale for the locale sensitive operations.
+     *
+     * @since 1.6
+     */
+    static public final Locale ROOT = new Locale("", "");
+    
     private String language;
     private String country;
+    
     public Locale(String language, String locale) {
         this.language = language;
         this.country = locale;

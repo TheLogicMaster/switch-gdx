@@ -22,10 +22,12 @@
  */
 package java.lang;
 
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 /**
  *
  * @author Shai Almog
  */
 public final class Void {
-    public static final Class TYPE = Void.class;
+    public static final Class TYPE = NativeUtils.getPrimitive("void");
 }

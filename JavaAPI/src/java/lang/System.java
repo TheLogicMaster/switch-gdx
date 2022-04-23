@@ -165,6 +165,8 @@ public final class System {
             return NativeUtils.isSwitch() ? "horizon" : "unknown";
         case "os.arch":
             return NativeUtils.isSwitch() ? "aarch64" : "x86_64";
+        case "java.runtime.name":
+            return "SwitchGDX";
         }
         return null; 
     }

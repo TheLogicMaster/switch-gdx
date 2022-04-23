@@ -144,7 +144,7 @@ public class Thread implements java.lang.Runnable{
     }
 
     public final void setDaemon(boolean on) {
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
     }
 
     /**

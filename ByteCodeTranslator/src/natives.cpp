@@ -454,6 +454,30 @@ JAVA_VOID com_thelogicmaster_switchgdx_NativeUtils_putByte___long_byte(CODENAME_
     *(JAVA_ARRAY_BYTE *) address = (JAVA_ARRAY_BYTE) value;
 }
 
+JAVA_OBJECT com_thelogicmaster_switchgdx_NativeUtils_getPrimitive___java_lang_String_R_java_lang_Class(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT nameObj) {
+    std::string name = toNativeString(threadStateData, nameObj);
+    if (name == "boolean")
+        return (JAVA_OBJECT)&class__JAVA_BOOLEAN;
+    else if (name == "byte")
+        return (JAVA_OBJECT)&class__JAVA_BYTE;
+    else if (name == "short")
+        return (JAVA_OBJECT)&class__JAVA_SHORT;
+    else if (name == "char")
+        return (JAVA_OBJECT)&class__JAVA_CHAR;
+    else if (name == "int")
+        return (JAVA_OBJECT)&class__JAVA_INT;
+    else if (name == "long")
+        return (JAVA_OBJECT)&class__JAVA_LONG;
+    else if (name == "float")
+        return (JAVA_OBJECT)&class__JAVA_FLOAT;
+    else if (name == "double")
+        return (JAVA_OBJECT)&class__JAVA_DOUBLE;
+    else if (name == "void")
+        return (JAVA_OBJECT)&class__JAVA_VOID;
+    else
+        return JAVA_NULL;
+}
+
 JAVA_BOOLEAN java_io_File_createFile___java_lang_String_R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT path) {
     auto nativePath = toNativeString(threadStateData, ((obj__java_io_File *) path)->java_io_File_path);
     std::ifstream test(nativePath);

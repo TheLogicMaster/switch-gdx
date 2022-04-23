@@ -25,6 +25,7 @@ package java.lang;
 
 import java.math.DoubleConsts;
 import java.math.FloatConsts;
+import java.util.Random;
 
 /**
  * The class Math contains methods for performing basic numeric operations.
@@ -149,6 +150,13 @@ public final class Math {
 	public native static double atan2 (double a, double b);
 
 	public native static double log(double a);
+
+	private static Random randomInst;
+	public static double random() {
+		if (randomInst == null)
+			randomInst = new Random();
+		return randomInst.nextDouble();
+	}
 
 	/**
 	 * Converts an angle measured in radians to the equivalent angle measured in degrees.

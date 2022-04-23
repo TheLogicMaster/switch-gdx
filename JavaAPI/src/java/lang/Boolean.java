@@ -26,6 +26,9 @@
  */
 
 package java.lang;
+
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 /**
  * The Boolean class wraps a value of the primitive type boolean in an object. An object of type Boolean contains a single field whose type is boolean.
  * Since: JDK1.0, CLDC 1.0
@@ -41,7 +44,7 @@ public final class Boolean implements Comparable<Boolean> {
      */
     public static final java.lang.Boolean TRUE = new Boolean(true);
 
-    public static final Class<Boolean> TYPE = Boolean.class;
+    public static final Class<Boolean> TYPE = (Class<Boolean>)NativeUtils.getPrimitive("boolean");
 
     private boolean value;
     

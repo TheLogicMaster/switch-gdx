@@ -22,6 +22,9 @@
  */
 
 package java.lang;
+
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 /**
  * The Short class is the standard wrapper for short values.
  * Since: JDK1.1, CLDC 1.0
@@ -39,7 +42,7 @@ public final class Short extends Number implements Comparable<Short> {
      */
     public static final short MIN_VALUE=-32768;
 
-    public static final Class<Short> TYPE = Short.class;
+    public static final Class<Short> TYPE = (Class<Short>)NativeUtils.getPrimitive("short");
 
     private short value;
     

@@ -101,6 +101,7 @@ public class BytecodeMethod implements SignatureSet {
     private final static Set<String> virtualMethodsInvoked = new TreeSet<String>();    
     private String desc;
     private boolean eliminated;
+    private int modifiers;
 
     private static String mainClass;
     
@@ -116,6 +117,7 @@ public class BytecodeMethod implements SignatureSet {
         methodName = name;
         this.clsName = clsName;
         this.desc = desc;
+        this.modifiers = access;
         privateMethod = (access & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE;
         nativeMethod = (access & Opcodes.ACC_NATIVE) == Opcodes.ACC_NATIVE;
         staticMethod = (access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC;
@@ -258,15 +260,28 @@ public class BytecodeMethod implements SignatureSet {
         appendFunctionPointer(sb);
         return sb.toString();
     }
-    
-    
-    
-    
+
+    public int getModifiers () {
+        return modifiers;
+    }
+
+    public ByteCodeMethodArg getReturnType() {
+        return returnType;
+    }
+
+    public List<ByteCodeMethodArg> getArgumentTypes() {
+        return arguments;
+    }
+
     private Hashtable<String,SignatureSet> usedSigs;
     
     // [ddyer 4/2017] avoid creating a lot of temporary objects. 
     // more than 3x faster than the old way.
     public boolean isMethodUsed(BytecodeMethod bm0) {
+        // Todo: Ensure that desired methods aren't optimized away after all essential classes are implemented
+//        if (ByteCodeClass.nonOptimized.contains(clsName))
+//            return true;
+
     	SignatureSet bm = (SignatureSet)bm0;
         if(usedSigs == null) {
         	usedSigs = new Hashtable<String,SignatureSet>();

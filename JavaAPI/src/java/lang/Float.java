@@ -22,6 +22,9 @@
  */
 
 package java.lang;
+
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 /**
  * The Float class wraps a value of primitive type float in an object. An object of type Float contains a single field whose type is float.
  * In addition, this class provides several methods for converting a float to a String and a String to a float, as well as other constants and methods useful when dealing with a float.
@@ -76,7 +79,7 @@ public final class Float extends Number implements Comparable<Float> {
      */
     public static final float POSITIVE_INFINITY=1f/0f;
 
-    public static final Class<Float> TYPE = Float.class;
+    public static final Class<Float> TYPE = (Class<Float>)NativeUtils.getPrimitive("float");
 
     private float value;
     

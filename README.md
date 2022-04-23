@@ -4,6 +4,21 @@
 This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the CodenameOne Parpar VM. It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications on a PC. It's similar to
 RoboVM, except it generates C code which is then compiled for the specific target.
 
+## Requrements
+### Desktop
+- CMake
+- SDL2
+- SDL2_Mixer
+- libffi
+- GLEW
+- pthreads
+- zlib
+- C++ 17 Filesystem support
+### Switch
+- DevKitPro
+- SDL2_Mixer, GLAD, and zlib for Switch
+- Custom build of libffi for Switch (Todo)
+
 ## Usage
 For now, reference the TestApp subproject for the Gradle setup. It's entirely untested on Windows at this point. The fat JARs created by the
 ShadowJar (*-all.jar) tasks in the JavaAPI and ByteCodeTranslator Gradle projects need to be manually copied from `build/libs` into the `TestApp/switch/libs` directory without the `-all` part of the filename
@@ -45,10 +60,11 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - Internal VM logging
 - GDX Networking
 - Possibly GDX threading stuff
+- Interruptable Thread.sleep() for clean exit
 - GL30?
-- Reflection method support
+- Reflection method support (libffi)
 - Incremental compilation, if possible, to cut down on compilation times (Something like rsync to only copy changed files into dist)
-- Switch wrapper buffers to use memory directly since it's always aligned, rather than the super inefficient byte by byte implementation
+- Switch wrapper buffers to use memory directly since it's always aligned, rather than the super inefficient byte by byte implementation (Profile using BufferUtilsTest)
 - Ensure code licensing is all good (Probably noting modifications to comply with GPLv2)
 - Remove any unnecessary java.util.concurrent stuff
 - Replace any class stubs with generic equivalents
@@ -62,6 +78,8 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - gdx-dialogs
 - Freetype
 - Debug server
+- Don't optimize out methods needed for reflection
+- Include native source files from dependency JARs
 
 ## Needs Testing
 - Windows everything, CMake libs, filesystem APIs, Gradle task commands, file separators
@@ -77,6 +95,7 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - Sound effects are limited to OGG and WAV, Music supports MP3, OGG, and WAV
 - Only one Music instance can be played at a time
 - Classes referenced with reflection must be included in switch.json
+- Only supports up to 3D arrays
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)

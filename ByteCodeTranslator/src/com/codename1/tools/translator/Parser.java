@@ -126,7 +126,7 @@ public class Parser extends ClassVisitor {
     
     
     private static void generateClassAndMethodIndexHeader(File outputDirectory) throws Exception {
-        int classOffset = 0;
+        int classOffset = 9;
         int methodOffset = 0;
         ArrayList<BytecodeMethod> methods = new ArrayList<BytecodeMethod>();
         for(ByteCodeClass bc : classes) {
@@ -145,11 +145,31 @@ public class Parser extends ClassVisitor {
         
         
         bld.append("// maps to offsets in the constant pool below\nextern int classNameLookup[];\n");
-        bldM.append("// maps to offsets in the constant pool below\nint classNameLookup[] = {");
+        bldM.append("// maps to offsets in the constant pool below\nint classNameLookup[] = {\n");
+
+        bld.append("#define cn1_class_id_JAVA_BOOLEAN 0\n");
+        bldM.append("\t").append(addToConstantPool("boolean")).append(",\n");
+        bld.append("#define cn1_class_id_JAVA_BYTE 1\n");
+        bldM.append("\t").append(addToConstantPool("byte")).append(",\n");
+        bld.append("#define cn1_class_id_JAVA_CHAR 2\n");
+        bldM.append("\t").append(addToConstantPool("char")).append(",\n");
+        bld.append("#define cn1_class_id_JAVA_SHORT 3\n");
+        bldM.append("\t").append(addToConstantPool("short")).append(",\n");
+        bld.append("#define cn1_class_id_JAVA_INT 4\n");
+        bldM.append("\t").append(addToConstantPool("int")).append(",\n");
+        bld.append("#define cn1_class_id_JAVA_LONG 5\n");
+        bldM.append("\t").append(addToConstantPool("long")).append(",\n");
+        bld.append("#define cn1_class_id_JAVA_FLOAT 6\n");
+        bldM.append("\t").append(addToConstantPool("float")).append(",\n");
+        bld.append("#define cn1_class_id_JAVA_DOUBLE 7\n");
+        bldM.append("\t").append(addToConstantPool("double")).append(",\n");
+        bld.append("#define cn1_class_id_JAVA_VOID 8\n");
+        bldM.append("\t").append(addToConstantPool("void")).append(",\n");
+
         boolean first = true;
         for(ByteCodeClass bc : classes) {
             if(first) {
-                bldM.append("\n    ");
+                bldM.append("    ");
             } else {
                 bldM.append(",\n    ");
             }
@@ -167,7 +187,7 @@ public class Parser extends ClassVisitor {
             bld.append("\n");
         }
         
-        int arrayId = classes.size() + 1;
+        int arrayId = classes.size() + 9 + 1;
         
         bld.append("#define cn1_array_start_offset ");
         bld.append(arrayId);
@@ -222,9 +242,12 @@ public class Parser extends ClassVisitor {
             bldM.append("");
         }
         bldM.append("};\n\n");
-        
+
+        for (int i = 0; i < 9; i++)
+            bldM.append("int classInstanceOfArr").append(i).append("[] = {-1};\n");
+
         ArrayList<Integer> instances = new ArrayList<Integer>();
-        int counter = 0;
+        int counter = 9;
         for(ByteCodeClass bc : classes) {
             /*bld.append("extern int classInstanceOfArr");
             bld.append(counter);
@@ -244,13 +267,17 @@ public class Parser extends ClassVisitor {
         }
         bld.append("extern int *classInstanceOf[];\n");
         bldM.append("int *classInstanceOf[");
-        bldM.append(classes.size());
-        bldM.append("] = {");
+        bldM.append(classes.size() + 9);
+        bldM.append("] = {\n");
+
+        for (int i = 0; i < 9; i++)
+            bldM.append("   classInstanceOfArr").append(i).append(",\n");
+
         first = true;
-        counter = 0;
+        counter = 9;
         for(ByteCodeClass bc : classes) {
             if(first) {
-                bldM.append("\n    ");
+                bldM.append("    ");
             } else {
                 bldM.append(",\n    ");
             }

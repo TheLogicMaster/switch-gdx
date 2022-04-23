@@ -10,6 +10,11 @@ public class SwitchLauncher {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println(e.getMessage());
+			Throwable cause = e.getCause();
+			while (cause != null) {
+				System.err.println(cause.getMessage());
+				cause = cause.getCause();
+			}
 		}
 	}
 }

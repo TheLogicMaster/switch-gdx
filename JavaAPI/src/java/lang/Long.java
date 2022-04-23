@@ -23,6 +23,8 @@
 
 package java.lang;
 
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 /**
  * The Long class wraps a value of the primitive type long in an object. An object of type Long contains a single field whose type is long.
  * In addition, this class provides several methods for converting a long to a String and a String to a long, as well as other constants and methods useful when dealing with a long.
@@ -30,7 +32,7 @@ package java.lang;
  */
 public final class Long extends Number implements Comparable<Long> {
 
-	public static Class<Long> TYPE = Long.class;
+	public static Class<Long> TYPE = (Class<Long>)NativeUtils.getPrimitive("long");
 
 	/**
 	 * The largest value of type long.

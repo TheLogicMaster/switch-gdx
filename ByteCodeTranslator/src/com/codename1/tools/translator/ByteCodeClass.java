@@ -81,7 +81,7 @@ public class ByteCodeClass {
 
     private static Set<String> arrayTypes = new TreeSet<String>();
 
-    private static final Set<String> nonOptimized = new HashSet<>();
+    public static final Set<String> nonOptimized = new HashSet<>();
     
     private ByteCodeClass baseClassObject;
     private List<ByteCodeClass> baseInterfacesObject;
@@ -462,51 +462,51 @@ public class ByteCodeClass {
             b.append(".h\"\n");
         }
 
-        b.append("#include \"java_lang_Short.h\"\n");
-        b.append("#include \"java_lang_Integer.h\"\n");
-        b.append("#include \"java_lang_Byte.h\"\n");
-        b.append("#include \"java_lang_Character.h\"\n");
-        b.append("#include \"java_lang_Boolean.h\"\n");
-        b.append("#include \"java_lang_Float.h\"\n");
-        b.append("#include \"java_lang_Double.h\"\n");
-        b.append("#include \"java_lang_Long.h\"\n");
+        if (mainClass == this)
+            for (String clazz: nonOptimized)
+                b.append("#include \"").append(clazz).append(".h\"\n");
 
         b.append('\n');
+
+        int methodCount = 0;
+        for (BytecodeMethod method: methods) {
+            if (method.isEliminated())
+                continue;
+            methodCount++;
+            b.append("static struct clazz *method_params_");
+            method.appendFunctionPointer(b);
+            b.append("[] = {");
+            for (ByteCodeMethodArg arg: method.getArgumentTypes()) {
+                arg.appendClassType(b);
+                b.append(", ");
+            }
+            b.append("};\n");
+        }
+
+        b.append("struct Method methods_for_").append(clsName).append("[] = {\n");
+        for (BytecodeMethod method: methods) {
+            if (method.isEliminated())
+                continue;
+            b.append("\t{");
+            b.append('"').append(method.getMethodName()).append('"');
+            b.append(", ").append(method.getArgumentTypes().size());
+            b.append(", ").append("method_params_");
+            method.appendFunctionPointer(b);
+            b.append(", ");
+            method.getReturnType().appendClassType(b);
+            b.append(", ").append(method.getModifiers());
+            b.append(", ");
+            method.appendFunctionPointer(b);
+            b.append("},\n");
+        }
+        b.append("};\n\n");
 
         b.append("struct Field fields_for_").append(clsName).append("[] = {\n");
         for (ByteCodeField field: fields) {
             b.append("\t{");
             b.append('"').append(field.getFieldName()).append('"');
-            if (field.getType() == null) {
-                b.append(", &class__java_lang_");
-                switch (field.getPrimitiveType().getName()) {
-                    case "int":
-                        b.append("Integer");
-                        break;
-                    case "short":
-                        b.append("Short");
-                        break;
-                    case "byte":
-                        b.append("Byte");
-                        break;
-                    case "char":
-                        b.append("Character");
-                        break;
-                    case "long":
-                        b.append("Long");
-                        break;
-                    case "float":
-                        b.append("Float");
-                        break;
-                    case "double":
-                        b.append("Double");
-                        break;
-                    case "boolean":
-                        b.append("Boolean");
-                        break;
-                }
-            } else
-                b.append(", &class__").append(field.getType());
+            b.append(", ");
+            field.appendClassType(b);
             b.append(", ").append(field.getModifiers());
             b.append(", get_").append(field.isStaticField() ? "static" : "field").append("_").append(clsName).append("_").append(field.getFieldName());
             if (field.isStaticField() && field.isFinal() && field.getValue() != null && !writableFields.contains(field.getFieldName()))
@@ -629,6 +629,11 @@ public class ByteCodeClass {
         b.append(", ").append(fields.size());
         // fields
         b.append(", fields_for_").append(clsName);
+
+        // methodCount
+        b.append(", ").append(methodCount);
+        // methods
+        b.append(", methods_for_").append(clsName);
         
         b.append("};\n\n");
 
@@ -642,7 +647,7 @@ public class ByteCodeClass {
             b.append(iter);
             b.append("__");
             b.append(clsName);
-            if(clsName.equals("java_lang_Class")) {
+            if(clsName.equals("java_lang_Class")) { // Todo: switch from null to &class__java_lang_reflect_Type for arrays?
                 b.append(" = {\n DEBUG_GC_INIT 0, 999999, 0, 0, 0, 0, 0, &arrayFinalizerFunction, &gcMarkArrayObject, 0, cn1_array_");
             } else {
                 b.append(" = {\n DEBUG_GC_INIT &class__java_lang_Class, 999999, 0, 0, 0, 0, 0, &arrayFinalizerFunction, &gcMarkArrayObject, 0, cn1_array_");
@@ -983,6 +988,8 @@ public class ByteCodeClass {
                 }
                 if(m.isMain()) {
                     b.append("\nint main(int argc, char *argv[]) {\n    initConstantPool();\n");
+                    for (String clazz: nonOptimized)
+                        b.append("\t__STATIC_INITIALIZER_").append(clazz).append("(getThreadLocalData());\n");
                     b.append("    ");
                     b.append(clsName);
                     b.append("_main___java_lang_String_1ARRAY(getThreadLocalData(), JAVA_NULL);\n}\n\n");

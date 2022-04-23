@@ -23,6 +23,8 @@
 
 package java.lang;
 
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 import java.util.Arrays;
 
 /**
@@ -155,7 +157,7 @@ public final class Character implements Comparable<Character>{
     //public static final int MAX_RADIX = 36;
     //public static final char MIN_VALUE = '\0';
     //public static final char MAX_VALUE = '\uFFFF';
-    public static final Class<Character> TYPE = Character.class;
+    public static final Class<Character> TYPE = (Class<Character>)NativeUtils.getPrimitive("char");
     public static final byte UNASSIGNED = 0;
     public static final byte UPPERCASE_LETTER = 1;
     public static final byte LOWERCASE_LETTER = 2;

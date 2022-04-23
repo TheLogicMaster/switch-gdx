@@ -23,6 +23,8 @@
 
 package java.lang;
 
+import com.thelogicmaster.switchgdx.NativeUtils;
+
 /**
  * The Integer class wraps a value of the primitive type int in an object. An object of type Integer contains a single field whose type is int.
  * In addition, this class provides several methods for converting an int to a String and a String to an int, as well as other constants and methods useful when dealing with an int.
@@ -30,7 +32,7 @@ package java.lang;
  */
 public final class Integer extends Number implements Comparable<Integer> {
 
-	public static final Class<Integer> TYPE = Integer.class;
+	public static final Class<Integer> TYPE = (Class<Integer>)NativeUtils.getPrimitive("int");
 
 	private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
