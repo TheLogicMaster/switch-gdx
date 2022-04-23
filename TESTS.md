@@ -20,10 +20,10 @@
 - Decal: Works
 - DisplayMode: Works
 - Download: Not yet implemented
-- EdgeDetection: Crashes because of buffer related NPE
+- EdgeDetection: Works
 - Files: Fails due to Classpath workaround
 - FilterPerformance: Works
-- FrameBuffer: Crashes due to Buffer related NPE
+- FrameBuffer: Works
 - FramebufferToTexture: Works
 - GLProfilerError: Can't test without keyboard support
 - GWTLossyPremultipliedAlpha: Works
@@ -38,7 +38,7 @@
 - IntegerBitmapFont: Works
 - Interpolation: Works
 - InverseKinematics: Works
-- IsometricTile: Unsupported Buffer.compact
+- IsometricTile: Works
 - LabelScale: Works
 - Label: Works
 - LifeCycle: Works
@@ -61,7 +61,7 @@
 - ReflectionCorrectness: Doesn't work
 - Rotation: Works
 - Scene2d: Works
-- ShadowMapping: Buffer related NPE
+- ShadowMapping: Works
 - ShapeRenderer: Works
 - SimpleAnimation: Works
 - SimpleDecal: Works

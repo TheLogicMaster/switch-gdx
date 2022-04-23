@@ -651,6 +651,8 @@ JAVA_VOID java_io_FileOutputStream_close0__(CODENAME_ONE_THREAD_STATE, JAVA_OBJE
 }
 
 void *getBufferAddress(JAVA_OBJECT buffer) {
+    if (buffer == JAVA_NULL)
+        return nullptr;
     int typeSize;
     if (instanceofFunction(cn1_class_id_java_nio_ByteBuffer, buffer->__codenameOneParentClsReference->classId))
         typeSize = sizeof(JAVA_ARRAY_BYTE);
