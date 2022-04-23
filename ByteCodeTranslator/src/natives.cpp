@@ -454,6 +454,10 @@ JAVA_VOID com_thelogicmaster_switchgdx_NativeUtils_putByte___long_byte(CODENAME_
     *(JAVA_ARRAY_BYTE *) address = (JAVA_ARRAY_BYTE) value;
 }
 
+JAVA_VOID com_thelogicmaster_switchgdx_NativeUtils_copyMemory___long_long_long(CODENAME_ONE_THREAD_STATE, JAVA_LONG src, JAVA_LONG dst, JAVA_LONG bytes) {
+    memcpy((void *)dst, (void *)src, bytes);
+}
+
 JAVA_OBJECT com_thelogicmaster_switchgdx_NativeUtils_getPrimitive___java_lang_String_R_java_lang_Class(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT nameObj) {
     std::string name = toNativeString(threadStateData, nameObj);
     if (name == "boolean")

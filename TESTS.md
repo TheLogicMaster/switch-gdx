@@ -19,7 +19,7 @@
 - CustomShaderSpriteBatch: Works
 - Decal: Works
 - DisplayMode: Works
-- Download: Not implemented
+- Download: Not yet implemented
 - EdgeDetection: Crashes because of buffer related NPE
 - Files: Fails due to Classpath workaround
 - FilterPerformance: Works
@@ -48,7 +48,7 @@
 - ModelCache: Mostly works, causes intermittent crashes related to GC/serialization
 - Multitouch: Works
 - Music: Plays fine, but tracking/stopping doesn't work correctly
-- OpenBrowser: Not implemented
+- OpenBrowser: Not yet implemented
 - Parallax: Doesn't work
 - ParticleEmitter: Works
 - PixelsPerInch: Works, but not accurate for Switch yet
@@ -69,11 +69,11 @@
 - SortedSprite: Works
 - Sound: Basic funcionality works, pitch not implemented, panning doesn't work, stop has delay
 - SpriteBatchShader: Works
-- SpriteCacheOffset: Buffer.compact not implemented
-- SpriteCache: Buffer.compact not implemented
+- SpriteCacheOffset: Works
+- SpriteCache: Works
 - Stage: Works
 - SuperKoalio: Works
-- SystemCursor: Not implemented
+- SystemCursor: Not available
 - Table: Works
 - TextArea: UnicodeHelper.getClasses not supported
 - TextArea2: UnicodeHelper.getClasses not supported

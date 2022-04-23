@@ -96,6 +96,7 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - Only one Music instance can be played at a time
 - Classes referenced with reflection must be included in switch.json
 - Only supports up to 3D arrays
+- Sometimes the JavaAPI fails to compile, just run it again
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)

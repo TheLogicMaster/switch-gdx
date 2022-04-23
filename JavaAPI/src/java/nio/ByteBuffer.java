@@ -177,7 +177,15 @@ public class ByteBuffer extends Buffer implements Comparable<ByteBuffer> {
 	}
 
 	public ByteBuffer compact () {
-		throw new UnsupportedOperationException();
+		int pos = position();
+		int lim = limit();
+		assert (pos <= lim);
+		int rem = (pos <= lim ? lim - pos : 0);
+		NativeUtils.copyMemory(ix(pos), ix(0), (long)rem << 0);
+		position(rem);
+		limit(capacity());
+		discardMark();
+		return this;
 	}
 
 	public boolean isDirect () {
