@@ -1,0 +1,89 @@
+# gdx-tests compatibility
+
+- Accelerometer: Rotation data not available yet
+- ActionSequence: Works
+- Action: Works
+- Alpha: Just displays red
+- Animation: Works
+- AssetManager: Crashes on I18N stuff
+- AtlasIssue: Works
+- BitmapFontAlignment: Works
+- BitmapFontFlip: Works
+- BitmapFontMetrics: Seems to work
+- BitmapFont: Works
+- Blit: Works
+- BufferUtils: Works
+- Clipboard: Not available
+- Color: Works
+- ComplexAction: Works
+- CustomShaderSpriteBatch: Works
+- Decal: Works
+- DisplayMode: Works
+- Download: Not implemented
+- EdgeDetection: Crashes because of buffer related NPE
+- Files: Fails due to Classpath workaround
+- FilterPerformance: Works
+- FrameBuffer: Crashes due to Buffer related NPE
+- FramebufferToTexture: Works
+- GLProfilerError: Can't test without keyboard support
+- GWTLossyPremultipliedAlpha: Works
+- GestureDetector: Flinging values are way too high
+- GroupCuling: Works
+- GroupFade: Works
+- GwtInput: Works
+- GetWindowMode: Not supported
+- I18NSimpleMessage: Locale related crash
+- ImageScale: Works
+- IndexBufferObjectShader: Works
+- IntegerBitmapFont: Works
+- Interpolation: Works
+- InverseKinematics: Works
+- IsometricTile: Unsupported Buffer.compact
+- LabelScale: Works
+- Label: Works
+- LifeCycle: Works
+- MeshShader: Works
+- MeshWithCustomAttributes: Works
+- MipMap: Works
+- ModelCache: Mostly works, causes intermittent crashes related to GC/serialization
+- Multitouch: Works
+- Music: Plays fine, but tracking/stopping doesn't work correctly
+- OpenBrowser: Not implemented
+- Parallax: Doesn't work
+- ParticleEmitter: Works
+- PixelsPerInch: Works, but not accurate for Switch yet
+- PixmapPacker: Works
+- Pixmap: Works
+- Preferences: Works
+- ProjectiveTexture: Works
+- QuadTreeFloatNearest: Works
+- QuadTreeFloat: Works
+- ReflectionCorrectness: Doesn't work
+- Rotation: Works
+- Scene2d: Works
+- ShadowMapping: Buffer related NPE
+- ShapeRenderer: Works
+- SimpleAnimation: Works
+- SimpleDecal: Works
+- SimpleStageCulling: Works
+- SortedSprite: Works
+- Sound: Basic funcionality works, pitch not implemented, panning doesn't work, stop has delay
+- SpriteBatchShader: Works
+- SpriteCacheOffset: Buffer.compact not implemented
+- SpriteCache: Buffer.compact not implemented
+- Stage: Works
+- SuperKoalio: Works
+- SystemCursor: Not implemented
+- Table: Works
+- TextArea: UnicodeHelper.getClasses not supported
+- TextArea2: UnicodeHelper.getClasses not supported
+- TextArea3: UnicodeHelper.getClasses not supported
+- TextButton: Works
+- TextureAtlas: Works
+- TiledMapAtlasAssetManager: Doesn't work
+- TiledMapObjectLoading: Works
+- TimeUtils: Works
+- UI: Works
+- VertexArray: Works
+- VertexBufferObjectShader: Works
+- YDownTest: Doesn't seem to work

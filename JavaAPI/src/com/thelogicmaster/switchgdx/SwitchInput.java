@@ -204,12 +204,12 @@ public class SwitchInput implements Input {
 
 	@Override
 	public float getPressure () {
-		return 0;
+		return getPressure(0);
 	}
 
 	@Override
 	public float getPressure (int pointer) {
-		return 0;
+		return isTouched(pointer) ? 1 : 0;
 	}
 
 	@Override

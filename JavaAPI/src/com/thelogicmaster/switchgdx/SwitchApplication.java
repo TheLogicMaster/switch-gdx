@@ -210,7 +210,7 @@ public class SwitchApplication implements Application {
 
 	@Override
 	public Clipboard getClipboard () {
-		return null;
+		return new SwitchClipboard();
 	}
 
 	@Override
@@ -244,4 +244,21 @@ public class SwitchApplication implements Application {
 	private static native boolean update ();
 
 	private static native void dispose ();
+
+	private static class SwitchClipboard implements Clipboard {
+		@Override
+		public boolean hasContents () {
+			return false;
+		}
+
+		@Override
+		public String getContents () {
+			return null;
+		}
+
+		@Override
+		public void setContents (String content) {
+
+		}
+	}
 }

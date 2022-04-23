@@ -517,7 +517,10 @@ JAVA_LONG java_io_File_length___R_long(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  _
 
 JAVA_OBJECT java_io_File_list___R_java_lang_String_1ARRAY(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
     std::vector<JAVA_OBJECT> collected;
-    for (const auto & entry : fs::directory_iterator(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path)))
+    auto path = toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path);
+    if (!fs::is_directory(path))
+        return JAVA_NULL;
+    for (const auto & entry : fs::directory_iterator(path))
         collected.emplace_back(newStringFromCString(threadStateData, entry.path().c_str()));
     auto array = __NEW_ARRAY_java_lang_String(threadStateData, (int)collected.size());
     for (int i = 0; i < (int)collected.size(); i++)
