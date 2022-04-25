@@ -1,6 +1,5 @@
 # Switch GDX
-[![Release](https://jitpack.io/v/com.thelogicmaster/switch-gdx.svg)]
-(https://jitpack.io/#com.thelogicmaster/switch-gdx)
+[![Release](https://jitpack.io/v/com.thelogicmaster/switch-gdx.svg)](https://jitpack.io/#com.thelogicmaster/switch-gdx)
 
 ## About
 This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the CodenameOne Parpar VM. It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications on a PC. It's similar to
@@ -22,8 +21,7 @@ RoboVM, except it generates C code which is then compiled for the specific targe
 - Custom build of libffi for Switch (Todo)
 
 ## Usage
-For now, reference the `example` subproject for the Gradle setup. It's entirely untested on Windows at this point. Currently, the `Clearwing` `runtime` and `transpiler`
-projects need to be manually built with JARs copied from `build/libs` into the `example/switch/libs` directory.
+For now, reference the `example` subproject for the Gradle setup. It's entirely untested on Windows at this point.
 The `transpile` task does just that and outputs
 the C projecct into the `example/switch/build/dist` directory. `run` executes the transpiler and runs the native PC backend. `deploy`
 does the same but deploys to a Switch via NXLink. Compiling for desktop is over twice as fast and allows for full IDE debugging, so it's
