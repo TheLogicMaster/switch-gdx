@@ -1,0 +1,17 @@
+{
+    "nonOptimized": [
+        "java.nio.DoubleBuffer",
+        "java.lang.reflect.Field",
+        "java.lang.reflect.Type",
+        "com.badlogic.gdx.graphics.g3d.model.Node",
+        "com.badlogic.gdx.scenes.scene2d.Stage.TouchFocus",
+        "com.badlogic.gdx.scenes.scene2d.Actor",
+        "com.badlogic.gdx.graphics.g2d.TextureRegion",
+        "com.badlogic.gdx.graphics.g2d.TextureAtlas",
+        "com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion",
+        "com.badlogic.gdx.maps.tiled.TiledMap",
+        "com.badlogic.gdx.assets.AssetDescriptor",
+        "com.badlogic.gdx.utils.XmlReader.Element",
+        "com.badlogic.gdx.graphics.Texture"
+    ]
+}

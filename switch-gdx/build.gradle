@@ -1,0 +1,49 @@
+plugins {
+    id 'java-library'
+}
+
+version = "0.1"
+group = 'com.thelogicmaster'
+
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.version
+            from components.java
+        }
+    }
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "com.badlogicgames.gdx:gdx:1.10.0"
+    compileOnly 'com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.1'
+    implementation('com.github.tommyettinger:RegExodus:0.1.13')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
+        resources {
+            srcDirs 'res'
+        }
+    }
+}
