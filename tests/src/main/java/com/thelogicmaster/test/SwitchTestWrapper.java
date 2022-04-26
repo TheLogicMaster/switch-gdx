@@ -1,107 +1,66 @@
 package com.thelogicmaster.test;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.tests.AbstractTestWrapper;
-import com.badlogic.gdx.tests.AccelerometerTest;
-import com.badlogic.gdx.tests.ActionSequenceTest;
-import com.badlogic.gdx.tests.ActionTest;
-import com.badlogic.gdx.tests.AlphaTest;
-import com.badlogic.gdx.tests.AnimationTest;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Field;
+import com.badlogic.gdx.tests.*;
+import com.badlogic.gdx.tests.QuadTreeFloatNearestTest;
+import com.badlogic.gdx.tests.ReflectionTest;
+import com.badlogic.gdx.tests.bench.TiledMapBench;
+import com.badlogic.gdx.tests.conformance.DisplayModeTest;
+import com.badlogic.gdx.tests.examples.MoveSpriteExample;
+import com.badlogic.gdx.tests.g2d.ProgressiveJPEGTest;
+import com.badlogic.gdx.tests.g3d.Animation3DTest;
+import com.badlogic.gdx.tests.g3d.AnisotropyTest;
+import com.badlogic.gdx.tests.g3d.Basic3DSceneTest;
+import com.badlogic.gdx.tests.g3d.Basic3DTest;
+import com.badlogic.gdx.tests.g3d.Benchmark3DTest;
+import com.badlogic.gdx.tests.g3d.FogTest;
+import com.badlogic.gdx.tests.g3d.FrameBufferCubemapTest;
+import com.badlogic.gdx.tests.g3d.HeightMapTest;
+import com.badlogic.gdx.tests.g3d.LightsTest;
+import com.badlogic.gdx.tests.g3d.MaterialEmissiveTest;
+import com.badlogic.gdx.tests.g3d.MaterialTest;
+import com.badlogic.gdx.tests.g3d.MeshBuilderTest;
+import com.badlogic.gdx.tests.g3d.ModelCacheTest;
+import com.badlogic.gdx.tests.g3d.ModelLoaderTest;
+import com.badlogic.gdx.tests.g3d.ModelTest;
+import com.badlogic.gdx.tests.g3d.MultipleRenderTargetTest;
+import com.badlogic.gdx.tests.g3d.ParticleControllerInfluencerSingleTest;
+import com.badlogic.gdx.tests.g3d.ParticleControllerTest;
+import com.badlogic.gdx.tests.g3d.PolarAccelerationTest;
+import com.badlogic.gdx.tests.g3d.ShaderCollectionTest;
+import com.badlogic.gdx.tests.g3d.ShaderTest;
+import com.badlogic.gdx.tests.g3d.ShadowMappingTest;
+import com.badlogic.gdx.tests.g3d.SkeletonTest;
+import com.badlogic.gdx.tests.g3d.TangentialAccelerationTest;
+import com.badlogic.gdx.tests.g3d.TextureArrayTest;
+import com.badlogic.gdx.tests.g3d.TextureRegion3DTest;
+import com.badlogic.gdx.tests.g3d.utils.DefaultTextureBinderTest;
+import com.badlogic.gdx.tests.g3d.voxel.VoxelTest;
+import com.badlogic.gdx.tests.gles2.HelloTriangle;
+import com.badlogic.gdx.tests.gles2.MipMap2D;
+import com.badlogic.gdx.tests.gles2.SimpleVertexShader;
+import com.badlogic.gdx.tests.gles3.InstancedRenderingTest;
+import com.badlogic.gdx.tests.gles3.PixelBufferObjectTest;
+import com.badlogic.gdx.tests.gwt.GwtInputTest;
+import com.badlogic.gdx.tests.gwt.GwtWindowModeTest;
+import com.badlogic.gdx.tests.net.HttpRequestExample;
+import com.badlogic.gdx.tests.net.NetAPITest;
+import com.badlogic.gdx.tests.net.OpenBrowserExample;
+import com.badlogic.gdx.tests.net.PingPongSocketExample;
+import com.badlogic.gdx.tests.superkoalio.SuperKoalio;
+import com.badlogic.gdx.tests.utils.GdxTest;
+import com.badlogic.gdx.tests.utils.IssueTest;
 //import com.badlogic.gdx.tests.AnnotationTest;
-import com.badlogic.gdx.tests.AssetManagerTest;
-import com.badlogic.gdx.tests.AtlasIssueTest;
 //import com.badlogic.gdx.tests.BigMeshTest;
-import com.badlogic.gdx.tests.BitmapFontAlignmentTest;
-import com.badlogic.gdx.tests.BitmapFontFlipTest;
-import com.badlogic.gdx.tests.BitmapFontMetricsTest;
-import com.badlogic.gdx.tests.BitmapFontTest;
-import com.badlogic.gdx.tests.BlitTest;
 //import com.badlogic.gdx.tests.Box2DCharacterControllerTest;
 //import com.badlogic.gdx.tests.Box2DTest;
 //import com.badlogic.gdx.tests.Box2DTestCollection;
-import com.badlogic.gdx.tests.BufferUtilsTest;
-import com.badlogic.gdx.tests.ClipboardTest;
-import com.badlogic.gdx.tests.ColorTest;
-import com.badlogic.gdx.tests.ComplexActionTest;
-import com.badlogic.gdx.tests.CustomShaderSpriteBatchTest;
-import com.badlogic.gdx.tests.DecalTest;
-import com.badlogic.gdx.tests.DownloadTest;
-import com.badlogic.gdx.tests.EdgeDetectionTest;
-import com.badlogic.gdx.tests.FilesTest;
-import com.badlogic.gdx.tests.FilterPerformanceTest;
-import com.badlogic.gdx.tests.FrameBufferTest;
-import com.badlogic.gdx.tests.FramebufferToTextureTest;
-import com.badlogic.gdx.tests.GLProfilerErrorTest;
-import com.badlogic.gdx.tests.GWTLossyPremultipliedAlphaTest;
-import com.badlogic.gdx.tests.GestureDetectorTest;
-import com.badlogic.gdx.tests.GroupCullingTest;
-import com.badlogic.gdx.tests.GroupFadeTest;
-import com.badlogic.gdx.tests.I18NSimpleMessageTest;
-import com.badlogic.gdx.tests.ImageScaleTest;
-import com.badlogic.gdx.tests.ImageTest;
-import com.badlogic.gdx.tests.IndexBufferObjectShaderTest;
-import com.badlogic.gdx.tests.IntegerBitmapFontTest;
-import com.badlogic.gdx.tests.InterpolationTest;
-import com.badlogic.gdx.tests.InverseKinematicsTest;
-import com.badlogic.gdx.tests.IsometricTileTest;
 //import com.badlogic.gdx.tests.KinematicBodyTest;
-import com.badlogic.gdx.tests.LabelScaleTest;
-import com.badlogic.gdx.tests.LabelTest;
-import com.badlogic.gdx.tests.LifeCycleTest;
-import com.badlogic.gdx.tests.MeshShaderTest;
-import com.badlogic.gdx.tests.MipMapTest;
-import com.badlogic.gdx.tests.MultitouchTest;
-import com.badlogic.gdx.tests.MusicTest;
-import com.badlogic.gdx.tests.ParallaxTest;
-import com.badlogic.gdx.tests.ParticleEmitterTest;
-import com.badlogic.gdx.tests.PixelsPerInchTest;
-import com.badlogic.gdx.tests.PixmapPackerTest;
-import com.badlogic.gdx.tests.PixmapTest;
-import com.badlogic.gdx.tests.PreferencesTest;
-import com.badlogic.gdx.tests.ProjectiveTextureTest;
-import com.badlogic.gdx.tests.QuadTreeFloatNearestTest;
-import com.badlogic.gdx.tests.QuadTreeFloatNearestTest;
-import com.badlogic.gdx.tests.QuadTreeFloatTest;
-import com.badlogic.gdx.tests.ReflectionCorrectnessTest;
-//import com.badlogic.gdx.tests.ReflectionTest;
-import com.badlogic.gdx.tests.RotationTest;
-import com.badlogic.gdx.tests.Scene2dTest;
-import com.badlogic.gdx.tests.ShapeRendererTest;
-import com.badlogic.gdx.tests.SimpleAnimationTest;
-import com.badlogic.gdx.tests.SimpleDecalTest;
-import com.badlogic.gdx.tests.SimpleStageCullingTest;
-import com.badlogic.gdx.tests.SortedSpriteTest;
-import com.badlogic.gdx.tests.SoundTest;
-import com.badlogic.gdx.tests.SpriteBatchShaderTest;
-import com.badlogic.gdx.tests.SpriteCacheOffsetTest;
-import com.badlogic.gdx.tests.SpriteCacheTest;
-import com.badlogic.gdx.tests.StageTest;
-import com.badlogic.gdx.tests.TableTest;
-import com.badlogic.gdx.tests.TextAreaTest;
-import com.badlogic.gdx.tests.TextAreaTest2;
-import com.badlogic.gdx.tests.TextAreaTest3;
-import com.badlogic.gdx.tests.TextButtonTest;
-import com.badlogic.gdx.tests.TextureAtlasTest;
-import com.badlogic.gdx.tests.TiledMapAtlasAssetManagerTest;
-import com.badlogic.gdx.tests.TiledMapObjectLoadingTest;
-import com.badlogic.gdx.tests.TimeUtilsTest;
-import com.badlogic.gdx.tests.UITest;
-import com.badlogic.gdx.tests.VertexBufferObjectShaderTest;
-import com.badlogic.gdx.tests.YDownTest;
-import com.badlogic.gdx.tests.conformance.DisplayModeTest;
-import com.badlogic.gdx.tests.g3d.ModelCacheTest;
-import com.badlogic.gdx.tests.g3d.ShadowMappingTest;
-import com.badlogic.gdx.tests.gwt.GwtInputTest;
-import com.badlogic.gdx.tests.gwt.GwtWindowModeTest;
 //import com.badlogic.gdx.tests.math.OctreeTest;
-import com.badlogic.gdx.tests.net.OpenBrowserExample;
-import com.badlogic.gdx.tests.superkoalio.SuperKoalio;
-import com.badlogic.gdx.tests.utils.GdxTest;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.Field;
 
 public class SwitchTestWrapper extends AbstractTestWrapper {
 
@@ -114,7 +73,7 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			Table container = (Table)tableField.get(this);
 			ScrollPane scrollPane = (ScrollPane)container.getChild(0);
 			Field skinField = ClassReflection.getDeclaredField(AbstractTestWrapper.class, "skin");
-			Skin skin = (Skin) skinField.get(this);
+			Skin skin = (Skin)skinField.get(this);
 
 			scrollPane.setStyle(skin.get(ScrollPane.ScrollPaneStyle.class));
 			scrollPane.setFlickScroll(false);
@@ -130,6 +89,458 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 		return new Instancer[] {new SwitchInstancer() {
 			public GdxTest instance () {
 				return new AccelerometerTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TiledMapBench();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new MoveSpriteExample();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new DefaultTextureBinderTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ProgressiveJPEGTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new VoxelTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Animation3DTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new AnisotropyTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Basic3DSceneTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Basic3DTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Benchmark3DTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FogTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FrameBufferCubemapTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new HeightMapTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new LightsTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new MaterialEmissiveTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new MaterialTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new MeshBuilderTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ModelLoaderTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ModelTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new MultipleRenderTargetTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ParticleControllerInfluencerSingleTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ParticleControllerTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PolarAccelerationTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ShaderCollectionTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ShaderTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new SkeletonTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TangentialAccelerationTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TextureArrayTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TextureRegion3DTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new HelloTriangle();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new MipMap2D();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new SimpleVertexShader();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new InstancedRenderingTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PixelBufferObjectTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new HttpRequestExample();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new NetAPITest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PingPongSocketExample();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new IssueTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Affine2Test();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new AudioDeviceTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new AudioRecorderTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new BitmapFontDistanceFieldTest();
+			}
+//		}, new SwitchInstancer() {
+//			public GdxTest instance () {
+//				return new BitmapFontWriterTest();
+//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Bresenham2Test();
+			}
+//		}, new SwitchInstancer() {
+//			public GdxTest instance () {
+//				return new CollectionsTest();
+//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ContainerTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new CoordinatesTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new CpuSpriteBatchTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new CullTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new DelaunayTriangulatorTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new DeltaTimeTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new DeviceInfoTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new DirtyRenderingTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new DpiTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new DragAndDropTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ETC1Test();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ExitTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ExternalMusicTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FloatTextureTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new GLES30Test();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new GroupTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new HexagonalTiledMapTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new I18NMessageTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new IntersectorOverlapConvexPolygonsTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new JsonTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new KTXTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new NinePatchTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new OnscreenKeyboardTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ParticleEmitterChangeSpriteTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ParticleEmittersTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PathTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PixelPerfectTest();
+			}
+//		}, new SwitchInstancer() {
+//			public GdxTest instance () {
+//				return new PixmapPackerIOTest();
+//			}
+//		}, new SwitchInstancer() {
+//			public GdxTest instance () {
+//				return new PngTest();
+//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PolygonRegionTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PolygonSpriteTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ProjectTest();
+			}
+//		}, new SwitchInstancer() {
+//			public GdxTest instance () {
+//				return new RunnablePostTest();
+//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ScrollPane2Test();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ScrollPaneScrollBarsTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ScrollPaneTextAreaTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ScrollPaneWithDynamicScrolling();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new SelectTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new SensorTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ShapeRendererAlphaTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ShortSoundTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new SoftKeyboardTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new SpriteBatchOriginScaleTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new SpriteBatchRotationTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new StageDebugTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TableLayoutTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TextInputDialogTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TextureDataTest();
+			}
+//		}, new SwitchInstancer() {
+//			public GdxTest instance () {
+//				return new TextureDownloadTest();
+//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TideMapAssetManagerTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TideMapDirectLoaderTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TiledMapAnimationLoadingTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TiledMapAssetManagerTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TiledMapDirectLoaderTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TiledMapGroupLayerTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TiledMapLayerOffsetTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TiledMapModifiedExternalTilesetTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TileTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TouchpadTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TreeTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new UBJsonTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new UtfFontTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new VBOWithVAOPerformanceTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Vector2dTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new VibratorTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ViewportTest1();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ViewportTest2();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ViewportTest3();
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
@@ -159,10 +570,10 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new AtlasIssueTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new BigMeshTest();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new BigMeshTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new BitmapFontAlignmentTest();
@@ -239,13 +650,11 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new FilterPerformanceTest();
 			}
-		},
-			// new SwitchInstancer() {public GdxTest instance(){return new FlickScrollPaneTest();}}, // FIXME this messes up stuff, why?
-			new SwitchInstancer() {
-				public GdxTest instance () {
-					return new FrameBufferTest();
-				}
-			}, new SwitchInstancer() {
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FrameBufferTest();
+			}
+		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new DownloadTest();
 			}
@@ -309,10 +718,6 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new IsometricTileTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new KinematicBodyTest();
-//			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new LifeCycleTest();
@@ -321,12 +726,14 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new LabelTest();
 			}
-		},
-			// new SwitchInstancer() {public GdxTest instance(){return new MatrixJNITest();}}, // No purpose
-			new SwitchInstancer() {
-				public GdxTest instance () {
-					return new MeshShaderTest();
-				}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new MatrixJNITest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new MeshShaderTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new MipMapTest();
@@ -343,16 +750,14 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new MusicTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new OctreeTest();
-//			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new OpenBrowserExample();
 			}
-			// }, new SwitchInstancer() { public GdxTest instance () { return new NoncontinuousRenderingTest(); } // FIXME doesn't compile due to
-			// the use of Thread
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new NoncontinuousRenderingTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new ParallaxTest();
@@ -373,14 +778,15 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new PixmapTest();
 			}
-		},
-			// new SwitchInstancer() {public GdxTest instance(){return new PixmapBlendingTest();}}, // FIXME no idea why this doesn't
-			// work
-			new SwitchInstancer() {
-				public GdxTest instance () {
-					return new PreferencesTest();
-				}
-			}, new SwitchInstancer() {
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PixmapBlendingTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PreferencesTest();
+			}
+		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new ProjectiveTextureTest();
 			}
@@ -396,10 +802,14 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new Scene2dTest();
 			}
-
-			// new SwitchInstancer() {public GdxTest instance(){return new RunnablePostTest();}}, // Goes into infinite loop
-			// new SwitchInstancer() {public GdxTest instance(){return new ScrollPaneTest();}}, // FIXME this messes up stuff, why?
-			// new SwitchInstancer() {public GdxTest instance(){return new ShaderMultitextureTest();}}, // FIXME fucks up stuff
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ScrollPaneTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ShaderMultitextureTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new ShadowMappingTest();
@@ -444,13 +854,15 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new StageTest();
 			}
-		},
-			// new SwitchInstancer() {public GdxTest instance(){return new StagePerformanceTest();}}, // FIXME borks out
-			new SwitchInstancer() {
-				public GdxTest instance () {
-					return new TableTest();
-				}
-			}, new SwitchInstancer() {
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new StagePerformanceTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new TableTest();
+			}
+		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new TextButtonTest();
 			}
@@ -478,10 +890,10 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new SuperKoalio();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new ReflectionTest();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new ReflectionTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new TiledMapAtlasAssetManagerTest();

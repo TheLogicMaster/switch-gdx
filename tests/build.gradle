@@ -8,17 +8,33 @@ group 'com.thelogicmaster'
 version '1.0'
 
 repositories {
+    mavenLocal()
     maven { url 'https://jitpack.io' }
     mavenCentral()
+}
+
+configurations {
+    transpiler {
+        transitive = false
+    }
 }
 
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:1.10.0"
     implementation 'com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.1'
     implementation('com.github.tommyettinger:RegExodus:0.1.13')
-    compileOnly files('libs/runtime.jar')
-    implementation files('libs/switch-gdx.jar')
+
     implementation files('libs/gdx-tests.jar')
+
+    // Use latest GitHub commit
+    implementation 'com.thelogicmaster.clearwing-vm:runtime:-SNAPSHOT'
+    implementation 'com.thelogicmaster:switch-gdx:-SNAPSHOT'
+    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:-SNAPSHOT'
+
+    // Use specified release
+//    implementation 'com.thelogicmaster.clearwing-vm:runtime:0.1'
+//    implementation 'com.thelogicmaster:switch-gdx:0.1'
+//    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:0.1'
 }
 
 task transpile(dependsOn: 'build') {
@@ -29,17 +45,16 @@ task transpile(dependsOn: 'build') {
 
         copy {
             from sourceSets.main.output
-            from { zipTree("$projectDir/libs/runtime.jar") }
             from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
             into "$buildDir/transpiler_input"
             exclude "META-INF", "META-INF/**"
-            duplicatesStrategy = 'EXCLUDE' // Todo: Find better way to force switch-gdx to override gdx files
+//            duplicatesStrategy = 'EXCLUDE' // Todo: Find better way to force switch-gdx to override gdx files
         }
 
         javaexec {
             main = "-jar"
             args = [
-                    "$projectDir/libs/transpiler.jar",
+                    "$configurations.transpiler.singleFile.absolutePath",
                     "$buildDir/transpiler_input",
                     "$buildDir/transpiler_output",
                     "$projectDir/switch.json",
@@ -63,6 +78,15 @@ task transpile(dependsOn: 'build') {
         }
 
         copy {
+            from ("$buildDir/transpiler_output") {
+                include "CMakeLists.txt"
+                include "Makefile"
+                include "*.cmake"
+            }
+            into "$buildDir/dist"
+        }
+
+        copy {
             from ("$buildDir/transpiler_input") {
                 exclude "**/*.class"
                 exclude "META-INF", "META-INF/**"
@@ -70,15 +94,6 @@ task transpile(dependsOn: 'build') {
             }
             into "$buildDir/dist/romfs/classpath"
             includeEmptyDirs = false
-        }
-
-        copy {
-            from ({ zipTree("$projectDir/libs/switch-gdx.jar") }) {
-                include "CMakeLists.txt"
-                include "Makefile"
-                include "*.cmake"
-            }
-            into "$buildDir/dist"
         }
 
         copy {

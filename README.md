@@ -1,4 +1,4 @@
-# Switch GDX
+# SwitchGDX
 [![Release](https://jitpack.io/v/com.thelogicmaster/switch-gdx.svg)](https://jitpack.io/#com.thelogicmaster/switch-gdx)
 
 ## About
@@ -80,6 +80,7 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - Classes referenced with reflection must be included in switch.json
 - Only supports up to 3D arrays
 - For Switch, all pthreads need to be terminated manually or it will crash on exit. Any program threads must be manually stopped on dispose.
+- If using SNAPSHOT Gradle dependency, refresh Gradle dependencies using the Intellij Gradle menu to not use cached versions and update to the latest.
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)
