@@ -3,87 +3,199 @@
 - Accelerometer: Rotation data not available yet
 - ActionSequence: Works
 - Action: Works
+- Affine2: Works
 - Alpha: Just displays red
+- Animation3D: JSON deserialization error, stack corruption
 - Animation: Works
+- Anisotropy: Works
 - AssetManager: Crashes on I18N stuff
 - AtlasIssue: Works
+- AudioDevice: Not yet implemented
+- AudioRecorder: Not yet implemented
+- Basic3DScene: Works
+- Basic3D: Works
+- Benchmark3D: Occasional errors with deserialization
+- BigMesh: Seems to work
 - BitmapFontAlignment: Works
+- BitmapFontDistanceField: Works
 - BitmapFontFlip: Works
 - BitmapFontMetrics: Seems to work
 - BitmapFont: Works
 - Blit: Works
+- Bresenham2: Seems to work
 - BufferUtils: Works
 - Clipboard: Not available
 - Color: Works
 - ComplexAction: Works
+- Container: Works
+- Coordinates: Works
+- CpuSpriteBatch: Works
+- Cull: Works
 - CustomShaderSpriteBatch: Works
 - Decal: Works
+- DefaultTextureBinder: Seems to work
+- DelaunayTriangulator: Works
+- DeltaTime: Works
+- DeviceInfo: Test isn't implemented
+- DirtyRendering: Non-continuous rendering isn't supported (seizure warning)
 - DisplayMode: Works
 - Download: Not yet implemented
+- Dpi: Works
+- DragAndDrop: Works
+- ETC1: "Couldn't load pkm file"
 - EdgeDetection: Works
+- Exit: Doesn't work
+- ExternalMusic: Works
 - Files: Fails due to Classpath workaround
 - FilterPerformance: Works
+- FloatTexture: GL30 not yet implemented
+- Fog: Works
+- FrameBufferCubemap: Works
 - FrameBuffer: Works
 - FramebufferToTexture: Works
+- GLES30: Works
 - GLProfilerError: Can't test without keyboard support
 - GWTLossyPremultipliedAlpha: Works
 - GestureDetector: Flinging values are way too high
 - GroupCuling: Works
 - GroupFade: Works
+- Group: Works
 - GwtInput: Works
 - GetWindowMode: Not supported
+- HeightMap: Works
+- HelloTriangle: Works
+- HexagonalTiledMap: Works
+- I18NMessage: Doesn't work
 - I18NSimpleMessage: Locale related crash
 - ImageScale: Works
+- Image: Works
 - IndexBufferObjectShader: Works
+- InstancedRendering: GL30 not yet supported
 - IntegerBitmapFont: Works
 - Interpolation: Works
+- IntersectorOverlapConvexPolygons: Works
 - InverseKinematics: Works
 - IsometricTile: Works
+- Issue: Works
+- Json: Crashes
+- KTX: Crash
 - LabelScale: Works
 - Label: Works
 - LifeCycle: Works
+- Lights: Works
+- MaterialEmissive: Works
+- Material: Works
+- MatrixJNI: Works
+- MeshBuilder: Works
 - MeshShader: Works
-- MeshWithCustomAttributes: Works
+- MipMap2D: Works
 - MipMap: Works
 - ModelCache: Mostly works, causes intermittent crashes related to GC/serialization
+- ModelLoader: Works
+- Model: Works
+- MoveSprite: Works
+- MultipleRenderTarget: GL30 not yet implemented
 - Multitouch: Works
 - Music: Plays fine, but tracking/stopping doesn't work correctly
+- NetAPI: Not yet implemented
+- NinePatch: Works
+- NoncontinuousRendering: Not supported
+- OnscreenKeyboard: Not supported
 - OpenBrowser: Not yet implemented
 - Parallax: Doesn't work
+- ParticleControllerInfluencerSingle: Reflection issue
+- ParticleController: Reflection issue
+- ParticleEmitterChangeSprite: Works
 - ParticleEmitter: Works
+- ParticleEmitters: Works
+- Path: Works
+- PingPongSocket: Not yet implemented
+- PixelBufferObject: Seems to cause infinite loop
+- PixelPerfect: Seems to work
 - PixelsPerInch: Works, but not accurate for Switch yet
+- PixmapBlending: Seems to work
 - PixmapPacker: Works
 - Pixmap: Works
+- PolarAcceleration: Reflection issue
+- PolygonRegion: Works
+- PolygonSprite: Works
 - Preferences: Works
+- ProgressiveJPEG: Works
+- Project: Works
 - ProjectiveTexture: Works
 - QuadTreeFloatNearest: Works
 - QuadTreeFloat: Works
 - ReflectionCorrectness: Doesn't work
+- Reflection: Doesn't work
 - Rotation: Works
 - Scene2d: Works
+- ScrollPane2: Works
+- ScrollPaneScrollBars: Works
+- ScrollPane: Works
+- ScrollPaneTextArea: UnicodeHelper.getClasses not supported
+- ScrollPaneWithDynamicScrolling: Works
+- Select: Works
+- Sensor: Orientation input not yet implemented
+- ShaderCollection: Serialization crash/stack corruption
+- ShaderMultitexture: Seems to work
+- Shader: Works
 - ShadowMapping: Works
+- ShapeRendererAlpha: Works
 - ShapeRenderer: Works
+- ShortSound: WOrks
 - SimpleAnimation: Works
 - SimpleDecal: Works
 - SimpleStageCulling: Works
+- SimpleVertexShader: Works
+- Skeleton: Works
+- SoftKeyboard: Not supported
 - SortedSprite: Works
 - Sound: Basic funcionality works, pitch not implemented, panning doesn't work, stop has delay
+- SpriteBatchOriginScale: Seems to work
+- SpriteBatchRotation: Works
 - SpriteBatchShader: Works
 - SpriteCacheOffset: Works
 - SpriteCache: Works
+- StageDebug: Works
+- StagePerformance: Works
 - Stage: Works
 - SuperKoalio: Works
-- SystemCursor: Not available
+- TableLayout: Works
 - Table: Works
+- TangentialAcceleration: Reflection issue
 - TextArea: UnicodeHelper.getClasses not supported
 - TextArea2: UnicodeHelper.getClasses not supported
 - TextArea3: UnicodeHelper.getClasses not supported
 - TextButton: Works
+- TextInputDialog: Doesn't work
+- TextureArray: GL30 not yet implemented
 - TextureAtlas: Works
+- TextureData: Works
+- TextureRegion3D: Works
+- TideMapAssetManager: Works
+- TideMapDirectLoader: Works
+- Tile: Works
+- TileMapAnimationLoading: Works
+- TiledMapAssetManager: Doesn't work
 - TiledMapAtlasAssetManager: Doesn't work
+- TiledMapBench: Works
+- TiledMapDirectLoader: Works
+- TiledMapGroupLayer: Works
+- TiledMapLayerOffset: Doesn't work
+- TiledMapModifiedExternalTileset: Seems to work
 - TiledMapObjectLoading: Works
 - TimeUtils: Works
+- Touchpad: Works
+- TreeTest: Works
+- UBJsonTest: Crash on GC
 - UI: Works
-- VertexArray: Works
+- UtfFont: Works
+- VBOWithVAOPerformance: GL30 not yet implemented
+- Vector2d: Works
 - VertexBufferObjectShader: Works
+- Vibrator: Not yet implemented
+- ViewportTest1: Seems to work
+- ViewportTest2: Seems to work
+- ViewportTest3: Seems to work
+- Voxel: Seems to enter infinite loop
 - YDownTest: Doesn't seem to work
