@@ -12,6 +12,7 @@
         "com.badlogic.gdx.maps.tiled.TiledMap",
         "com.badlogic.gdx.assets.AssetDescriptor",
         "com.badlogic.gdx.utils.XmlReader.Element",
-        "com.badlogic.gdx.graphics.Texture"
+        "com.badlogic.gdx.graphics.Texture",
+        "com.badlogic.gdx.graphics.g3d.particles.ParticleController"
     ]
 }

@@ -296,14 +296,6 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
-				return new DeviceInfoTest();
-			}
-		}, new SwitchInstancer() {
-			public GdxTest instance () {
-				return new DirtyRenderingTest();
-			}
-		}, new SwitchInstancer() {
-			public GdxTest instance () {
 				return new DpiTest();
 			}
 		}, new SwitchInstancer() {
@@ -357,10 +349,6 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new NinePatchTest();
-			}
-		}, new SwitchInstancer() {
-			public GdxTest instance () {
-				return new OnscreenKeyboardTest();
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
@@ -433,10 +421,6 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new ShortSoundTest();
-			}
-		}, new SwitchInstancer() {
-			public GdxTest instance () {
-				return new SoftKeyboardTest();
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
@@ -612,10 +596,6 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
-				return new ClipboardTest();
-			}
-		}, new SwitchInstancer() {
-			public GdxTest instance () {
 				return new ColorTest();
 			}
 		}, new SwitchInstancer() {
@@ -684,10 +664,6 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
-				return new GwtWindowModeTest();
-			}
-		}, new SwitchInstancer() {
-			public GdxTest instance () {
 				return new I18NSimpleMessageTest();
 			}
 		}, new SwitchInstancer() {
@@ -753,10 +729,6 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new OpenBrowserExample();
-			}
-		}, new SwitchInstancer() {
-			public GdxTest instance () {
-				return new NoncontinuousRenderingTest();
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {

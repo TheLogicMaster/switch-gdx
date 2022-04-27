@@ -1,6 +1,6 @@
 # gdx-tests compatibility
 
-- Accelerometer: Rotation data not available yet
+- Accelerometer: Not yet implemented
 - ActionSequence: Works
 - Action: Works
 - Affine2: Works
@@ -24,7 +24,6 @@
 - Blit: Works
 - Bresenham2: Seems to work
 - BufferUtils: Works
-- Clipboard: Not available
 - Color: Works
 - ComplexAction: Works
 - Container: Works
@@ -36,8 +35,6 @@
 - DefaultTextureBinder: Seems to work
 - DelaunayTriangulator: Works
 - DeltaTime: Works
-- DeviceInfo: Test isn't implemented
-- DirtyRendering: Non-continuous rendering isn't supported (seizure warning)
 - DisplayMode: Works
 - Download: Not yet implemented
 - Dpi: Works
@@ -61,7 +58,6 @@
 - GroupFade: Works
 - Group: Works
 - GwtInput: Works
-- GetWindowMode: Not supported
 - HeightMap: Works
 - HelloTriangle: Works
 - HexagonalTiledMap: Works
@@ -99,8 +95,6 @@
 - Music: Plays fine, but tracking/stopping doesn't work correctly
 - NetAPI: Not yet implemented
 - NinePatch: Works
-- NoncontinuousRendering: Not supported
-- OnscreenKeyboard: Not supported
 - OpenBrowser: Not yet implemented
 - Parallax: Doesn't work
 - ParticleControllerInfluencerSingle: Reflection issue
@@ -142,15 +136,14 @@
 - ShadowMapping: Works
 - ShapeRendererAlpha: Works
 - ShapeRenderer: Works
-- ShortSound: WOrks
+- ShortSound: Works
 - SimpleAnimation: Works
 - SimpleDecal: Works
 - SimpleStageCulling: Works
 - SimpleVertexShader: Works
 - Skeleton: Works
-- SoftKeyboard: Not supported
 - SortedSprite: Works
-- Sound: Basic funcionality works, pitch not implemented, panning doesn't work, stop has delay
+- Sound: Basic functionality works, pitch not implemented, panning doesn't work, stop has delay
 - SpriteBatchOriginScale: Seems to work
 - SpriteBatchRotation: Works
 - SpriteBatchShader: Works
