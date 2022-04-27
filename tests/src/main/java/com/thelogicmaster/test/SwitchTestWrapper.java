@@ -256,6 +256,10 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
+				return new BitmapFontAtlasRegionTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
 				return new BitmapFontDistanceFieldTest();
 			}
 //		}, new SwitchInstancer() {

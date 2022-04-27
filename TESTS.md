@@ -4,7 +4,7 @@
 - ActionSequence: Works
 - Action: Works
 - Affine2: Works
-- Alpha: Just displays red
+- Alpha: Works
 - Animation3D: JSON deserialization error, stack corruption
 - Animation: Works
 - Anisotropy: Works
@@ -15,14 +15,15 @@
 - Basic3DScene: Works
 - Basic3D: Works
 - Benchmark3D: Occasional errors with deserialization
-- BigMesh: Seems to work
+- BigMesh: Works
 - BitmapFontAlignment: Works
+- BitmapFontAtlasRegion: Works
 - BitmapFontDistanceField: Works
 - BitmapFontFlip: Works
-- BitmapFontMetrics: Seems to work
+- BitmapFontMetrics: Works
 - BitmapFont: Works
 - Blit: Works
-- Bresenham2: Seems to work
+- Bresenham2: Works
 - BufferUtils: Works
 - Color: Works
 - ComplexAction: Works
@@ -32,7 +33,7 @@
 - Cull: Works
 - CustomShaderSpriteBatch: Works
 - Decal: Works
-- DefaultTextureBinder: Seems to work
+- DefaultTextureBinder: Works
 - DelaunayTriangulator: Works
 - DeltaTime: Works
 - DisplayMode: Works
@@ -96,7 +97,7 @@
 - NetAPI: Not yet implemented
 - NinePatch: Works
 - OpenBrowser: Not yet implemented
-- Parallax: Doesn't work
+- Parallax: Works
 - ParticleControllerInfluencerSingle: Works
 - ParticleController: Works
 - ParticleEmitterChangeSprite: Works
@@ -105,9 +106,9 @@
 - Path: Works
 - PingPongSocket: Not yet implemented
 - PixelBufferObject: Threading issue
-- PixelPerfect: Seems to work
+- PixelPerfect: Works
 - PixelsPerInch: Works, but not accurate for Switch yet
-- PixmapBlending: Seems to work
+- PixmapBlending: Works
 - PixmapPacker: Works
 - Pixmap: Works
 - PolarAcceleration: Works
@@ -131,7 +132,7 @@
 - Select: Works
 - Sensor: Orientation input not yet implemented
 - ShaderCollection: Serialization crash/stack corruption
-- ShaderMultitexture: Seems to work
+- ShaderMultitexture: Works
 - Shader: Works
 - ShadowMapping: Works
 - ShapeRendererAlpha: Works
@@ -144,7 +145,7 @@
 - Skeleton: Works
 - SortedSprite: Works
 - Sound: Basic functionality works, pitch not implemented, panning doesn't work, stop has delay
-- SpriteBatchOriginScale: Seems to work
+- SpriteBatchOriginScale: Works
 - SpriteBatchRotation: Works
 - SpriteBatchShader: Works
 - SpriteCacheOffset: Works
@@ -160,7 +161,7 @@
 - TextArea2: Works
 - TextArea3: Works
 - TextButton: Works
-- TextInputDialog: Doesn't work
+- TextInputDialog: Not yet implemented
 - TextureArray: GL30 not yet implemented
 - TextureAtlas: Works
 - TextureData: Works
@@ -175,7 +176,7 @@
 - TiledMapDirectLoader: Works
 - TiledMapGroupLayer: Works
 - TiledMapLayerOffset: Doesn't work
-- TiledMapModifiedExternalTileset: Seems to work
+- TiledMapModifiedExternalTileset: Works
 - TiledMapObjectLoading: Works
 - TimeUtils: Works
 - Touchpad: Works
@@ -187,8 +188,8 @@
 - Vector2d: Works
 - VertexBufferObjectShader: Works
 - Vibrator: Not yet implemented
-- ViewportTest1: Seems to work
-- ViewportTest2: Seems to work
-- ViewportTest3: Seems to work
+- ViewportTest1: Works (Can't switch viewports without space bar)
+- ViewportTest2: Works (Can't switch viewports without space bar)
+- ViewportTest3: Works (Can't switch viewports without space bar)
 - Voxel: Works, but long load time due to buffer implementation
-- YDownTest: Doesn't seem to work
+- YDownTest: Works
