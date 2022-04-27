@@ -27,14 +27,14 @@ dependencies {
     implementation files('libs/gdx-tests.jar')
 
     // Use latest GitHub commit
-//    implementation 'com.thelogicmaster.clearwing-vm:runtime:-SNAPSHOT'
-//    implementation 'com.thelogicmaster:switch-gdx:-SNAPSHOT'
-//    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:-SNAPSHOT'
+    implementation 'com.thelogicmaster.clearwing-vm:runtime:-SNAPSHOT'
+    implementation 'com.thelogicmaster:switch-gdx:-SNAPSHOT'
+    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:-SNAPSHOT'
 
     // Use specified release
-    implementation 'com.thelogicmaster.clearwing-vm:runtime:0.1'
-    implementation 'com.thelogicmaster:switch-gdx:0.1'
-    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:0.1'
+//    implementation 'com.thelogicmaster.clearwing-vm:runtime:0.1'
+//    implementation 'com.thelogicmaster:switch-gdx:0.1'
+//    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:0.1'
 }
 
 task transpile(dependsOn: 'build') {

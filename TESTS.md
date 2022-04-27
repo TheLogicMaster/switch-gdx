@@ -62,7 +62,7 @@
 - HelloTriangle: Works
 - HexagonalTiledMap: Works
 - I18NMessage: Doesn't work
-- I18NSimpleMessage: Locale related crash
+- I18NSimpleMessage: Mostly works, Date formatting not implemented yet
 - ImageScale: Works
 - Image: Works
 - IndexBufferObjectShader: Works
@@ -97,20 +97,20 @@
 - NinePatch: Works
 - OpenBrowser: Not yet implemented
 - Parallax: Doesn't work
-- ParticleControllerInfluencerSingle: Reflection issue
-- ParticleController: Reflection issue
+- ParticleControllerInfluencerSingle: Works
+- ParticleController: Works
 - ParticleEmitterChangeSprite: Works
 - ParticleEmitter: Works
 - ParticleEmitters: Works
 - Path: Works
 - PingPongSocket: Not yet implemented
-- PixelBufferObject: Seems to cause infinite loop
+- PixelBufferObject: Threading issue
 - PixelPerfect: Seems to work
 - PixelsPerInch: Works, but not accurate for Switch yet
 - PixmapBlending: Seems to work
 - PixmapPacker: Works
 - Pixmap: Works
-- PolarAcceleration: Reflection issue
+- PolarAcceleration: Works
 - PolygonRegion: Works
 - PolygonSprite: Works
 - Preferences: Works
@@ -126,7 +126,7 @@
 - ScrollPane2: Works
 - ScrollPaneScrollBars: Works
 - ScrollPane: Works
-- ScrollPaneTextArea: UnicodeHelper.getClasses not supported
+- ScrollPaneTextArea: Works
 - ScrollPaneWithDynamicScrolling: Works
 - Select: Works
 - Sensor: Orientation input not yet implemented
@@ -155,10 +155,10 @@
 - SuperKoalio: Works
 - TableLayout: Works
 - Table: Works
-- TangentialAcceleration: Reflection issue
-- TextArea: UnicodeHelper.getClasses not supported
-- TextArea2: UnicodeHelper.getClasses not supported
-- TextArea3: UnicodeHelper.getClasses not supported
+- TangentialAcceleration: Works
+- TextArea: Works
+- TextArea2: Works
+- TextArea3: Works
 - TextButton: Works
 - TextInputDialog: Doesn't work
 - TextureArray: GL30 not yet implemented
@@ -190,5 +190,5 @@
 - ViewportTest1: Seems to work
 - ViewportTest2: Seems to work
 - ViewportTest3: Seems to work
-- Voxel: Seems to enter infinite loop
+- Voxel: Works, but long load time due to buffer implementation
 - YDownTest: Doesn't seem to work

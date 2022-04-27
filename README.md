@@ -59,7 +59,6 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - Possibly GDX threading stuff
 - GL30?
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
-- GDX test suite
 - Bullet
 - Box2D
 - gdx-dialogs
