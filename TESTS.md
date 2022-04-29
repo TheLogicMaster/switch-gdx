@@ -23,6 +23,9 @@
 - BitmapFontMetrics: Works
 - BitmapFont: Works
 - Blit: Works
+- Box2DCharacterController: Works
+- Box2D: Works
+- Box2DTestCollection: Works
 - Bresenham2: Works
 - BufferUtils: Works
 - Color: Works
@@ -51,6 +54,13 @@
 - FrameBufferCubemap: Works
 - FrameBuffer: Works
 - FramebufferToTexture: Works
+- FreeTypeAtlas: EnumMap not yet implemented
+- FreeTypeDispose: Heap usage not yet implemented
+- FreeTypeFontLoader: Font has blue background
+- FreeTypeIncremental: Font has blue background
+- FreeTypeMetrics: Font has blue background
+- FreeType: Font has blue background
+- FreeTypePack: EnumMap not yet implemented
 - GLES30: Works
 - GLProfilerError: Can't test without keyboard support
 - GWTLossyPremultipliedAlpha: Works
@@ -69,6 +79,7 @@
 - IndexBufferObjectShader: Works
 - InstancedRendering: GL30 not yet supported
 - IntegerBitmapFont: Works
+- InternationalFonts: Font has blue background
 - Interpolation: Works
 - IntersectorOverlapConvexPolygons: Works
 - InverseKinematics: Works

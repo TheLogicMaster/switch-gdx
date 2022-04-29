@@ -3,6 +3,14 @@ package com.thelogicmaster.test;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.tests.extensions.FreeTypeAtlasTest;
+import com.badlogic.gdx.tests.extensions.FreeTypeDisposeTest;
+import com.badlogic.gdx.tests.extensions.FreeTypeFontLoaderTest;
+import com.badlogic.gdx.tests.extensions.FreeTypeIncrementalTest;
+import com.badlogic.gdx.tests.extensions.FreeTypeMetricsTest;
+import com.badlogic.gdx.tests.extensions.FreeTypePackTest;
+import com.badlogic.gdx.tests.extensions.FreeTypeTest;
+import com.badlogic.gdx.tests.extensions.InternationalFontsTest;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
 import com.badlogic.gdx.tests.*;
@@ -46,7 +54,6 @@ import com.badlogic.gdx.tests.gles2.SimpleVertexShader;
 import com.badlogic.gdx.tests.gles3.InstancedRenderingTest;
 import com.badlogic.gdx.tests.gles3.PixelBufferObjectTest;
 import com.badlogic.gdx.tests.gwt.GwtInputTest;
-import com.badlogic.gdx.tests.gwt.GwtWindowModeTest;
 import com.badlogic.gdx.tests.net.HttpRequestExample;
 import com.badlogic.gdx.tests.net.NetAPITest;
 import com.badlogic.gdx.tests.net.OpenBrowserExample;
@@ -54,13 +61,11 @@ import com.badlogic.gdx.tests.net.PingPongSocketExample;
 import com.badlogic.gdx.tests.superkoalio.SuperKoalio;
 import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.tests.utils.IssueTest;
-//import com.badlogic.gdx.tests.AnnotationTest;
-//import com.badlogic.gdx.tests.BigMeshTest;
-//import com.badlogic.gdx.tests.Box2DCharacterControllerTest;
-//import com.badlogic.gdx.tests.Box2DTest;
-//import com.badlogic.gdx.tests.Box2DTestCollection;
-//import com.badlogic.gdx.tests.KinematicBodyTest;
-//import com.badlogic.gdx.tests.math.OctreeTest;
+import com.badlogic.gdx.tests.AnnotationTest;
+import com.badlogic.gdx.tests.Box2DCharacterControllerTest;
+import com.badlogic.gdx.tests.Box2DTest;
+import com.badlogic.gdx.tests.Box2DTestCollection;
+import com.badlogic.gdx.tests.KinematicBodyTest;
 
 public class SwitchTestWrapper extends AbstractTestWrapper {
 
@@ -582,18 +587,18 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new BlitTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new Box2DCharacterControllerTest();
-//			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new Box2DTest();
-//			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new Box2DTestCollection();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Box2DCharacterControllerTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Box2DTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Box2DTestCollection();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new BufferUtilsTest();
@@ -901,6 +906,42 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new TextAreaTest3();
+			}
+//		}, new SwitchInstancer() {
+//			public GdxTest instance () {
+//				return new FreeTypeAtlasTest();
+//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FreeTypeDisposeTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FreeTypeFontLoaderTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FreeTypeIncrementalTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FreeTypeMetricsTest();
+			}
+//		}, new SwitchInstancer() {
+//			public GdxTest instance () {
+//				return new FreeTypePackTest();
+//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FreeTypeTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new InternationalFontsTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new KinematicBodyTest();
 			}
 		}};
 	}

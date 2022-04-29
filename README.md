@@ -14,10 +14,11 @@ RoboVM, except it generates C code which is then compiled for the specific targe
 - GLEW
 - pthreads
 - zlib
+- Freetype
 - C++ 17 Filesystem support
 ### Switch
 - DevKitPro
-- SDL2_Mixer, GLAD, and zlib for Switch
+- SDL2_Mixer, GLAD, Freetype, and zlib for Switch
 - Custom build of libffi for Switch (Todo)
 
 ## Usage
@@ -53,16 +54,16 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - Basic GDX Audio support (SDL_mixer)
 - Scene2d Skins
 - Partial GDX Reflection support
+- FreeType
+- Box2D
 
 ## Todo
 - GDX Networking
-- Possibly GDX threading stuff
+- Possibly threading stuff
 - GL30?
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
 - Bullet
-- Box2D
 - gdx-dialogs
-- Freetype
 
 ## Needs Testing
 - Windows everything, CMake libs, filesystem APIs, Gradle task commands, file separators
@@ -85,3 +86,4 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
 - Flick gesture detection is broken
+- Crashes on exit again

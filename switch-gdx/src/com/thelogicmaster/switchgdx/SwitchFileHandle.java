@@ -6,6 +6,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 public class SwitchFileHandle extends FileHandle {
 
@@ -48,5 +50,10 @@ public class SwitchFileHandle extends FileHandle {
 		if (type == Files.FileType.Local)
 			return new File(Gdx.files.getLocalStoragePath(), file.getPath());
 		return super.file();
+	}
+
+	@Override
+	public ByteBuffer map (FileChannel.MapMode mode) {
+		throw new GdxRuntimeException("Cannot map files in Switch backend");
 	}
 }

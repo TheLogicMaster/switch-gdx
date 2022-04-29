@@ -1,5 +1,9 @@
 #include "cn1_globals.h"
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 JAVA_OBJECT getOSLanguage(CODENAME_ONE_THREAD_STATE) {
 #ifdef __SWITCH__
     u64 languageCode;
