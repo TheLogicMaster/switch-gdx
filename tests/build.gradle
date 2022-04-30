@@ -227,6 +227,14 @@ task transpile(dependsOn: 'build') {
             }
             workingDir "$buildDir/dist/source"
         }
+
+        exec {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' $buildDir/dist/ $buildDir/${project.name}"
+            } else {
+                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' $buildDir/dist/ $buildDir/${project.name}"
+            }
+        }
     }
 }
 
@@ -234,26 +242,19 @@ task run(dependsOn: 'transpile') {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', "rsync -icrvh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude '.idea' $buildDir/dist/ $buildDir/dist_incremental"
+                commandLine 'cmd', '/c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
             } else {
-                commandLine 'bash', '-c', "rsync -icrvh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude '.idea' $buildDir/dist/ $buildDir/dist_incremental"
+                commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
             }
+            workingDir "$buildDir/${project.name}"
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build -G Ninja && cmake --build build'
+                commandLine 'cmd', '/c', './build-run/dist'
             } else {
-                commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build -G Ninja && cmake --build build'
+                commandLine 'bash', '-c', './build-run/dist'
             }
-            workingDir "$buildDir/dist_incremental"
-        }
-        exec {
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', './build/dist'
-            } else {
-                commandLine 'bash', '-c', './build/dist'
-            }
-            workingDir "$buildDir/dist_incremental"
+            workingDir "$buildDir/${project.name}"
         }
     }
 }
@@ -262,28 +263,19 @@ task deploy(dependsOn: 'transpile') {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', "rsync -icrvh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude '.idea' $buildDir/dist/ $buildDir/dist_incremental"
-            } else {
-                commandLine 'bash', '-c', "rsync -icrvh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude '.idea' $buildDir/dist/ $buildDir/dist_incremental"
-            }
-        }
-
-        project.file("$buildDir/dist_incremental/build").mkdir()
-        exec {
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
                 commandLine 'cmd', '/c', 'make -j8'
             } else {
                 commandLine 'bash', '-c', 'make -j8'
             }
-            workingDir "$buildDir/dist_incremental"
+            workingDir "$buildDir/${project.name}"
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', '$DEVKITPRO/tools/bin/nxlink --server ./dist_incremental.nro'
+                commandLine 'cmd', '/c', "\$DEVKITPRO/tools/bin/nxlink --server ./${project.name}.nro"
             } else {
-                commandLine 'bash', '-c', '$DEVKITPRO/tools/bin/nxlink --server ./dist_incremental.nro'
+                commandLine 'bash', '-c', "\$DEVKITPRO/tools/bin/nxlink --server ./${project.name}.nro"
             }
-            workingDir "$buildDir/dist_incremental"
+            workingDir "$buildDir/${project.name}"
         }
     }
 }
