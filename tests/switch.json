@@ -18,6 +18,7 @@
         "com.badlogic.gdx.graphics.g3d.particles.renderers.BillboardControllerRenderData",
         "com.badlogic.gdx.graphics.g3d.particles.influencers.RegionInfluencer.AspectTextureRegion",
         "com.badlogic.gdx.graphics.g3d.particles.influencers.Influencer",
-        "com.badlogic.gdx.graphics.g3d.particles.ParallelArray.Channel"
+        "com.badlogic.gdx.graphics.g3d.particles.ParallelArray.Channel",
+        "com.badlogic.gdx.physics.box2d.World"
     ]
 }

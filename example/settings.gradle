@@ -1,6 +1,3 @@
-if (System.env.JITPACK)
-    throw new StopActionException('Shouldn\'t build with JitPack')
-
 rootProject.name = 'example'
 include 'core'
 include 'desktop'

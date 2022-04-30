@@ -47,7 +47,11 @@ task transpile(dependsOn: 'build') {
             from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
             into "$buildDir/transpiler_input"
             exclude "META-INF", "META-INF/**"
-//            duplicatesStrategy = 'EXCLUDE' // Todo: Find better way to force switch-gdx to override gdx files
+            exclude "*/**/*.h"
+            exclude "*/**/*.c"
+            exclude "*/**/*.cpp"
+            includeEmptyDirs = false
+            duplicatesStrategy = 'EXCLUDE' // Todo: Find better way to force switch-gdx to override gdx files
         }
 
         javaexec {
@@ -74,6 +78,21 @@ task transpile(dependsOn: 'build') {
                 include "*.cpp"
             }
             into "$buildDir/dist/source"
+        }
+
+        copy {
+            from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
+            include "**/*.h"
+            into "$buildDir/dist/include"
+            includeEmptyDirs = false
+        }
+
+        copy {
+            from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
+            include "**/*.c"
+            include "**/*.cpp"
+            into "$buildDir/dist/source"
+            includeEmptyDirs = false
         }
 
         copy {
@@ -189,11 +208,18 @@ task run(dependsOn: 'transpile') {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+                commandLine 'cmd', '/c', "rsync -icrvh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude '.idea' $buildDir/dist/ $buildDir/dist_incremental"
+            } else {
+                commandLine 'bash', '-c', "rsync -icrvh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude '.idea' $buildDir/dist/ $buildDir/dist_incremental"
+            }
+        }
+        exec {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
                 commandLine 'cmd', '/c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build -G Ninja && cmake --build build'
             } else {
                 commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build -G Ninja && cmake --build build'
             }
-            workingDir "$buildDir/dist"
+            workingDir "$buildDir/dist_incremental"
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
@@ -201,29 +227,37 @@ task run(dependsOn: 'transpile') {
             } else {
                 commandLine 'bash', '-c', './build/dist'
             }
-            workingDir "$buildDir/dist"
+            workingDir "$buildDir/dist_incremental"
         }
     }
 }
 
 task deploy(dependsOn: 'transpile') {
     doLast {
-        project.file("$buildDir/dist/build").mkdir()
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', 'make -j4'
+                commandLine 'cmd', '/c', "rsync -icrvh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude '.idea' $buildDir/dist/ $buildDir/dist_incremental"
             } else {
-                commandLine 'bash', '-c', 'make -j4'
+                commandLine 'bash', '-c', "rsync -icrvh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude '.idea' $buildDir/dist/ $buildDir/dist_incremental"
             }
-            workingDir "$buildDir/dist"
+        }
+
+        project.file("$buildDir/dist_incremental/build").mkdir()
+        exec {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+                commandLine 'cmd', '/c', 'make -j8'
+            } else {
+                commandLine 'bash', '-c', 'make -j8'
+            }
+            workingDir "$buildDir/dist_incremental"
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', '$DEVKITPRO/tools/bin/nxlink --server ./dist.nro'
+                commandLine 'cmd', '/c', '$DEVKITPRO/tools/bin/nxlink --server ./dist_incremental.nro'
             } else {
-                commandLine 'bash', '-c', '$DEVKITPRO/tools/bin/nxlink --server ./dist.nro'
+                commandLine 'bash', '-c', '$DEVKITPRO/tools/bin/nxlink --server ./dist_incremental.nro'
             }
-            workingDir "$buildDir/dist"
+            workingDir "$buildDir/dist_incremental"
         }
     }
 }

@@ -1,2 +1,0 @@
-if (System.env.JITPACK)
-    throw new StopActionException('Shouldn\'t build with JitPack')

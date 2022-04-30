@@ -1,0 +1,5 @@
+include 'switch-gdx'
+
+if (!System.env.JITPACK) {
+    include 'tests'
+}

@@ -12,6 +12,13 @@
         "com.badlogic.gdx.maps.tiled.TiledMap",
         "com.badlogic.gdx.assets.AssetDescriptor",
         "com.badlogic.gdx.utils.XmlReader.Element",
-        "com.badlogic.gdx.graphics.Texture"
+        "com.badlogic.gdx.graphics.Texture",
+        "com.badlogic.gdx.graphics.g3d.particles.ParticleController",
+        "com.badlogic.gdx.graphics.g3d.Renderable",
+        "com.badlogic.gdx.graphics.g3d.particles.renderers.BillboardControllerRenderData",
+        "com.badlogic.gdx.graphics.g3d.particles.influencers.RegionInfluencer.AspectTextureRegion",
+        "com.badlogic.gdx.graphics.g3d.particles.influencers.Influencer",
+        "com.badlogic.gdx.graphics.g3d.particles.ParallelArray.Channel",
+        "com.badlogic.gdx.physics.box2d.World"
     ]
 }

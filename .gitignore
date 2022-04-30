@@ -1,5 +1,8 @@
 # https://github.com/github/gitignore/blob/main/Java.gitignore
 
+.idea
+.gradle
+
 # Compiled class file
 *.class
 
