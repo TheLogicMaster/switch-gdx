@@ -400,10 +400,10 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new ProjectTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new RunnablePostTest();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new RunnablePostTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new ScrollPane2Test();
@@ -912,10 +912,10 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new TextAreaTest3();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new FreeTypeAtlasTest();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FreeTypeAtlasTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new FreeTypeDisposeTest();
@@ -932,10 +932,10 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new FreeTypeMetricsTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new FreeTypePackTest();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new FreeTypePackTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new FreeTypeTest();

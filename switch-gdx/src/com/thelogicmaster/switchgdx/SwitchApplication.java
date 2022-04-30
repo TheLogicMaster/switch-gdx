@@ -18,11 +18,11 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class SwitchApplication implements Application {
 
-	private final SwitchGraphics graphics;
-	private final SwitchFiles files;
-	private final SwitchInput input;
-	private final SwitchNet net;
-	private final SwitchAudio audio;
+	private SwitchGraphics graphics;
+	private SwitchFiles files;
+	private SwitchInput input;
+	private SwitchNet net;
+	private SwitchAudio audio;
 
 	private boolean running;
 	private ApplicationLogger applicationLogger;
@@ -38,41 +38,61 @@ public class SwitchApplication implements Application {
 	public SwitchApplication (ApplicationListener listener) {
 		this.listener = listener;
 
-		applicationLogger = new SwitchLogger();
-		graphics = new SwitchGraphics();
-		files = new SwitchFiles();
-		input = new SwitchInput();
-		net = new SwitchNet();
-		audio = new SwitchAudio();
+		try {
+			applicationLogger = new SwitchLogger();
+			graphics = new SwitchGraphics();
+			files = new SwitchFiles();
+			input = new SwitchInput();
+			net = new SwitchNet();
+			audio = new SwitchAudio();
 
-		Gdx.app = this;
-		Gdx.input = this.getInput();
-		Gdx.audio = this.getAudio();
-		Gdx.files = this.getFiles();
-		Gdx.graphics = this.getGraphics();
-		Gdx.net = this.getNet();
+			Gdx.app = this;
+			Gdx.input = this.getInput();
+			Gdx.audio = this.getAudio();
+			Gdx.files = this.getFiles();
+			Gdx.graphics = this.getGraphics();
+			Gdx.net = this.getNet();
 
-		Controllers.preferredManager = "com.thelogicmaster.switchgdx.SwitchControllerManager";
-		Controllers.getCurrent();
-		SwitchControllerManager controllerManager = SwitchControllerManager.getInstance();
+			Controllers.preferredManager = "com.thelogicmaster.switchgdx.SwitchControllerManager";
+			Controllers.getCurrent();
+			SwitchControllerManager controllerManager = SwitchControllerManager.getInstance();
 
-		running = true;
-		listener.create();
+			running = true;
+			listener.create();
 
-		listener.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			listener.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		while (running && update()) {
-			graphics.update();
-			audio.update(graphics.getDeltaTime());
-			input.update();
-			controllerManager.update();
-			executeRunnables();
-			listener.render();
+			while (running && update()) {
+				graphics.update();
+				audio.update(graphics.getDeltaTime());
+				input.update();
+				controllerManager.update();
+				executeRunnables();
+				listener.render();
+			}
+
+			for (LifecycleListener lifecycleListener : new Array.ArrayIterable<>(lifecycleListeners))
+				lifecycleListener.dispose();
+			listener.dispose();
+		} catch (Throwable t) {
+			try {
+				if (Thread.currentThread().getUncaughtExceptionHandler() != null)
+					Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
+			} catch (Exception ignored){}
+			try {
+				if (Thread.getDefaultUncaughtExceptionHandler() != null)
+					Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
+			} catch (Exception ignored){}
+
+			t.printStackTrace();
+			System.err.println("Message: " + t.getMessage());
+			Throwable cause = t.getCause();
+			while (cause != null) {
+				System.err.println("Message: " + cause.getMessage());
+				cause = cause.getCause();
+			}
 		}
 
-		for (LifecycleListener lifecycleListener : new Array.ArrayIterable<>(lifecycleListeners))
-			lifecycleListener.dispose();
-		listener.dispose();
 		dispose();
 
 		System.exit(0);

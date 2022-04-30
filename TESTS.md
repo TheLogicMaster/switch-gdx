@@ -54,13 +54,13 @@
 - FrameBufferCubemap: Works
 - FrameBuffer: Works
 - FramebufferToTexture: Works
-- FreeTypeAtlas: EnumMap not yet implemented
+- FreeTypeAtlas: Font has incorrect background
 - FreeTypeDispose: Heap usage not yet implemented
-- FreeTypeFontLoader: Font has blue background
-- FreeTypeIncremental: Font has blue background
-- FreeTypeMetrics: Font has blue background
-- FreeType: Font has blue background
-- FreeTypePack: EnumMap not yet implemented
+- FreeTypeFontLoader: Font has incorrect background
+- FreeTypeIncremental: Font has incorrect background
+- FreeTypeMetrics: Font has incorrect background
+- FreeType: Font has incorrect background
+- FreeTypePack: Font has incorrect background
 - GLES30: Works
 - GLProfilerError: Can't test without keyboard support
 - GWTLossyPremultipliedAlpha: Works
@@ -134,6 +134,7 @@
 - ReflectionCorrectness: Doesn't work
 - Reflection: Doesn't work
 - Rotation: Works
+- RunnablePost: Works
 - Scene2d: Works
 - ScrollPane2: Works
 - ScrollPaneScrollBars: Works

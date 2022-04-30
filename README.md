@@ -35,7 +35,8 @@ Set the working directory in the run config to the `build/$project` project dire
 can be properly loaded at runtime. To trace back a seg fault, simply press the debug icon next to the run
 configuration, and it should jump right to the exception and show the native stack trace. By inspecting the
 generated code and call stack, null fields can be found and traced back to Java source code by looking at the
-`__CN1_DEBUG_INFO` macro line numbers. 
+`__CN1_DEBUG_INFO` macro line numbers. Code changes may lead to additional classes being included by the transpiler, in which case
+the CLion CMake project needs to be reloaded using `Tools/Cmake/Reload CMake Project` or it won't compile.
 
 ## Features implemented
 - Regex (RegExodus)
