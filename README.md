@@ -63,7 +63,6 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - GL30?
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
 - Bullet
-- gdx-dialogs
 
 ## Needs Testing
 - Windows everything, CMake libs, filesystem APIs, Gradle task commands, file separators
@@ -86,4 +85,4 @@ under `Tools/Cmake/Reload CMake Project` or it won't run. Sometimes closing CLio
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so comment out for now (Probably related to setjmp/try-catch)
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
 - Flick gesture detection is broken
-- Crashes on exit again
+- GC bug where it tries to dispose of primitive array contents (JSON test)

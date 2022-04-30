@@ -52,7 +52,7 @@ ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
 			$(ARCH) $(DEFINES)
 
-CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -DNOJNI `$(PREFIX)pkg-config --cflags SDL2_mixer` `freetype-config --cflags` -Wno-unused-variable -DJOIN_ON_EXIT
+CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -DNOJNI `$(PREFIX)pkg-config --cflags SDL2_mixer` `freetype-config --cflags` -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -DJOIN_ON_EXIT
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 

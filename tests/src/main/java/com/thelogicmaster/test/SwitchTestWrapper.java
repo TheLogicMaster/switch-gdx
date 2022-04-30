@@ -92,6 +92,11 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 	@Override
 	protected Instancer[] getTestList () {
 		return new Instancer[] {new SwitchInstancer() {
+			@Override
+			public GdxTest instance () {
+				return new SwitchInputTest();
+			}
+		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new AccelerometerTest();
 			}

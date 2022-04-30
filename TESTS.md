@@ -85,7 +85,7 @@
 - InverseKinematics: Works
 - IsometricTile: Works
 - Issue: Works
-- Json: Crashes
+- Json: Works with occasional primitive array related GC crashes
 - KTX: Crash
 - LabelScale: Works
 - Label: Works
