@@ -17,6 +17,10 @@ configurations {
     transpiler {
         transitive = false
     }
+    switchgdx {
+        transitive = false
+    }
+    implementation.extendsFrom(switchgdx)
 }
 
 dependencies {
@@ -27,12 +31,12 @@ dependencies {
 
     // Use latest GitHub commit
     implementation 'com.thelogicmaster.clearwing-vm:runtime:-SNAPSHOT'
-    implementation 'com.thelogicmaster:switch-gdx:-SNAPSHOT'
+    switchgdx 'com.thelogicmaster:switch-gdx:-SNAPSHOT'
     transpiler 'com.thelogicmaster.clearwing-vm:transpiler:-SNAPSHOT'
 
     // Use specified release
 //    implementation 'com.thelogicmaster.clearwing-vm:runtime:0.1'
-//    implementation 'com.thelogicmaster:switch-gdx:0.1'
+//    switchgdx 'com.thelogicmaster:switch-gdx:0.1'
 //    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:0.1'
 }
 
@@ -51,7 +55,17 @@ task transpile(dependsOn: 'build') {
             exclude "*/**/*.c"
             exclude "*/**/*.cpp"
             includeEmptyDirs = false
-            duplicatesStrategy = 'EXCLUDE' // Todo: Find better way to force switch-gdx to override gdx files
+        }
+
+        copy {
+            from sourceSets.main.output
+            from ({ zipTree(configurations.switchgdx.singleFile.absolutePath) })
+            into "$buildDir/transpiler_input"
+            exclude "META-INF", "META-INF/**"
+            exclude "*/**/*.h"
+            exclude "*/**/*.c"
+            exclude "*/**/*.cpp"
+            includeEmptyDirs = false
         }
 
         javaexec {

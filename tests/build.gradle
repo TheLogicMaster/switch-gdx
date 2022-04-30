@@ -17,6 +17,10 @@ configurations {
     transpiler {
         transitive = false
     }
+    switchgdx {
+        transitive = false
+    }
+    implementation.extendsFrom(switchgdx)
 }
 
 dependencies {
@@ -25,7 +29,7 @@ dependencies {
     implementation 'com.github.tommyettinger:RegExodus:0.1.13'
     implementation "com.badlogicgames.gdx:gdx-freetype:1.10.0"
     implementation "com.badlogicgames.gdx:gdx-box2d:1.10.0"
-    implementation project(':switch-gdx')
+    switchgdx project(':switch-gdx')
 
     implementation files('libs/gdx-tests.jar')
 
@@ -53,7 +57,17 @@ task transpile(dependsOn: 'build') {
             exclude "*/**/*.c"
             exclude "*/**/*.cpp"
             includeEmptyDirs = false
-            duplicatesStrategy = 'EXCLUDE' // Todo: Find better way to force switch-gdx to override gdx files
+        }
+
+        copy {
+            from sourceSets.main.output
+            from ({ zipTree(configurations.switchgdx.singleFile.absolutePath) })
+            into "$buildDir/transpiler_input"
+            exclude "META-INF", "META-INF/**"
+            exclude "*/**/*.h"
+            exclude "*/**/*.c"
+            exclude "*/**/*.cpp"
+            includeEmptyDirs = false
         }
 
         javaexec {
