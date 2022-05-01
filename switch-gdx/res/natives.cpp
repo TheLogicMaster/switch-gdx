@@ -9,6 +9,7 @@
 #include "gdx_matrix4.h"
 #include "gdx2d.h"
 #include "etc1_utils.h"
+#include "tinyfiledialogs.h"
 
 namespace fs = std::filesystem;
 
@@ -27,6 +28,7 @@ extern "C" {
 #include "com_thelogicmaster_switchgdx_SwitchMusic.h"
 #include "com_thelogicmaster_switchgdx_SwitchSound.h"
 #include "com_badlogic_gdx_utils_GdxRuntimeException.h"
+#include "com_badlogic_gdx_Input_TextInputListener.h"
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -976,8 +978,33 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_getTouchData___int_1ARRAY(COD
     memcpy((void *) ((JAVA_ARRAY) touchData)->data, touches, sizeof(touches));
 }
 
-JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_getTextInput___com_badlogic_gdx_Input_TextInputListener_java_lang_String_java_lang_String_java_lang_String_com_badlogic_gdx_Input_OnscreenKeyboardType(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_OBJECT __cn1Arg1, JAVA_OBJECT __cn1Arg2, JAVA_OBJECT __cn1Arg3, JAVA_OBJECT __cn1Arg4, JAVA_OBJECT __cn1Arg5) {
-
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_getTextInput___com_badlogic_gdx_Input_TextInputListener_java_lang_String_java_lang_String_java_lang_String_com_badlogic_gdx_Input_OnscreenKeyboardType(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_OBJECT listener, JAVA_OBJECT title, JAVA_OBJECT text, JAVA_OBJECT hint, JAVA_OBJECT type) {
+#ifdef __SWITCH__
+    Result rc;
+    SwkbdConfig kbd;
+    char buffer[256];
+    rc = swkbdCreate(&kbd, 0);
+    if (rc)
+        goto failed;
+    swkbdConfigMakePresetDefault(&kbd);
+    swkbdConfigSetHeaderText(&kbd, toNativeString(threadStateData, title));
+    swkbdConfigSetGuideText(&kbd, toNativeString(threadStateData, text));
+    swkbdConfigSetInitialText(&kbd, toNativeString(threadStateData, hint));
+    swkbdConfigSetStringLenMax(&kbd, sizeof(buffer) - 1);
+    rc = swkbdShow(&kbd, buffer, sizeof(buffer));
+    if (rc)
+        goto failed;
+    com_badlogic_gdx_Input_TextInputListener_input___java_lang_String(threadStateData, listener, fromNativeString(threadStateData, buffer));
+    return;
+#else
+    auto input = tinyfd_inputBox(toNativeString(threadStateData, title), toNativeString(threadStateData, text), "");
+    if (!input)
+        goto failed;
+    com_badlogic_gdx_Input_TextInputListener_input___java_lang_String(threadStateData, listener, fromNativeString(threadStateData, input));
+    return;
+#endif
+failed:
+    com_badlogic_gdx_Input_TextInputListener_canceled__(threadStateData, listener);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glActiveTexture___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT texture) {

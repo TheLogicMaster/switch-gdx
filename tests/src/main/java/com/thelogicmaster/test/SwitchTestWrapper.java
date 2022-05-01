@@ -272,18 +272,14 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new BitmapFontDistanceFieldTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new BitmapFontWriterTest();
-//			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new Bresenham2Test();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new CollectionsTest();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new CollectionsTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new ContainerTest();
@@ -380,14 +376,14 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new PixelPerfectTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new PixmapPackerIOTest();
-//			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new PngTest();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PixmapPackerIOTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new PngTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new PolygonRegionTest();
@@ -556,10 +552,10 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new AnimationTest();
 			}
-//		}, new SwitchInstancer() {
-//			public GdxTest instance () {
-//				return new AnnotationTest();
-//			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new AnnotationTest();
+			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new AssetManagerTest();

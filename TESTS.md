@@ -8,6 +8,7 @@
 - Animation3D: JSON deserialization error, stack corruption
 - Animation: Works
 - Anisotropy: Works
+- Annotation: Annotations not yet implemented
 - AssetManager: Crashes on I18N stuff
 - AtlasIssue: Works
 - AudioDevice: Not yet implemented
@@ -28,6 +29,7 @@
 - Box2DTestCollection: Works
 - Bresenham2: Works
 - BufferUtils: Works
+- Collections: Map hashing doesn't work, needs method optimization fix
 - Color: Works
 - ComplexAction: Works
 - Container: Works
@@ -120,8 +122,10 @@
 - PixelPerfect: Works
 - PixelsPerInch: Works, but not accurate for Switch yet
 - PixmapBlending: Works
+- PixmapPackerIO: DeflaterOutputStream blocks indefinitely
 - PixmapPacker: Works
 - Pixmap: Works
+- PNG: FileHandle parent crash
 - PolarAcceleration: Works
 - PolygonRegion: Works
 - PolygonSprite: Works
@@ -177,6 +181,7 @@
 - TextureArray: GL30 not yet implemented
 - TextureAtlas: Works
 - TextureData: Works
+- TextureDownload: Networking not yet implemented
 - TextureRegion3D: Works
 - TideMapAssetManager: Works
 - TideMapDirectLoader: Works
