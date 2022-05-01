@@ -17,6 +17,9 @@ configurations {
     transpiler {
         transitive = false
     }
+    jnigen {
+        transitive = false
+    }
     switchgdx {
         transitive = false
     }
@@ -36,10 +39,12 @@ dependencies {
     // Use latest GitHub commit
     implementation 'com.thelogicmaster.clearwing-vm:runtime:-SNAPSHOT'
     transpiler 'com.thelogicmaster.clearwing-vm:transpiler:-SNAPSHOT'
+    jnigen 'com.thelogicmaster.clearwing-vm:jnigen:-SNAPSHOT'
 
     // Use specified release
 //    implementation 'com.thelogicmaster.clearwing-vm:runtime:0.1'
 //    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:0.1'
+//    jnigen 'com.thelogicmaster.clearwing-vm:jnigen:0.1'
 }
 
 task transpile(dependsOn: 'build') {
@@ -68,6 +73,15 @@ task transpile(dependsOn: 'build') {
             exclude "*/**/*.c"
             exclude "*/**/*.cpp"
             includeEmptyDirs = false
+        }
+
+        javaexec {
+            main = "-jar"
+            args = [
+                    "$configurations.jnigen.singleFile.absolutePath",
+                    "$projectDir/src/main/java",
+                    "$buildDir/transpiler_input"
+            ]
         }
 
         javaexec {
