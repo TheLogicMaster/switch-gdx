@@ -177,7 +177,7 @@
 - TextArea2: Works
 - TextArea3: Works
 - TextButton: Works
-- TextInputDialog: Not yet implemented
+- TextInputDialog: Works
 - TextureArray: GL30 not yet implemented
 - TextureAtlas: Works
 - TextureData: Works

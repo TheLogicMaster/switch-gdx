@@ -98,15 +98,15 @@ task transpile(dependsOn: 'build') {
 
         copy {
             from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
-            include "**/*.h"
+            include "*/**/*.h"
             into "$buildDir/dist/include"
             includeEmptyDirs = false
         }
 
         copy {
             from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
-            include "**/*.c"
-            include "**/*.cpp"
+            include "*/**/*.c"
+            include "*/**/*.cpp"
             into "$buildDir/dist/source"
             includeEmptyDirs = false
         }

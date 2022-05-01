@@ -47,6 +47,7 @@ Thanks for contributions, bug corrections & thorough testing to:
 - Paul Rouget
 */
 
+#ifndef __SWITCH__
 
 #ifndef __sun
 #ifndef _POSIX_C_SOURCE
@@ -84,8 +85,8 @@ Thanks for contributions, bug corrections & thorough testing to:
  #include <limits.h>
  #include <unistd.h>
  #include <dirent.h> /* on old systems try <sys/dir.h> instead */
-// #include <termios.h>
-// #include <sys/utsname.h>
+ #include <termios.h>
+ #include <sys/utsname.h>
  #include <signal.h> /* on old systems try <sys/signal.h> instead */
  #define SLASH "/"
 #endif /* _WIN32 */
@@ -3225,14 +3226,13 @@ static char gPythonName[16];
 
 int tfd_isDarwin(void)
 {
-    return 0;
-//        static int lsIsDarwin = -1 ;
-//        struct utsname lUtsname ;
-//        if ( lsIsDarwin < 0 )
-//        {
-//                lsIsDarwin = !uname(&lUtsname) && !strcmp(lUtsname.sysname,"Darwin") ;
-//        }
-//        return lsIsDarwin ;
+        static int lsIsDarwin = -1 ;
+        struct utsname lUtsname ;
+        if ( lsIsDarwin < 0 )
+        {
+                lsIsDarwin = !uname(&lUtsname) && !strcmp(lUtsname.sysname,"Darwin") ;
+        }
+        return lsIsDarwin ;
 }
 
 
@@ -4186,8 +4186,8 @@ int tinyfd_messageBox(
         int lWasXterm = 0 ;
         int lResult ;
         char lChar ;
-//        struct termios infoOri;
-//        struct termios info;
+        struct termios infoOri;
+        struct termios info;
         size_t lTitleLen ;
         size_t lMessageLen ;
 
@@ -5044,86 +5044,86 @@ my \\$notificationsObject = \\$notificationsService->get_object('/org/freedeskto
                 }
                 strcat( lDialogString , "\"" ) ;
         }
-//        else
-//        {
-//                if (aTitle&&!strcmp(aTitle,"tinyfd_query")){strcpy(tinyfd_response,"basicinput");return 0;}
-//                if ( !gWarningDisplayed && !tinyfd_forceConsole)
-//                {
-//                        gWarningDisplayed = 1 ;
-//                        printf("\n\n%s\n", gTitle);
-//                        printf("%s\n\n", tinyfd_needs);
-//                }
-//                if ( aTitle && strlen(aTitle) )
-//                {
-//                        printf("\n%s\n", aTitle);
-//                }
-//
-//                tcgetattr(0, &infoOri);
-//                tcgetattr(0, &info);
-//                info.c_lflag &= ~ICANON;
-//                info.c_cc[VMIN] = 1;
-//                info.c_cc[VTIME] = 0;
-//                tcsetattr(0, TCSANOW, &info);
-//                if ( aDialogType && !strcmp("yesno",aDialogType) )
-//                {
-//                        do
-//                        {
-//                                if ( aMessage && strlen(aMessage) )
-//                                {
-//                                        printf("\n%s\n",aMessage);
-//                                }
-//                                printf("y/n: "); fflush(stdout);
-//                                lChar = tolower( getchar() ) ;
-//                                printf("\n\n");
-//                        }
-//                        while ( lChar != 'y' && lChar != 'n' );
-//                        lResult = lChar == 'y' ? 1 : 0 ;
-//                }
-//                else if ( aDialogType && !strcmp("okcancel",aDialogType) )
-//                {
-//                        do
-//                        {
-//                                if ( aMessage && strlen(aMessage) )
-//                                {
-//                                        printf("\n%s\n",aMessage);
-//                                }
-//                                printf("[O]kay/[C]ancel: "); fflush(stdout);
-//                                lChar = tolower( getchar() ) ;
-//                                printf("\n\n");
-//                        }
-//                        while ( lChar != 'o' && lChar != 'c' );
-//                        lResult = lChar == 'o' ? 1 : 0 ;
-//                }
-//                else if ( aDialogType && !strcmp("yesnocancel",aDialogType) )
-//                {
-//                        do
-//                        {
-//                                if ( aMessage && strlen(aMessage) )
-//                                {
-//                                        printf("\n%s\n",aMessage);
-//                                }
-//                                printf("[Y]es/[N]o/[C]ancel: "); fflush(stdout);
-//                                lChar = tolower( getchar() ) ;
-//                                printf("\n\n");
-//                        }
-//                        while ( lChar != 'y' && lChar != 'n' && lChar != 'c' );
-//                        lResult = (lChar == 'y') ? 1 : (lChar == 'n') ? 2 : 0 ;
-//                }
-//                else
-//                {
-//                        if ( aMessage && strlen(aMessage) )
-//                        {
-//                                printf("\n%s\n\n",aMessage);
-//                        }
-//                        printf("press enter to continue "); fflush(stdout);
-//                        getchar() ;
-//                        printf("\n\n");
-//                        lResult = 1 ;
-//                }
-//                tcsetattr(0, TCSANOW, &infoOri);
-//                free(lDialogString);
-//                return lResult ;
-//        }
+        else
+        {
+                if (aTitle&&!strcmp(aTitle,"tinyfd_query")){strcpy(tinyfd_response,"basicinput");return 0;}
+                if ( !gWarningDisplayed && !tinyfd_forceConsole)
+                {
+                        gWarningDisplayed = 1 ;
+                        printf("\n\n%s\n", gTitle);
+                        printf("%s\n\n", tinyfd_needs);
+                }
+                if ( aTitle && strlen(aTitle) )
+                {
+                        printf("\n%s\n", aTitle);
+                }
+
+                tcgetattr(0, &infoOri);
+                tcgetattr(0, &info);
+                info.c_lflag &= ~ICANON;
+                info.c_cc[VMIN] = 1;
+                info.c_cc[VTIME] = 0;
+                tcsetattr(0, TCSANOW, &info);
+                if ( aDialogType && !strcmp("yesno",aDialogType) )
+                {
+                        do
+                        {
+                                if ( aMessage && strlen(aMessage) )
+                                {
+                                        printf("\n%s\n",aMessage);
+                                }
+                                printf("y/n: "); fflush(stdout);
+                                lChar = tolower( getchar() ) ;
+                                printf("\n\n");
+                        }
+                        while ( lChar != 'y' && lChar != 'n' );
+                        lResult = lChar == 'y' ? 1 : 0 ;
+                }
+                else if ( aDialogType && !strcmp("okcancel",aDialogType) )
+                {
+                        do
+                        {
+                                if ( aMessage && strlen(aMessage) )
+                                {
+                                        printf("\n%s\n",aMessage);
+                                }
+                                printf("[O]kay/[C]ancel: "); fflush(stdout);
+                                lChar = tolower( getchar() ) ;
+                                printf("\n\n");
+                        }
+                        while ( lChar != 'o' && lChar != 'c' );
+                        lResult = lChar == 'o' ? 1 : 0 ;
+                }
+                else if ( aDialogType && !strcmp("yesnocancel",aDialogType) )
+                {
+                        do
+                        {
+                                if ( aMessage && strlen(aMessage) )
+                                {
+                                        printf("\n%s\n",aMessage);
+                                }
+                                printf("[Y]es/[N]o/[C]ancel: "); fflush(stdout);
+                                lChar = tolower( getchar() ) ;
+                                printf("\n\n");
+                        }
+                        while ( lChar != 'y' && lChar != 'n' && lChar != 'c' );
+                        lResult = (lChar == 'y') ? 1 : (lChar == 'n') ? 2 : 0 ;
+                }
+                else
+                {
+                        if ( aMessage && strlen(aMessage) )
+                        {
+                                printf("\n%s\n\n",aMessage);
+                        }
+                        printf("press enter to continue "); fflush(stdout);
+                        getchar() ;
+                        printf("\n\n");
+                        lResult = 1 ;
+                }
+                tcsetattr(0, TCSANOW, &infoOri);
+                free(lDialogString);
+                return lResult ;
+        }
 
         if (tinyfd_verbose) printf( "lDialogString: %s\n" , lDialogString ) ;
 
@@ -5367,8 +5367,8 @@ char * tinyfd_inputBox(
         int lWasGraphicDialog = 0 ;
         int lWasXterm = 0 ;
         int lWasBasicXterm = 0 ;
-//        struct termios oldt ;
-//        struct termios newt ;
+        struct termios oldt ;
+        struct termios newt ;
         char * lEOF;
         size_t lTitleLen ;
         size_t lMessageLen ;
@@ -5816,68 +5816,68 @@ frontmost of process \\\"Python\\\" to true' ''');");
 			free(lDialogString);
 			return NULL;
         }
-//        else
-//        {
-//                if (aTitle&&!strcmp(aTitle,"tinyfd_query")){strcpy(tinyfd_response,"basicinput");return (char *)0;}
-//                if ( !gWarningDisplayed && !tinyfd_forceConsole)
-//                {
-//                        gWarningDisplayed = 1 ;
-//                        tinyfd_messageBox(gTitle,tinyfd_needs,"ok","warning",0);
-//                }
-//                if ( aTitle && strlen(aTitle) )
-//                {
-//                        printf("\n%s\n", aTitle);
-//                }
-//                if ( aMessage && strlen(aMessage) )
-//                {
-//                        printf("\n%s\n",aMessage);
-//                }
-//                printf("(esc+enter to cancel): "); fflush(stdout);
-//                if ( ! aDefaultInput )
-//                {
-//                        tcgetattr(STDIN_FILENO, & oldt) ;
-//                        newt = oldt ;
-//                        newt.c_lflag &= ~ECHO ;
-//                        tcsetattr(STDIN_FILENO, TCSANOW, & newt);
-//                }
-//
-//                lEOF = fgets(lBuff, MAX_PATH_OR_CMD, stdin);
-//                /* printf("lbuff<%c><%d>\n",lBuff[0],lBuff[0]); */
-//                if ( ! lEOF  || (lBuff[0] == '\0') )
-//                {
-//                        free(lDialogString);
-//                        return NULL;
-//                }
-//
-//                if ( lBuff[0] == '\n' )
-//                {
-//                        lEOF = fgets(lBuff, MAX_PATH_OR_CMD, stdin);
-//                        /* printf("lbuff<%c><%d>\n",lBuff[0],lBuff[0]); */
-//                        if ( ! lEOF  || (lBuff[0] == '\0') )
-//                        {
-//                                free(lDialogString);
-//                                return NULL;
-//                        }
-//                }
-//
-//                if ( ! aDefaultInput )
-//                {
-//                        tcsetattr(STDIN_FILENO, TCSANOW, & oldt);
-//                        printf("\n");
-//                }
-//                printf("\n");
-//                if ( strchr(lBuff,27) )
-//                {
-//                        free(lDialogString);
-//                        return NULL ;
-//                }
-//                if ( lBuff[strlen( lBuff ) -1] == '\n' )
-//                {
-//                        lBuff[strlen( lBuff ) -1] = '\0' ;
-//                }
-//                free(lDialogString);
-//                return lBuff ;
-//        }
+        else
+        {
+                if (aTitle&&!strcmp(aTitle,"tinyfd_query")){strcpy(tinyfd_response,"basicinput");return (char *)0;}
+                if ( !gWarningDisplayed && !tinyfd_forceConsole)
+                {
+                        gWarningDisplayed = 1 ;
+                        tinyfd_messageBox(gTitle,tinyfd_needs,"ok","warning",0);
+                }
+                if ( aTitle && strlen(aTitle) )
+                {
+                        printf("\n%s\n", aTitle);
+                }
+                if ( aMessage && strlen(aMessage) )
+                {
+                        printf("\n%s\n",aMessage);
+                }
+                printf("(esc+enter to cancel): "); fflush(stdout);
+                if ( ! aDefaultInput )
+                {
+                        tcgetattr(STDIN_FILENO, & oldt) ;
+                        newt = oldt ;
+                        newt.c_lflag &= ~ECHO ;
+                        tcsetattr(STDIN_FILENO, TCSANOW, & newt);
+                }
+
+                lEOF = fgets(lBuff, MAX_PATH_OR_CMD, stdin);
+                /* printf("lbuff<%c><%d>\n",lBuff[0],lBuff[0]); */
+                if ( ! lEOF  || (lBuff[0] == '\0') )
+                {
+                        free(lDialogString);
+                        return NULL;
+                }
+
+                if ( lBuff[0] == '\n' )
+                {
+                        lEOF = fgets(lBuff, MAX_PATH_OR_CMD, stdin);
+                        /* printf("lbuff<%c><%d>\n",lBuff[0],lBuff[0]); */
+                        if ( ! lEOF  || (lBuff[0] == '\0') )
+                        {
+                                free(lDialogString);
+                                return NULL;
+                        }
+                }
+
+                if ( ! aDefaultInput )
+                {
+                        tcsetattr(STDIN_FILENO, TCSANOW, & oldt);
+                        printf("\n");
+                }
+                printf("\n");
+                if ( strchr(lBuff,27) )
+                {
+                        free(lDialogString);
+                        return NULL ;
+                }
+                if ( lBuff[strlen( lBuff ) -1] == '\n' )
+                {
+                        lBuff[strlen( lBuff ) -1] = '\0' ;
+                }
+                free(lDialogString);
+                return lBuff ;
+        }
 
         if (tinyfd_verbose) printf( "lDialogString: %s\n" , lDialogString ) ;
         lIn = popen( lDialogString , "r" );
@@ -7748,4 +7748,6 @@ tinyfd_messageBox("The selected hexcolor is",
 #pragma warning(default:4996)
 #pragma warning(default:4100)
 #pragma warning(default:4706)
+#endif
+
 #endif
