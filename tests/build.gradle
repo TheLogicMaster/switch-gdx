@@ -244,10 +244,11 @@ task transpile(dependsOn: 'build') {
 
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' $buildDir/dist/ $buildDir/${project.name}"
+                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${project.name}"
             } else {
-                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' $buildDir/dist/ $buildDir/${project.name}"
+                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${project.name}"
             }
+            workingDir "$buildDir"
         }
     }
 }
@@ -256,7 +257,7 @@ task run(dependsOn: 'transpile') {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
+                commandLine 'cmd', '/c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G "MSYS Makefiles" && cmake --build build-run'
             } else {
                 commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
             }

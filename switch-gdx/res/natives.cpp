@@ -44,8 +44,7 @@ extern "C" {
 # include <sys/errno.h>
 # include <unistd.h>
 #else
-# define GL_GLEXT_PROTOTYPES
-# include <SDL_opengl.h>
+#include "glad/gles2.h"
 #endif
 
 static int touches[16 * 3];
@@ -157,6 +156,8 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
 
     SDL_GL_CreateContext(window);
     SDL_GL_SetSwapInterval(1);
+
+    gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress);
 #endif
 
     Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG);
@@ -504,7 +505,11 @@ JAVA_BOOLEAN java_io_File_isDirectory___R_boolean(CODENAME_ONE_THREAD_STATE, JAV
 JAVA_LONG java_io_File_lastModified___R_long(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
     struct stat s;
     stat(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path), &s);
+#ifdef _WIN32
+    return s.st_mtime;
+#else
     return s.st_mtim.tv_sec;
+#endif
 }
 
 JAVA_LONG java_io_File_length___R_long(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
@@ -518,8 +523,16 @@ JAVA_OBJECT java_io_File_list___R_java_lang_String_1ARRAY(CODENAME_ONE_THREAD_ST
     auto path = toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path);
     if (!fs::is_directory(path))
         return JAVA_NULL;
-    for (const auto & entry : fs::directory_iterator(path))
-        collected.emplace_back(newStringFromCString(threadStateData, entry.path().c_str()));
+    for (const auto & entry : fs::directory_iterator(path)) {
+#ifdef _WIN32
+        std::wstring wstring(entry.path().c_str());
+        std::string string(wstring.begin(), wstring.end());
+        auto filePath = string.c_str();
+#else
+        auto filePath = entry.path().c_str();
+#endif
+        collected.emplace_back(newStringFromCString(threadStateData, filePath));
+    }
     auto array = __NEW_ARRAY_java_lang_String(threadStateData, (int)collected.size());
     for (int i = 0; i < (int)collected.size(); i++)
         ((JAVA_OBJECT *)((JAVA_ARRAY)array)->data)[i] = collected[i];
@@ -527,7 +540,11 @@ JAVA_OBJECT java_io_File_list___R_java_lang_String_1ARRAY(CODENAME_ONE_THREAD_ST
 }
 
 JAVA_BOOLEAN java_io_File_mkdir___R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+#ifdef _WIN32
+    return !mkdir(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path));
+#else
     return !mkdir(toNativeString(threadStateData, ((obj__java_io_File *) __cn1ThisObject)->java_io_File_path), 0777);
+#endif
 }
 
 void throwIOException(CODENAME_ONE_THREAD_STATE, const char *reason) {

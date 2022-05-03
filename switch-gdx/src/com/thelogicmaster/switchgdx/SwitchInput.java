@@ -388,7 +388,7 @@ public class SwitchInput implements Input {
 		case Keys.DPAD_DOWN:
 			return 15;
 		case Keys.DPAD_LEFT:
-			return 16;
+			return 12;
 		case Keys.BUTTON_THUMBL:
 			return 4;
 		case Keys.BUTTON_THUMBR:

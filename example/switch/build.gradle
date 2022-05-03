@@ -218,10 +218,11 @@ task transpile(dependsOn: 'build') {
 
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' $buildDir/dist/ $buildDir/${rootProject.name}"
+                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
             } else {
-                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' $buildDir/dist/ $buildDir/${rootProject.name}"
+                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
             }
+            workingDir "$buildDir"
         }
     }
 }
@@ -230,7 +231,7 @@ task run(dependsOn: 'transpile') {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
+                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir/${rootProject.name}", '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G \'MSYS Makefiles\' && cmake --build build-run || sleep 50000'
             } else {
                 commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
             }
@@ -238,11 +239,11 @@ task run(dependsOn: 'transpile') {
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', './build-run/dist'
+                commandLine 'cmd', '/c', './dist'
             } else {
-                commandLine 'bash', '-c', './build-run/dist'
+                commandLine 'bash', '-c', './dist'
             }
-            workingDir "$buildDir/${rootProject.name}"
+            workingDir "$buildDir/${rootProject.name}/build-run"
         }
     }
 }

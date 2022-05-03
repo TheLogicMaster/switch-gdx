@@ -6,25 +6,41 @@ This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the Cod
 and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
 on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target.
 
-## Requrements
-### Desktop
-- CMake
-- SDL2
-- SDL2_Mixer
-- libffi
-- GLEW
-- pthreads
-- zlib
-- Freetype
-- C++ 17 Filesystem support
-### Switch
-- DevKitPro
-- SDL2_Mixer, GLAD, Freetype, and zlib for Switch
-- Custom build of libffi for Switch (Todo)
+## Installation
+- Install JDK 8
+### Linux
+- Install CMake, Ninja, Texinfo, SDL2, SDL2_Mixer, GLEW, libffi, zlib, freetype
+- With APT: `sudo apt install build-essential texinfo rsync cmake ninja-build libffi-dev libsdl2-mixer-dev zlib1g-dev libglew-dev libfreetype-dev libcurl4-gnutls-dev`
+- Install [devkitPro pacman](https://github.com/devkitPro/pacman/releases/tag/v1.0.2)
+- `dkp-pacman -S switch-zlib switch-sdl2 switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
+
+### Windows
+- Install [devkitPro Updater](https://github.com/devkitPro/installer/releases/latest) with Switch packages selected
+- Open MSYS2 two from the start menu
+- `pacman -Syu`
+- `pacman -S switch-zlib switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
+- `pacman -S gcc git rsync texinfo mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-curl-gnutls mingw-w64-x86_64-freetype mingw-w64-x86_64-bullet`
+
+### libffi
+This is a library that has to be compiled and installed manually for Switch. Run this for Linux normally and on Windows under 
+MSYS2. On Windows, ensure that the working directory doesn't contain any spaces.
+``` bash
+git clone https://github.com/libffi/libffi.git
+cd libffi
+./autogen.sh
+source $DEVKITPRO/switchvars.sh
+source $DEVKITPRO/devkita64.sh
+CFLAGS="-g -O2 -march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIC -ftls-model=local-exec" CHOST=aarch64-none-elf ./configure --prefix="$DEVKITPRO/portlibs/switch" --host=aarch64-none-elf
+make
+sudo cp ./aarch64-none-elf/include/*.h $DEVKITPRO/portlibs/switch/include/
+sudo cp ./aarch64-none-elf/.libs/libffi.a $DEVKITPRO/portlibs/switch/lib
+sudo cp ./aarch64-none-elf/.libs/libffi.la $DEVKITPRO/portlibs/switch/lib
+sudo cp ./aarch64-none-elf/libffi.pc $DEVKITPRO/portlibs/switch/lib/pkgconfig/
+```
 
 ## Usage
 For now, reference the `example` subproject for the Gradle setup. It's entirely untested on Windows at this point.
-The `transpile` task does just that and outputs  the C project into the `example/switch/build/example` directory. `run` executes 
+The `transpile` task does just that and outputs  the C project into the `example/switch/build/example` directory. `run` executes
 the transpiler and runs the native PC backend. `deploy` does the same but deploys to a Switch via NXLink.
 
 ## Debugging
@@ -59,7 +75,7 @@ the CLion CMake project needs to be reloaded using `Tools/Cmake/Reload CMake Pro
 ## Todo
 - GDX Networking
 - Possibly threading stuff
-- GL30?
+- GL30 (Requires regenerating glad2 online)
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
 - Bullet
 
