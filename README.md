@@ -2,14 +2,16 @@
 [![Release](https://jitpack.io/v/com.thelogicmaster/switch-gdx.svg)](https://jitpack.io/#com.thelogicmaster/switch-gdx)
 
 ## About
-This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the CodenameOne Parpar VM. It's early in development 
-and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
-on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target.
+This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the CodenameOne [Parpar VM](https://github.com/codenameone/CodenameOne/tree/master/vm). 
+It uses a custom fork of the VM named [Clearwing VM](https://github.com/TheLogicMaster/clearwing-vm).
+It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
+on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. Linux is fully
+supported and Windows has very early support. 
 
 ## Installation
 - Install JDK 8
 ### Linux
-- Install CMake, Ninja, Texinfo, SDL2, SDL2_Mixer, GLEW, libffi, zlib, freetype
+- Install CMake, Ninja, Rsync, Texinfo, SDL2, SDL2_Mixer, GLEW, libffi, zlib, freetype
 - With APT: `sudo apt install build-essential texinfo rsync cmake ninja-build libffi-dev libsdl2-mixer-dev zlib1g-dev libglew-dev libfreetype-dev libcurl4-gnutls-dev`
 - Install [devkitPro pacman](https://github.com/devkitPro/pacman/releases/tag/v1.0.2)
 - `dkp-pacman -S switch-zlib switch-sdl2 switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
@@ -23,7 +25,7 @@ on a PC. It's similar to RoboVM, except it generates C code which is then compil
 
 ### libffi
 This is a library that has to be compiled and installed manually for Switch. Run this for Linux normally and on Windows under 
-MSYS2. On Windows, ensure that the working directory doesn't contain any spaces.
+MSYS2. Ensure that the working directory doesn't contain any spaces.
 ``` bash
 git clone https://github.com/libffi/libffi.git
 cd libffi
@@ -39,9 +41,10 @@ sudo cp ./aarch64-none-elf/libffi.pc $DEVKITPRO/portlibs/switch/lib/pkgconfig/
 ```
 
 ## Usage
-For now, reference the `example` subproject for the Gradle setup. It's entirely untested on Windows at this point.
-The `transpile` task does just that and outputs  the C project into the `example/switch/build/example` directory. `run` executes
-the transpiler and runs the native PC backend. `deploy` does the same but deploys to a Switch via NXLink.
+For now, reference the `example` subproject for the Gradle setup. Windows support is a work in progress. 
+The `transpile` task does just that and outputs the C project into the `example/switch/build/example` directory. `run` executes
+the transpiler and runs the native PC backend. `deploy` does the same but deploys to a Switch via NXLink. Ensure that the path
+to the project directory doesn't contain any spaces. 
 
 ## Debugging
 The project can be debugged as a normal C project with your IDE of choice. CLion works out of the box with
@@ -53,6 +56,7 @@ configuration, and it should jump right to the exception and show the native sta
 generated code and call stack, null fields can be found and traced back to Java source code by looking at the
 `__CN1_DEBUG_INFO` macro line numbers. Code changes may lead to additional classes being included by the transpiler, in which case
 the CLion CMake project needs to be reloaded using `Tools/Cmake/Reload CMake Project` or it won't compile.
+If using Windows, the devkitPro MinGW toolchain has to be selected under the project build settings.
 
 ## Features implemented
 - Regex (RegExodus)
@@ -89,9 +93,11 @@ the CLion CMake project needs to be reloaded using `Tools/Cmake/Reload CMake Pro
 - Only supports up to 3D arrays
 - For Switch, all pthreads need to be terminated manually, or it will crash on exit. Any program threads must be manually stopped on dispose.
 - If using SNAPSHOT Gradle dependency, refresh Gradle dependencies using the Intellij Gradle menu to not use cached versions and update to the latest.
+- Project folder paths can't contain spaces due to Make not supporting them
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so patch for now (Probably related to setjmp/try-catch)
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
 - Flick gesture detection is broken
 - GC bug where it tries to dispose of primitive array contents (JSON test)
+- Windows PC program crash related to filesystem writing
