@@ -1,3 +1,5 @@
+#ifndef __SWITCH__
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -480,9 +482,11 @@ int gladLoadGLES2( GLADloadfunc load) {
 
 
 
- 
+
 
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

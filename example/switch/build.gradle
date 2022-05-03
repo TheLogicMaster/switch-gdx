@@ -237,13 +237,19 @@ task run(dependsOn: 'transpile') {
             }
             workingDir "$buildDir/${rootProject.name}"
         }
+        if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            copy { // Todo: Copy only needed
+                from "C:\\devkitPro\\msys2\\mingw64\\bin\\*.dll"
+                into "$buildDir/${rootProject.name}/build-run"
+            }
+        }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', './dist'
+                commandLine 'cmd', '/c', 'build-run\\dist.exe'
             } else {
-                commandLine 'bash', '-c', './dist'
+                commandLine 'bash', '-c', './build-run/dist'
             }
-            workingDir "$buildDir/${rootProject.name}/build-run"
+            workingDir "$buildDir/${rootProject.name}"
         }
     }
 }
@@ -252,7 +258,7 @@ task deploy(dependsOn: 'transpile') {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', 'make -j8'
+                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir/${rootProject.name}", '-c', 'make -j8 || sleep 50000'
             } else {
                 commandLine 'bash', '-c', 'make -j8'
             }
@@ -260,7 +266,7 @@ task deploy(dependsOn: 'transpile') {
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', "\$DEVKITPRO/tools/bin/nxlink --server ./${rootProject.name}.nro"
+                commandLine 'bash', '-c', "/opt/devkitpro/tools/bin/nxlink --server ./${rootProject.name}.nro"
             } else {
                 commandLine 'bash', '-c', "\$DEVKITPRO/tools/bin/nxlink --server ./${rootProject.name}.nro"
             }

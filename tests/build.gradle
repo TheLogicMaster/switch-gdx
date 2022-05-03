@@ -257,15 +257,22 @@ task run(dependsOn: 'transpile') {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G "MSYS Makefiles" && cmake --build build-run'
+                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir/${rootProject.name}", '-c',
+                        'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G \'MSYS Makefiles\' && cmake --build build-run || sleep 50000'
             } else {
                 commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
             }
             workingDir "$buildDir/${project.name}"
         }
+        if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            copy { // Todo: Copy only needed
+                from "C:\\devkitPro\\msys2\\mingw64\\bin\\*.dll"
+                into "$buildDir/${rootProject.name}/build-run"
+            }
+        }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', './build-run/dist'
+                commandLine 'cmd', '/c', 'build-run\\dist.exe'
             } else {
                 commandLine 'bash', '-c', './build-run/dist'
             }
@@ -278,7 +285,7 @@ task deploy(dependsOn: 'transpile') {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', 'make -j8'
+                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir/${rootProject.name}", '-c', 'make -j8 || sleep 50000'
             } else {
                 commandLine 'bash', '-c', 'make -j8'
             }
@@ -286,7 +293,7 @@ task deploy(dependsOn: 'transpile') {
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
-                commandLine 'cmd', '/c', "\$DEVKITPRO/tools/bin/nxlink --server ./${project.name}.nro"
+                commandLine 'bash', '-c', "/opt/devkitpro/tools/bin/nxlink --server ./${rootProject.name}.nro"
             } else {
                 commandLine 'bash', '-c', "\$DEVKITPRO/tools/bin/nxlink --server ./${project.name}.nro"
             }
