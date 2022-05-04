@@ -5,7 +5,8 @@
 This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the CodenameOne [Parpar VM](https://github.com/codenameone/CodenameOne/tree/master/vm). 
 It uses a custom fork of the VM named [Clearwing VM](https://github.com/TheLogicMaster/clearwing-vm).
 It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
-on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. 
+on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. See [Tests](TESTS.md)
+for current GDX compatibility.
 
 ## Installation
 - Install JDK 8
