@@ -5,8 +5,7 @@
 This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the CodenameOne [Parpar VM](https://github.com/codenameone/CodenameOne/tree/master/vm). 
 It uses a custom fork of the VM named [Clearwing VM](https://github.com/TheLogicMaster/clearwing-vm).
 It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
-on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. Linux is fully
-supported and Windows has very early support. 
+on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. 
 
 ## Installation
 - Install JDK 8
@@ -41,16 +40,22 @@ sudo cp ./aarch64-none-elf/libffi.pc $DEVKITPRO/portlibs/switch/lib/pkgconfig/
 ```
 
 ## Usage
-For now, reference the `example` subproject for the Gradle setup. Windows support is a work in progress. 
-The `transpile` task does just that and outputs the C project into the `example/switch/build/example` directory. `run` executes
+For now, reference the `example` project for the Gradle setup. If you don't yet have a LibGDX project, create one using 
+[gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff). Ensure that your project path contains
+no spaces. In your project, add a new Gradle submodule called `switch` and
+copy `switch.json` and `build.gradle` from the `example` project's `switch` directory into the new submodule. Create a new Class called 
+`SwitchLauncher` or whatever you want to call it and add a main method that simply creates a new `SwitchApplication` instance
+that takes your `ApplicationListener` as a parameter. Edit `build.gradle` to update the main class name and artifact IDs. 
+Ensure that the core project has `sourceCompatibility` set no higher than 1.8 for now.
+The `transpile` task does just that and outputs the C project into the `<project>/switch/build/<project>` directory. `run` executes
 the transpiler and runs the native PC backend. `deploy` does the same but deploys to a Switch via NXLink. Ensure that the path
 to the project directory doesn't contain any spaces. 
 
 ## Debugging
 The project can be debugged as a normal C project with your IDE of choice. CLion works out of the box with
 the CMake project if you have a license. Simply run one of the Gradle tasks to transpile the project, then
-open the `$project/switch/build/$project` directory with CLion as a CMake project. A Run configuration should be automatically created. 
-Set the working directory in the run config to the `build/$project` project directory so that assets
+open the `<project>/switch/build/<project>` directory with CLion as a CMake project. A Run configuration should be automatically created. 
+Set the working directory in the run config to the `build/<project>` project directory so that assets
 can be properly loaded at runtime. To trace back a seg fault, simply press the debug icon next to the run
 configuration, and it should jump right to the exception and show the native stack trace. By inspecting the
 generated code and call stack, null fields can be found and traced back to Java source code by looking at the
