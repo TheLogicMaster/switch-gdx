@@ -554,9 +554,9 @@ void throwIOException(CODENAME_ONE_THREAD_STATE, const char *reason) {
 }
 
 JAVA_VOID java_io_FileInputStream_open___java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_OBJECT name) {
-    auto f = fopen(toNativeString(threadStateData, name), "r");
+    auto f = fopen(toNativeString(threadStateData, name), "rb");
     if (f)
-        ((obj__java_io_FileInputStream *) __cn1ThisObject)->java_io_FileInputStream_file = (long) f;
+        ((obj__java_io_FileInputStream *) __cn1ThisObject)->java_io_FileInputStream_file = (JAVA_LONG) f;
     else {
         JAVA_OBJECT exception = __NEW_java_io_FileNotFoundException(threadStateData);
         java_io_FileNotFoundException___INIT_____java_lang_String(threadStateData, exception, name);
@@ -619,9 +619,9 @@ JAVA_VOID java_io_FileInputStream_close0__(CODENAME_ONE_THREAD_STATE, JAVA_OBJEC
 }
 
 JAVA_VOID java_io_FileOutputStream_open___java_lang_String_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_OBJECT name, JAVA_BOOLEAN append) {
-    auto f = fopen(toNativeString(threadStateData, name), append ? "w+" : "w");
+    auto f = fopen(toNativeString(threadStateData, name), append ? "wb+" : "wb");
     if (f)
-        ((obj__java_io_FileOutputStream *) __cn1ThisObject)->java_io_FileOutputStream_file = (long) f;
+        ((obj__java_io_FileOutputStream *) __cn1ThisObject)->java_io_FileOutputStream_file = (JAVA_LONG) f;
     else {
         JAVA_OBJECT exception = __NEW_java_io_FileNotFoundException(threadStateData);
         java_io_FileNotFoundException___INIT_____java_lang_String(threadStateData, exception, name);
@@ -839,7 +839,7 @@ JAVA_OBJECT com_badlogic_gdx_graphics_g2d_Gdx2DPixmap_load___long_1ARRAY_byte_1A
     if (!pixmap)
         return nullptr;
     auto pixelBuffer = __NEW_java_nio_ByteBuffer(threadStateData);
-    java_nio_ByteBuffer___INIT_____long_int_boolean(threadStateData, pixelBuffer, (long) pixmap->pixels, (JAVA_INT) (pixmap->width * pixmap->height * gdx2d_bytes_per_pixel(pixmap->format)), false);
+    java_nio_ByteBuffer___INIT_____long_int_boolean(threadStateData, pixelBuffer, (JAVA_LONG) pixmap->pixels, (JAVA_INT) (pixmap->width * pixmap->height * gdx2d_bytes_per_pixel(pixmap->format)), false);
     auto nativeDataPtr = (JAVA_ARRAY_LONG *) ((JAVA_ARRAY) nativeData)->data;
     nativeDataPtr[0] = (JAVA_ARRAY_LONG) pixmap;
     nativeDataPtr[1] = pixmap->width;
@@ -853,7 +853,7 @@ JAVA_OBJECT com_badlogic_gdx_graphics_g2d_Gdx2DPixmap_newPixmap___long_1ARRAY_in
     if (!pixmap)
         return nullptr;
     auto pixelBuffer = __NEW_java_nio_ByteBuffer(threadStateData);
-    java_nio_ByteBuffer___INIT_____long_int_boolean(threadStateData, pixelBuffer, (long) pixmap->pixels, (JAVA_INT) (pixmap->width * pixmap->height * gdx2d_bytes_per_pixel(pixmap->format)), false);
+    java_nio_ByteBuffer___INIT_____long_int_boolean(threadStateData, pixelBuffer, (JAVA_LONG) pixmap->pixels, (JAVA_INT) (pixmap->width * pixmap->height * gdx2d_bytes_per_pixel(pixmap->format)), false);
     auto nativeDataPtr = (JAVA_ARRAY_LONG *) ((JAVA_ARRAY) nativeData)->data;
     nativeDataPtr[0] = (JAVA_ARRAY_LONG) pixmap;
     nativeDataPtr[1] = pixmap->width;
@@ -947,7 +947,7 @@ JAVA_OBJECT com_badlogic_gdx_graphics_glutils_ETC1_encodeImage___java_nio_ByteBu
     auto compressedData = (etc1_byte *) malloc(compressedSize);
     etc1_encode_image((etc1_byte *) ((obj__java_nio_ByteBuffer *) imageData)->java_nio_Buffer_address + offset, width, height, pixelSize, width * pixelSize, compressedData);
     auto pixelBuffer = __NEW_java_nio_ByteBuffer(threadStateData);
-    java_nio_ByteBuffer___INIT_____long_int(threadStateData, pixelBuffer, (long) compressedData, (JAVA_INT) compressedSize);
+    java_nio_ByteBuffer___INIT_____long_int(threadStateData, pixelBuffer, (JAVA_LONG) compressedData, (JAVA_INT) compressedSize);
     return pixelBuffer;
 }
 
@@ -957,7 +957,7 @@ JAVA_OBJECT com_badlogic_gdx_graphics_glutils_ETC1_encodeImagePKM___java_nio_Byt
     etc1_pkm_format_header(compressed, width, height);
     etc1_encode_image((etc1_byte *) ((obj__java_nio_ByteBuffer *) imageData)->java_nio_Buffer_address + offset, width, height, pixelSize, width * pixelSize, compressed + ETC_PKM_HEADER_SIZE);
     auto pixelBuffer = __NEW_java_nio_ByteBuffer(threadStateData);
-    java_nio_ByteBuffer___INIT_____long_int(threadStateData, pixelBuffer, (long) compressed, (JAVA_INT) compressedSize);
+    java_nio_ByteBuffer___INIT_____long_int(threadStateData, pixelBuffer, (JAVA_LONG) compressed, (JAVA_INT) compressedSize);
     return pixelBuffer;
 }
 
@@ -1299,7 +1299,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDisableVertexAttribArray___int
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glDrawElements___int_int_int_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT mode, JAVA_INT count, JAVA_INT type, JAVA_INT indices) {
-    glDrawElements(mode, count, type, (void *) (long) indices);
+    glDrawElements(mode, count, type, (void *) (JAVA_LONG) indices);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glEnableVertexAttribArray___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT index) {
@@ -1686,6 +1686,6 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttribPointer___int_int_
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchGL_glVertexAttribPointer___int_int_int_boolean_int_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT index, JAVA_INT size, JAVA_INT type, JAVA_BOOLEAN normalized, JAVA_INT stride, JAVA_INT ptr) {
-    glVertexAttribPointer(index, size, type, normalized, stride, (void *) (long) ptr);
+    glVertexAttribPointer(index, size, type, normalized, stride, (void *) (JAVA_LONG) ptr);
 }
 }

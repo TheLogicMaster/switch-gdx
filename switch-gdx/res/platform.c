@@ -1,4 +1,5 @@
 #include "cn1_globals.h"
+#include <string.h>
 
 #ifdef __SWITCH__
 #include <switch.h>

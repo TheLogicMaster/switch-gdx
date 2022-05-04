@@ -267,7 +267,7 @@ extern "C" JAVA_OBJECT com_badlogic_gdx_graphics_g2d_freetype_FreeType_Bitmap_ge
     FT_Bitmap *bmp = (FT_Bitmap *) bitmap;
 //    return env->NewDirectByteBuffer((void*)bmp->buffer, bmp->rows * abs(bmp->pitch));
     auto buffer = __NEW_java_nio_ByteBuffer(threadStateData);
-    java_nio_ByteBuffer___INIT_____long_int_boolean(threadStateData, buffer, (long) bmp->buffer, bmp->rows * abs(bmp->pitch), false);
+    java_nio_ByteBuffer___INIT_____long_int_boolean(threadStateData, buffer, (JAVA_LONG) bmp->buffer, bmp->rows * abs(bmp->pitch), false);
     return buffer;
 }
 
