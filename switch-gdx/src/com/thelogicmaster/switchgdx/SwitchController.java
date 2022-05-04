@@ -22,6 +22,14 @@ public class SwitchController implements Controller {
 		return (buttons & (1 << buttonCode)) == 0 && (prevButtons & (1 << buttonCode)) != 0;
 	}
 
+	boolean isAnyButtonPressed() {
+		return buttons != 0;
+	}
+
+	boolean isAnyButtonJustPressed() {
+		return (buttons & ~prevButtons) != 0;
+	}
+
 	@Override
 	public boolean getButton (int buttonCode) {
 		return (buttons & (1 << buttonCode)) != 0;

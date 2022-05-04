@@ -224,12 +224,16 @@ public class SwitchInput implements Input {
 
 	@Override
 	public boolean isKeyPressed (int key) {
+		if (key == Keys.ANY_KEY)
+			return ((SwitchController)Controllers.getCurrent()).isAnyButtonPressed();
 		int button = keyToButton(key);
 		return button != -1 && Controllers.getCurrent().getButton(button);
 	}
 
 	@Override
 	public boolean isKeyJustPressed (int key) {
+		if (key == Keys.ANY_KEY)
+			return ((SwitchController)Controllers.getCurrent()).isAnyButtonJustPressed();
 		int button = keyToButton(key);
 		return button != -1 && ((SwitchController)Controllers.getCurrent()).getButtonPressed(button);
 	}

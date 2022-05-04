@@ -211,7 +211,7 @@ static int keyToButton(int key) {
         case SDL_SCANCODE_DOWN:
             return 1 << 15;
         case SDL_SCANCODE_LEFT:
-            return 1 << 16;
+            return 1 << 12;
         case SDL_SCANCODE_RIGHT:
             return 1 << 14;
         default:

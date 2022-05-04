@@ -37,7 +37,7 @@ public class SwitchGraphics extends AbstractGraphics {
 
 	void update() {
 		long timestamp = System.currentTimeMillis();
-		deltaTime = (timestamp - previousTime) / 1000.f;
+		deltaTime = (Math.max(timestamp - previousTime, 1)) / 1000.f;
 		previousTime = timestamp;
 		time += deltaTime;
 		frameId++;
