@@ -112,8 +112,8 @@ public class TestApp implements ApplicationListener {
 	private Texture pixmapTexture;
 	private BitmapFont font;
 
-	Stage stage;
-	Skin skin;
+	private Stage stage;
+	private Skin skin;
 
 	private Environment environment;
 	private PerspectiveCamera camera;
@@ -130,14 +130,14 @@ public class TestApp implements ApplicationListener {
 	private static TestApp reflectionValue2;
 
 	private static class SerializationTest {
-		private int a;
-		private transient int b;
+		public int a;
+		public transient int b;
 
 		@Override
 		public String toString () {
 			return "(" + a + ", " + b + ")";
 		}
-	};
+	}
 
 	@Override
 	public void create () {
@@ -287,11 +287,11 @@ public class TestApp implements ApplicationListener {
 		Gdx.gl.glLinkProgram(shader);
 
 		try {
-			Field field = ClassReflection.getField(getClass(), "reflectionValue");
+			Field field = ClassReflection.getDeclaredField(getClass(), "reflectionValue");
 			System.out.println("Old reflection value: " + field.get(this));
 			field.set(this, 1);
 			System.out.println("New reflection value: " + field.get(this));
-			field = ClassReflection.getField(getClass(), "reflectionValue2");
+			field = ClassReflection.getDeclaredField(getClass(), "reflectionValue2");
 			System.out.println("Old reflection value 2: " + field.get(null));
 			field.set(null, this);
 			System.out.println("New reflection value 2: " + field.get(null));

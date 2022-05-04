@@ -4,8 +4,6 @@ project(dist)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
-set(CMAKE_CXX_FLAGS "-fpermissive")
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(SDL2 REQUIRED)

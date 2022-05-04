@@ -14,8 +14,14 @@ import java.nio.ShortBuffer;
 
 public class JniGenTest extends GdxTest {
 
-	private static native int sum (int a, int b); /*
+	/*JNI
+	static int sumNative(int a, int b) {
 		return a + b;
+	}
+	 */
+
+	private static native int sum (int a, int b); /*
+		return sumNative(a, b);
 	*/
 
 	private static native int sum (ByteBuffer buffer, int len); /*
