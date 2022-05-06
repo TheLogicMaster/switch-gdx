@@ -8,6 +8,14 @@ import java.util.UUID;
 import com.badlogic.gdx.math.MathUtils;
 
 public class SharedLibraryLoader {
+	static public boolean isWindows = System.getProperty("os.name").contains("Windows");
+	static public boolean isLinux = System.getProperty("os.name").contains("Linux");
+	static public boolean isMac = false;
+	static public boolean isIos = false;
+	static public boolean isAndroid = false;
+	static public boolean isARM = System.getProperty("os.arch").startsWith("arm") || System.getProperty("os.arch").startsWith("aarch64");
+	static public boolean is64Bit = System.getProperty("os.arch").contains("64") || System.getProperty("os.arch").startsWith("armv8");
+
 	public SharedLibraryLoader () {
 	}
 

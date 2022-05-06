@@ -88,6 +88,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - GL30 (Requires regenerating glad2 online)
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
 - Bullet
+- Have transpiler detect types needed by GDX collections for array reflection
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)

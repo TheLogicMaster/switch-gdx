@@ -53,6 +53,9 @@ public class SwitchApplication implements Application {
 			Gdx.graphics = this.getGraphics();
 			Gdx.net = this.getNet();
 
+			new SwitchFileHandle("", Files.FileType.External).mkdirs();
+			new SwitchFileHandle("", Files.FileType.Local).mkdirs();
+
 			Controllers.preferredManager = "com.thelogicmaster.switchgdx.SwitchControllerManager";
 			Controllers.getCurrent();
 			SwitchControllerManager controllerManager = SwitchControllerManager.getInstance();

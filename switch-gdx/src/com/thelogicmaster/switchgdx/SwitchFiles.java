@@ -41,7 +41,7 @@ public class SwitchFiles implements Files {
 
 	@Override
 	public String getExternalStoragePath () {
-		return SwitchApplication.isSwitch ? "sdmc:" : "";
+		return "data";
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class SwitchFiles implements Files {
 
 	@Override
 	public String getLocalStoragePath () {
-		return "";
+		return "data";
 	}
 
 	@Override

@@ -33,6 +33,8 @@ public class SwitchGraphics extends AbstractGraphics {
 		extensions = Gdx.gl.glGetString(GL20.GL_EXTENSIONS);
 
 		bufferFormat = new BufferFormat(8, 8, 8, 8, 24, 8, 0, false);
+
+		previousTime = System.currentTimeMillis();
 	}
 
 	void update() {
