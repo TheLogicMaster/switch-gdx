@@ -1,11 +1,13 @@
 #include <fcntl.h>
 #include <csignal>
 #include <vector>
+#include <string>
 #include "gdx_buffer_utils.h"
 #include "gdx_matrix4.h"
 #include "gdx2d.h"
 #include "etc1_utils.h"
 #include "tinyfiledialogs.h"
+#include <curl/curl.h>
 
 extern "C" {
 #include "cn1_globals.h"
@@ -21,6 +23,7 @@ extern "C" {
 #include "com_thelogicmaster_switchgdx_SwitchAudio.h"
 #include "com_thelogicmaster_switchgdx_SwitchMusic.h"
 #include "com_thelogicmaster_switchgdx_SwitchSound.h"
+#include "com_thelogicmaster_switchgdx_SwitchHttpResponse.h"
 #include "com_badlogic_gdx_utils_GdxRuntimeException.h"
 #include "com_badlogic_gdx_Input_TextInputListener.h"
 
@@ -159,6 +162,8 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
     Mix_AllocateChannels(16);
     Mix_HookMusicFinished(onMusicFinished);
     Mix_ChannelFinished(onSoundFinished);
+
+    curl_global_init(CURL_GLOBAL_ALL);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_dispose__(CODENAME_ONE_THREAD_STATE) {
@@ -177,6 +182,8 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_dispose__(CODENAME_ONE_
 
     romfsExit();
 #endif
+
+    curl_global_cleanup();
 }
 
 #ifndef __SWITCH__
@@ -302,6 +309,81 @@ JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchApplication_update___R_boolean(C
     SDL_GL_SwapWindow(window);
     return true;
 #endif
+}
+
+JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchNet_openURI___java_lang_String_R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_OBJECT urlObj) {
+#ifdef __SWITCH__
+    WebCommonConfig config;
+    WebCommonReply reply;
+    return !webPageCreate(&config, toNativeString(threadStateData, urlObj) and !webConfigSetWhitelist(&config, "^http*") and !webConfigShow(&config, &reply);
+#else
+    std::string url(toNativeString(threadStateData, urlObj));
+# if __WIN32__
+    system(("start " + url).c_str());
+# elif __APPLE__
+    system(("open " + url).c_str());
+# else
+    system(("xdg-open " + url).c_str());
+# endif
+    return true;
+#endif
+}
+
+static size_t curlWriteCallback(void *contents, size_t size, size_t nmemb, void *string) {
+    auto *data = (std::string *)string;
+    data->append((const char *)contents, size * nmemb);
+    return size * nmemb;
+}
+
+JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchNet_sendRequest___java_lang_String_byte_1ARRAY_java_lang_String_1ARRAY_java_lang_String_long_com_thelogicmaster_switchgdx_SwitchHttpResponse_R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT urlObj, JAVA_OBJECT contentObj, JAVA_OBJECT headersObj, JAVA_OBJECT methodObj, JAVA_LONG timeout, JAVA_OBJECT responseObj) {
+    char errorBuffer[CURL_ERROR_SIZE]{};
+    CURL *curl = curl_easy_init();
+    if (!curl)
+        return JAVA_NULL;
+
+    std::string responseData;
+    curl_easy_setopt(curl, CURLOPT_URL, toNativeString(threadStateData, urlObj));
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseData);
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, "switchgdx-agent/1.0");
+    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
+
+    curl_slist *headers = nullptr;
+    auto headersArray = (JAVA_ARRAY)headersObj;
+    for (int i = 0; i < headersArray->length; i++)
+        headers = curl_slist_append(headers, toNativeString(threadStateData, ((JAVA_OBJECT *)headersArray->data)[i]));
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+    auto method = std::string(toNativeString(threadStateData, methodObj));
+    if (method == "POST" or method == "PUT" or method == "PATCH") {
+        auto contentArray = (JAVA_ARRAY) contentObj;
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, contentArray->length);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, contentArray->data);
+    } else if (method == "HEAD")
+        curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
+    else if (method == "GET")
+        curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
+
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, timeout);
+
+    long status;
+    CURLcode res = curl_easy_perform(curl);
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status);
+
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+
+    if (res != CURLE_OK)
+        return fromNativeString(threadStateData, strlen(errorBuffer) ? errorBuffer : curl_easy_strerror(res));
+
+    auto httpResponse = (obj__com_thelogicmaster_switchgdx_SwitchHttpResponse *) responseObj;
+    httpResponse->com_thelogicmaster_switchgdx_SwitchHttpResponse_status = (JAVA_INT)status;
+
+    auto response = __NEW_ARRAY_JAVA_BYTE(threadStateData, (int)responseData.length());
+    memcpy(((JAVA_ARRAY)response)->data, responseData.c_str(), responseData.length());
+    httpResponse->com_thelogicmaster_switchgdx_SwitchHttpResponse_result = response;
+
+    return JAVA_NULL;
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_create___java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_OBJECT file) {

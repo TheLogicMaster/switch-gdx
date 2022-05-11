@@ -2,6 +2,7 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id 'java'
+    id "me.tatarka.retrolambda" version "3.7.1"
 }
 
 group 'com.thelogicmaster'

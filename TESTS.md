@@ -87,6 +87,7 @@
 - InverseKinematics: Works
 - IsometricTile: Works
 - Issue: Works
+- JniGen: Works
 - Json: Works with occasional primitive array related GC crashes
 - KTX: Crash
 - LabelScale: Works
@@ -107,9 +108,9 @@
 - MultipleRenderTarget: GL30 not yet implemented
 - Multitouch: Works
 - Music: Plays fine, but tracking/stopping doesn't work correctly
-- NetAPI: Not yet implemented
+- NetAPI: GC related crash on GET Text
 - NinePatch: Works
-- OpenBrowser: Not yet implemented
+- OpenBrowser: Works
 - Parallax: Works
 - ParticleControllerInfluencerSingle: Works
 - ParticleController: Works
@@ -183,6 +184,7 @@
 - TextureData: Works
 - TextureDownload: Networking not yet implemented
 - TextureRegion3D: Works
+- Thread: Bug with try-catch/synchronized block nesting
 - TideMapAssetManager: Works
 - TideMapDirectLoader: Works
 - Tile: Works

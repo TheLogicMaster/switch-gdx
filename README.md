@@ -84,11 +84,11 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 
 ## Todo
 - GDX Networking
-- Possibly threading stuff
 - GL30 (Requires regenerating glad2 online)
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
 - Bullet
-- Have transpiler detect types needed by GDX collections for array reflection
+- Have transpiler detect types needed by GDX collections for array reflection, possibly
+- Error dialogs for uncaught main thread exceptions
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
@@ -107,4 +107,3 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
 - Flick gesture detection is broken
 - GC bug where it tries to dispose of primitive array contents (JSON test)
-- Windows PC program crash related to filesystem writing

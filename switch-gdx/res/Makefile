@@ -59,7 +59,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lglad -lEGL -lglapi -ldrm_nouveau -lnx -lz -lffi `$(PREFIX)pkg-config --libs SDL2_mixer` `freetype-config --libs`
+LIBS	:= -lglad -lEGL -lglapi -ldrm_nouveau -lnx -lz -lffi -lcurl `$(PREFIX)pkg-config --libs SDL2_mixer` `freetype-config --libs`
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
