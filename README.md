@@ -81,9 +81,9 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Partial GDX Reflection support
 - FreeType
 - Box2D
+- GDX Networking
 
 ## Todo
-- GDX Networking
 - GL30 (Requires regenerating glad2 online)
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
 - Bullet

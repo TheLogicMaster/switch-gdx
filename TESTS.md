@@ -171,6 +171,8 @@
 - StagePerformance: Works
 - Stage: Works
 - SuperKoalio: Works
+- SwitchInput: Works
+- SwitchSocket: Works
 - TableLayout: Works
 - Table: Works
 - TangentialAcceleration: Works

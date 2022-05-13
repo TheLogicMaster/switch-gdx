@@ -9,6 +9,19 @@
 #include "tinyfiledialogs.h"
 #include <curl/curl.h>
 
+#ifndef __WIN32__
+# include <sys/socket.h>
+# include <arpa/inet.h>
+# include <netinet/in.h>
+# include <netdb.h>
+# include <poll.h>
+#else
+# define WIN32_LEAN_AND_MEAN
+# include <winsock2.h>
+# include <ws2tcpip.h>
+typedef int socklen_t;
+#endif
+
 extern "C" {
 #include "cn1_globals.h"
 #include "java_nio_Buffer.h"
@@ -26,6 +39,8 @@ extern "C" {
 #include "com_thelogicmaster_switchgdx_SwitchHttpResponse.h"
 #include "com_badlogic_gdx_utils_GdxRuntimeException.h"
 #include "com_badlogic_gdx_Input_TextInputListener.h"
+#include "com_thelogicmaster_switchgdx_SwitchSocket.h"
+#include "com_thelogicmaster_switchgdx_SwitchServerSocket.h"
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -384,6 +399,223 @@ JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchNet_sendRequest___java_lang_Strin
     httpResponse->com_thelogicmaster_switchgdx_SwitchHttpResponse_result = response;
 
     return JAVA_NULL;
+}
+
+void throwNativeIOException(CODENAME_ONE_THREAD_STATE) {
+    auto exception = __NEW_java_io_IOException(threadStateData);
+    java_io_IOException___INIT_____java_lang_String(threadStateData, exception, fromNativeString(threadStateData, strerror(errno)));
+    throwException(threadStateData, exception);
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSocket_dispose__(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
+    auto switchSocket = (obj__com_thelogicmaster_switchgdx_SwitchSocket *) __cn1ThisObject;
+    if (switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd) {
+        close(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd);
+        switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd = 0;
+    }
+}
+
+// https://stackoverflow.com/a/61960339
+int connectWithTimeout(int fd, const struct sockaddr *addr, socklen_t addrLen, unsigned int timeout) {
+    int rc = 0;
+    int prevFlags;
+    if ((prevFlags = fcntl(fd, F_GETFL, 0) < 0))
+        return -1;
+    if (fcntl(fd, F_SETFL, prevFlags | O_NONBLOCK) < 0)
+        return -1;
+    do {
+        if (connect(fd, addr, addrLen) < 0) {
+            if ((errno != EWOULDBLOCK) && (errno != EINPROGRESS))
+                rc = -1;
+            else {
+                timespec now{};
+                if (clock_gettime(CLOCK_MONOTONIC, &now) < 0) {
+                    rc = -1;
+                    break;
+                }
+                struct timespec deadline = {.tv_sec = now.tv_sec, .tv_nsec = now.tv_nsec + timeout * 1000000l};
+                do {
+                    if (clock_gettime(CLOCK_MONOTONIC, &now) < 0) {
+                        rc = -1;
+                        break;
+                    }
+                    int remaining = (int) ((deadline.tv_sec - now.tv_sec) * 1000l + (deadline.tv_nsec - now.tv_nsec) / 1000000l);
+                    if (remaining < 0) {
+                        rc = 0;
+                        break;
+                    }
+                    pollfd fds[] = {{.fd = fd, .events = POLLOUT}};
+                    rc = poll(fds, 1, remaining);
+                    if (rc > 0) {
+                        int error = 0;
+                        socklen_t len = sizeof(error);
+                        int retVal = getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len);
+                        if (retVal == 0)
+                            errno = error;
+                        if (error != 0)
+                            rc = -1;
+                    }
+                }
+                while (rc == -1 && errno == EINTR);
+                if (rc == 0) {
+                    errno = ETIMEDOUT;
+                    rc = -1;
+                }
+            }
+        }
+    } while (false);
+    if (fcntl(fd, F_SETFL, prevFlags) < 0)
+        return -1;
+    return rc;
+}
+
+void setSocketTimeout(int fd, int timeout) {
+#ifdef __WIN32__
+    DWORD timeoutVal = timeout;
+    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeoutVal, sizeof timeoutVal);
+    setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeoutVal, sizeof timeoutVal);
+#else
+    timeout /= 2; // Timeout doesn't seem to be reliable in blocking mode
+    timeval timeoutVal{};
+    timeoutVal.tv_usec = 1000 * (timeout % 1000);
+    timeoutVal.tv_sec = timeout / 1000;
+    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeoutVal, sizeof timeoutVal);
+    setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeoutVal, sizeof timeoutVal);
+#endif
+}
+
+JAVA_INT
+com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int_int_int_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT hostObj, JAVA_INT port, JAVA_INT connectTimeout, JAVA_INT timeout) {
+    std::string host(toNativeString(threadStateData, hostObj));
+
+    int fd;
+
+    addrinfo hints{};
+    addrinfo *addrInfo = nullptr;
+    in6_addr serverAddr{};
+    hints.ai_flags = AI_NUMERICSERV;
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    auto portString = std::to_string(port);
+
+    if (inet_pton(AF_INET, host.c_str(), &serverAddr) == 1) {
+        hints.ai_family = AF_INET;
+        hints.ai_flags |= AI_NUMERICHOST;
+    } else if (inet_pton(AF_INET6, host.c_str(), &serverAddr) == 1) {
+        hints.ai_family = AF_INET6;
+        hints.ai_flags |= AI_NUMERICHOST;
+    }
+
+    if (getaddrinfo(host.c_str(), portString.c_str(), &hints, &addrInfo))
+        goto error;
+
+    if ((fd = socket(addrInfo->ai_family, addrInfo->ai_socktype, addrInfo->ai_protocol)) < 0)
+        goto error;
+
+    if (connectWithTimeout(fd, addrInfo->ai_addr, addrInfo->ai_addrlen, connectTimeout) < 0)
+        goto error;
+
+    setSocketTimeout(fd, timeout);
+
+    freeaddrinfo(addrInfo);
+    return fd;
+
+    error:
+    if (fd > 0)
+        close(fd);
+    if (addrInfo)
+        freeaddrinfo(addrInfo);
+    throwNativeIOException(threadStateData);
+    return 0;
+}
+
+JAVA_INT com_thelogicmaster_switchgdx_SwitchSocket_read___R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
+    auto switchSocket = (obj__com_thelogicmaster_switchgdx_SwitchSocket *) __cn1ThisObject;
+    signed char buffer;
+    if (!switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd)
+        throwException(threadStateData, __NEW_INSTANCE_java_io_IOException(threadStateData));
+    if (read(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd, &buffer, 1) != 1)
+        throwNativeIOException(threadStateData);
+    return buffer;
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSocket_write___int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT value) {
+    auto switchSocket = (obj__com_thelogicmaster_switchgdx_SwitchSocket *) __cn1ThisObject;
+    auto buffer = (signed char) value;
+    if (!switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd)
+        throwException(threadStateData, __NEW_INSTANCE_java_io_IOException(threadStateData));
+    if (send(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd, &buffer, 1, 0) != 1)
+        throwNativeIOException(threadStateData);
+}
+
+JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchSocket_getRemoteAddress___R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
+    auto switchSocket = (obj__com_thelogicmaster_switchgdx_SwitchSocket *) __cn1ThisObject;
+    if (!switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd)
+        throwException(threadStateData, __NEW_INSTANCE_java_io_IOException(threadStateData));
+    sockaddr_in6 address{};
+    socklen_t addrLen = sizeof(address);
+    char addrStr[INET6_ADDRSTRLEN];
+    if (getpeername(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd, (sockaddr *) &address, &addrLen))
+        throwNativeIOException(threadStateData);
+    if (!inet_ntop(AF_INET6, &address.sin6_addr, addrStr, sizeof(addrStr)))
+        throwNativeIOException(threadStateData);
+    return fromNativeString(threadStateData, addrStr);
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchServerSocket_dispose__(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
+    auto server = (obj__com_thelogicmaster_switchgdx_SwitchServerSocket *) __cn1ThisObject;
+    if (server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd) {
+        close(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd);
+        server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd = 0;
+    }
+}
+
+JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_create___int_boolean_int_R_int(CODENAME_ONE_THREAD_STATE, JAVA_INT port, JAVA_BOOLEAN reuseAddress, JAVA_INT acceptTimeout) {
+    sockaddr_in6 address{};
+    address.sin6_family = AF_INET6;
+    address.sin6_port = htons(port);
+    address.sin6_addr = in6addr_any;
+    int fd;
+
+    if ((fd = socket(AF_INET6, SOCK_STREAM, 0)) < 0)
+        goto error;
+
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &reuseAddress, sizeof(int)) < 0)
+        goto error;
+
+    setSocketTimeout(fd, acceptTimeout);
+
+    if (bind(fd, (sockaddr *) &address, sizeof(address)) < 0)
+        goto error;
+
+    if (listen(fd, 10) < 0)
+        goto error;
+
+    return fd;
+
+    error:
+    if (fd > 0)
+        close(fd);
+    throwNativeIOException(threadStateData);
+    return 0;
+}
+
+JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_accept___int_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject, JAVA_INT timeout) {
+    auto server = (obj__com_thelogicmaster_switchgdx_SwitchServerSocket *) __cn1ThisObject;
+    if (!server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd)
+        throwException(threadStateData, __NEW_INSTANCE_java_io_IOException(threadStateData));
+
+    sockaddr_in6 address{};
+    socklen_t addrLen = sizeof(address);
+    if (getsockname(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd, (sockaddr *) &address, &addrLen))
+        throwNativeIOException(threadStateData);
+
+    int fd = accept(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd, (sockaddr *) &address, &addrLen);
+    if (fd < 0)
+        throwNativeIOException(threadStateData);
+    setSocketTimeout(fd, timeout);
+    return fd;
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_create___java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_OBJECT file) {
@@ -844,7 +1076,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_getTextInput___com_badlogic_g
     com_badlogic_gdx_Input_TextInputListener_input___java_lang_String(threadStateData, listener, fromNativeString(threadStateData, input));
     return;
 #endif
-failed:
+    failed:
     com_badlogic_gdx_Input_TextInputListener_canceled__(threadStateData, listener);
 }
 

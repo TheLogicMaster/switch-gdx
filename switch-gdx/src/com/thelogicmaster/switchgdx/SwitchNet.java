@@ -77,17 +77,17 @@ public class SwitchNet implements Net {
 
 	@Override
 	public ServerSocket newServerSocket (Protocol protocol, String hostname, int port, ServerSocketHints hints) {
-		return null;
+		return new SwitchServerSocket(port, hints);
 	}
 
 	@Override
 	public ServerSocket newServerSocket (Protocol protocol, int port, ServerSocketHints hints) {
-		return null;
+		return new SwitchServerSocket(port, hints);
 	}
 
 	@Override
 	public Socket newClientSocket (Protocol protocol, String host, int port, SocketHints hints) {
-		return null;
+		return new SwitchSocket(host, port, hints);
 	}
 
 	@Override

@@ -100,7 +100,11 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new JniGenTest();
 			}
-		},new SwitchInstancer() {
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new SwitchSocketTest();
+			}
+		}, new SwitchInstancer() {
 			public GdxTest instance () {
 				return new ThreadTest();
 			}
