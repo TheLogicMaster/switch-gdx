@@ -10,11 +10,13 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 public class SwitchServerSocket implements ServerSocket {
 
 	private final int fd;
+	private final int acceptTimeout;
 
 	public SwitchServerSocket (int port, ServerSocketHints hints) {
 		if (hints == null)
 			hints = new ServerSocketHints();
-		fd = create(port, hints.reuseAddress, hints.acceptTimeout);
+		acceptTimeout = hints.acceptTimeout;
+		fd = create(port, hints.reuseAddress);
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class SwitchServerSocket implements ServerSocket {
 	@Override
 	public native void dispose ();
 
-	private static native int create(int port, boolean reuseAddress, int acceptTimeout);
+	private static native int create(int port, boolean reuseAddress);
 
 	private native int accept(int timeout);
 }

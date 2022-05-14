@@ -8,6 +8,7 @@
 #include "etc1_utils.h"
 #include "tinyfiledialogs.h"
 #include <curl/curl.h>
+#include <chrono>
 
 #ifndef __WIN32__
 # include <sys/socket.h>
@@ -69,6 +70,7 @@ static EGLSurface surface;
 static PadState pad;
 
 static int nxlinkSock = -1;
+static bool socketInit;
 #else
 static SDL_Window *window;
 static int buttons;
@@ -77,30 +79,29 @@ static float joysticks[4];
 
 #ifdef __SWITCH__
 static void initNxLink() {
-    if (R_FAILED(socketInitializeDefault()))
-        return;
-
     nxlinkSock = nxlinkStdio();
     if (nxlinkSock >= 0)
         printf("STDIO Redirected over NXLink\n");
-    else
-        socketExit();
 }
 
 static void deinitNxLink() {
     if (nxlinkSock >= 0) {
         close(nxlinkSock);
-        socketExit();
         nxlinkSock = -1;
     }
 }
 
 void userAppInit() {
+    if (R_FAILED(socketInitializeDefault()))
+        return;
     initNxLink();
+    socketInit = true;
 }
 
 void userAppExit() {
     deinitNxLink();
+    if (socketInit)
+        socketExit();
 }
 #endif
 
@@ -330,7 +331,7 @@ JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchNet_openURI___java_lang_String_R
 #ifdef __SWITCH__
     WebCommonConfig config;
     WebCommonReply reply;
-    return !webPageCreate(&config, toNativeString(threadStateData, urlObj) and !webConfigSetWhitelist(&config, "^http*") and !webConfigShow(&config, &reply);
+    return !webPageCreate(&config, toNativeString(threadStateData, urlObj)) and !webConfigSetWhitelist(&config, "^http*") and !webConfigShow(&config, &reply);
 #else
     std::string url(toNativeString(threadStateData, urlObj));
 # if __WIN32__
@@ -433,7 +434,7 @@ int connectWithTimeout(int fd, const struct sockaddr *addr, socklen_t addrLen, u
                     rc = -1;
                     break;
                 }
-                struct timespec deadline = {.tv_sec = now.tv_sec, .tv_nsec = now.tv_nsec + timeout * 1000000l};
+                timespec deadline = {.tv_sec = now.tv_sec, .tv_nsec = now.tv_nsec + timeout * 1000000l};
                 do {
                     if (clock_gettime(CLOCK_MONOTONIC, &now) < 0) {
                         rc = -1;
@@ -455,8 +456,7 @@ int connectWithTimeout(int fd, const struct sockaddr *addr, socklen_t addrLen, u
                         if (error != 0)
                             rc = -1;
                     }
-                }
-                while (rc == -1 && errno == EINTR);
+                } while (rc == -1 && errno == EINTR);
                 if (rc == 0) {
                     errno = ETIMEDOUT;
                     rc = -1;
@@ -484,11 +484,13 @@ void setSocketTimeout(int fd, int timeout) {
 #endif
 }
 
-JAVA_INT
-com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int_int_int_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT hostObj, JAVA_INT port, JAVA_INT connectTimeout, JAVA_INT timeout) {
-    std::string host(toNativeString(threadStateData, hostObj));
+JAVA_INT com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int_int_int_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT hostObj, JAVA_INT port, JAVA_INT connectTimeout, JAVA_INT timeout) {
+    std::string host(hostObj ? toNativeString(threadStateData, hostObj) : "");
+    const char *hostname = nullptr;
+    if (hostObj)
+        hostname = host.c_str();
 
-    int fd;
+    int fd = -1;
 
     addrinfo hints{};
     addrinfo *addrInfo = nullptr;
@@ -499,15 +501,17 @@ com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int_int_int_
 
     auto portString = std::to_string(port);
 
-    if (inet_pton(AF_INET, host.c_str(), &serverAddr) == 1) {
-        hints.ai_family = AF_INET;
-        hints.ai_flags |= AI_NUMERICHOST;
-    } else if (inet_pton(AF_INET6, host.c_str(), &serverAddr) == 1) {
-        hints.ai_family = AF_INET6;
-        hints.ai_flags |= AI_NUMERICHOST;
+    if (hostname) {
+        if (inet_pton(AF_INET, hostname, &serverAddr) == 1) {
+            hints.ai_family = AF_INET;
+            hints.ai_flags |= AI_NUMERICHOST;
+        } else if (inet_pton(AF_INET6, hostname, &serverAddr) == 1) {
+            hints.ai_family = AF_INET6;
+            hints.ai_flags |= AI_NUMERICHOST;
+        }
     }
 
-    if (getaddrinfo(host.c_str(), portString.c_str(), &hints, &addrInfo))
+    if (getaddrinfo(hostname, portString.c_str(), &hints, &addrInfo))
         goto error;
 
     if ((fd = socket(addrInfo->ai_family, addrInfo->ai_socktype, addrInfo->ai_protocol)) < 0)
@@ -553,12 +557,13 @@ JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchSocket_getRemoteAddress___R_java_
     auto switchSocket = (obj__com_thelogicmaster_switchgdx_SwitchSocket *) __cn1ThisObject;
     if (!switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd)
         throwException(threadStateData, __NEW_INSTANCE_java_io_IOException(threadStateData));
-    sockaddr_in6 address{};
+    sockaddr_storage address{};
     socklen_t addrLen = sizeof(address);
     char addrStr[INET6_ADDRSTRLEN];
     if (getpeername(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd, (sockaddr *) &address, &addrLen))
         throwNativeIOException(threadStateData);
-    if (!inet_ntop(AF_INET6, &address.sin6_addr, addrStr, sizeof(addrStr)))
+    auto data = address.ss_family == AF_INET ? (void *)&((sockaddr_in *)&address)->sin_addr : (void *)&((sockaddr_in6 *)&address)->sin6_addr;
+    if (!inet_ntop(address.ss_family, data, addrStr, sizeof(addrStr)))
         throwNativeIOException(threadStateData);
     return fromNativeString(threadStateData, addrStr);
 }
@@ -571,20 +576,20 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchServerSocket_dispose__(CODENAME_ONE
     }
 }
 
-JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_create___int_boolean_int_R_int(CODENAME_ONE_THREAD_STATE, JAVA_INT port, JAVA_BOOLEAN reuseAddress, JAVA_INT acceptTimeout) {
-    sockaddr_in6 address{};
-    address.sin6_family = AF_INET6;
-    address.sin6_port = htons(port);
-    address.sin6_addr = in6addr_any;
+JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_create___int_boolean_R_int(CODENAME_ONE_THREAD_STATE, JAVA_INT port, JAVA_BOOLEAN reuseAddress) {
+    sockaddr_in address{};
+    address.sin_family = AF_INET;
+    address.sin_port = htons(port);
+    address.sin_addr.s_addr = INADDR_ANY;
     int fd;
 
-    if ((fd = socket(AF_INET6, SOCK_STREAM, 0)) < 0)
+    if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         goto error;
 
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &reuseAddress, sizeof(int)) < 0)
         goto error;
 
-    setSocketTimeout(fd, acceptTimeout);
+    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK);
 
     if (bind(fd, (sockaddr *) &address, sizeof(address)) < 0)
         goto error;
@@ -611,9 +616,23 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_accept___int_R_int(CODE
     if (getsockname(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd, (sockaddr *) &address, &addrLen))
         throwNativeIOException(threadStateData);
 
-    int fd = accept(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd, (sockaddr *) &address, &addrLen);
-    if (fd < 0)
-        throwNativeIOException(threadStateData);
+    int fd = -1;
+    auto start = std::chrono::steady_clock::now();
+    while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() < server->com_thelogicmaster_switchgdx_SwitchServerSocket_acceptTimeout) {
+        fd = accept(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd, (sockaddr *) &address, &addrLen);
+        if (fd >= 0)
+            break;
+        if (errno != EAGAIN)
+            throwNativeIOException(threadStateData);
+    }
+
+    if (fd < 0) {
+        auto error = __NEW_java_io_IOException(threadStateData);
+        java_io_IOException___INIT_____java_lang_String(threadStateData, error, fromNativeString(threadStateData, "Accept timed out"));
+        throwException(threadStateData, error);
+    }
+
+    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) & ~O_NONBLOCK);
     setSocketTimeout(fd, timeout);
     return fd;
 }

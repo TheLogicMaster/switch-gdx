@@ -89,6 +89,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Bullet
 - Have transpiler detect types needed by GDX collections for array reflection, possibly
 - Error dialogs for uncaught main thread exceptions
+- Additional socket hints such as server backlog
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
@@ -101,6 +102,9 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - For Switch, all pthreads need to be terminated manually, or it will crash on exit. Any program threads must be manually stopped on dispose.
 - If using SNAPSHOT Gradle dependency, refresh Gradle dependencies using the Intellij Gradle menu to not use cached versions and update to the latest.
 - Project folder paths can't contain spaces due to Make not supporting them
+- Changing any String literals forces a full recompilation
+- Socket server only supports IPv4
+- Restarting a program that uses sockets without fully restarting the Switch app leads to a crash
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so patch for now (Probably related to setjmp/try-catch)

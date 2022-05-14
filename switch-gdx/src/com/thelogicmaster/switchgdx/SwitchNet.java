@@ -51,10 +51,12 @@ public class SwitchNet implements Net {
 
 			new Thread(() -> {
 				String error = sendRequest(url, content, headers.toArray(new String[0]), httpRequest.getMethod(), httpRequest.getTimeOut(), response);
-				if (error != null)
-					httpResponseListener.failed(new GdxRuntimeException(error));
-				else if (!response.isCancelled())
-					httpResponseListener.handleHttpResponse(response);
+				if (httpResponseListener != null) {
+					if (error != null)
+						httpResponseListener.failed(new GdxRuntimeException(error));
+					else if (!response.isCancelled())
+						httpResponseListener.handleHttpResponse(response);
+				}
 
 				synchronized (responses) {
 					if (responses.containsKey(httpRequest))
@@ -63,7 +65,8 @@ public class SwitchNet implements Net {
 			}).start();
 
 		} catch (Exception e) {
-			httpResponseListener.failed(e);
+			if (httpResponseListener != null)
+				httpResponseListener.failed(e);
 		}
 	}
 
