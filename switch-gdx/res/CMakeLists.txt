@@ -32,3 +32,6 @@ target_link_libraries(dist ${SDL2_LIBRARIES} ${SDL2_mixer_LIBRARIES} ${OPENGL_LI
 if(CMAKE_THREAD_LIBS_INIT)
   target_link_libraries(dist "${CMAKE_THREAD_LIBS_INIT}")
 endif()
+if(WIN32)
+  target_link_libraries(dist wsock32 ws2_32)
+endif()
