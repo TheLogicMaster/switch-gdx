@@ -28,11 +28,11 @@ configurations {
 }
 
 dependencies {
-    implementation "com.badlogicgames.gdx:gdx:1.10.0"
-    implementation 'com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.1'
-    implementation 'com.github.tommyettinger:RegExodus:0.1.13'
-    implementation "com.badlogicgames.gdx:gdx-freetype:1.10.0"
-    implementation "com.badlogicgames.gdx:gdx-box2d:1.10.0"
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+    implementation "com.github.tommyettinger:RegExodus:$regExodusVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     switchgdx project(':switch-gdx')
 
     implementation files('libs/gdx-tests.jar')
@@ -63,6 +63,7 @@ task transpile(dependsOn: 'build') {
             exclude "*/**/*.c"
             exclude "*/**/*.cpp"
             includeEmptyDirs = false
+            duplicatesStrategy = "INCLUDE"
         }
 
         copy {
@@ -151,7 +152,7 @@ task transpile(dependsOn: 'build') {
         }
 
         copy {
-            from ({ zipTree("$projectDir/libs/gdx-tests-lwjgl.jar") }) {
+            from ({ zipTree("$projectDir/libs/gdx-tests-lwjgl3.jar") }) {
                 include "data/**"
                 eachFile { fcd ->
                     fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1))

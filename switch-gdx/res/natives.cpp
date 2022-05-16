@@ -15,7 +15,6 @@
 # include <arpa/inet.h>
 # include <netinet/in.h>
 # include <netdb.h>
-# include <poll.h>
 #else
 # include <winsock2.h>
 # include <ws2tcpip.h>
@@ -1001,6 +1000,20 @@ JAVA_VOID com_badlogic_gdx_math_Matrix4_rot___float_1ARRAY_float_1ARRAY_int_int_
 
 JAVA_OBJECT com_badlogic_gdx_graphics_g2d_Gdx2DPixmap_load___long_1ARRAY_byte_1ARRAY_int_int_R_java_nio_ByteBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT nativeData, JAVA_OBJECT buffer, JAVA_INT offset, JAVA_INT len) {
     auto pixmap = gdx2d_load((unsigned char *) ((JAVA_ARRAY) buffer)->data + offset, len);
+    if (!pixmap)
+        return nullptr;
+    auto pixelBuffer = __NEW_java_nio_ByteBuffer(threadStateData);
+    java_nio_ByteBuffer___INIT_____long_int_boolean(threadStateData, pixelBuffer, (JAVA_LONG) pixmap->pixels, (JAVA_INT) (pixmap->width * pixmap->height * gdx2d_bytes_per_pixel(pixmap->format)), false);
+    auto nativeDataPtr = (JAVA_ARRAY_LONG *) ((JAVA_ARRAY) nativeData)->data;
+    nativeDataPtr[0] = (JAVA_ARRAY_LONG) pixmap;
+    nativeDataPtr[1] = pixmap->width;
+    nativeDataPtr[2] = pixmap->height;
+    nativeDataPtr[3] = pixmap->format;
+    return pixelBuffer;
+}
+
+JAVA_OBJECT com_badlogic_gdx_graphics_g2d_Gdx2DPixmap_loadByteBuffer___long_1ARRAY_java_nio_ByteBuffer_int_int_R_java_nio_ByteBuffer(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT nativeData, JAVA_OBJECT buffer, JAVA_INT offset, JAVA_INT len) {
+    auto pixmap = gdx2d_load((unsigned char *) ((obj__java_nio_ByteBuffer *) buffer)->java_nio_Buffer_address + offset, len);
     if (!pixmap)
         return nullptr;
     auto pixelBuffer = __NEW_java_nio_ByteBuffer(threadStateData);

@@ -33,11 +33,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.badlogicgames.gdx:gdx:1.10.0"
-    compileOnly 'com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.1'
-    implementation('com.github.tommyettinger:RegExodus:0.1.13')
-    implementation "com.badlogicgames.gdx:gdx-freetype:1.10.0"
-    implementation "com.badlogicgames.gdx:gdx-box2d:1.10.0"
+    compileOnly "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compileOnly "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+    implementation "com.github.tommyettinger:RegExodus:$regExodusVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
 }
 
 sourceSets {

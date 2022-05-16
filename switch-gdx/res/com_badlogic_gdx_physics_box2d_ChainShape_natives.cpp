@@ -56,3 +56,7 @@ extern "C" JAVA_VOID com_badlogic_gdx_physics_box2d_ChainShape_jniGetVertex___lo
     verts[1] = v.y;
 }
 
+extern "C" JAVA_VOID com_badlogic_gdx_physics_box2d_ChainShape_jniClear___long(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT object, JAVA_LONG addr) {
+    b2ChainShape* chain = (b2ChainShape*)addr;
+    chain->Clear();
+}
