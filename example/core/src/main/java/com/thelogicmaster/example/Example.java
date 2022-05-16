@@ -1,4 +1,4 @@
-package com.thelogicmaster.test;
+package com.thelogicmaster.example;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -61,7 +61,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Locale;
 
-public class TestApp implements ApplicationListener {
+public class Example implements ApplicationListener {
 
 	private static final float[] VERTICES = new float[]{
 		// Base
@@ -127,7 +127,7 @@ public class TestApp implements ApplicationListener {
 	private boolean running = true;
 
 	private int reflectionValue;
-	private static TestApp reflectionValue2;
+	private static Example reflectionValue2;
 
 	private static class SerializationTest {
 		public int a;

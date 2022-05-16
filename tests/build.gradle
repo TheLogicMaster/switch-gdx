@@ -2,7 +2,6 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id 'java'
-    id "me.tatarka.retrolambda" version "3.7.1"
 }
 
 group 'com.thelogicmaster'
@@ -25,6 +24,9 @@ configurations {
         transitive = false
     }
     implementation.extendsFrom(switchgdx)
+    retrolambda {
+        transitive = false
+    }
 }
 
 dependencies {
@@ -33,6 +35,7 @@ dependencies {
     implementation "com.github.tommyettinger:RegExodus:$regExodusVersion"
     implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    retrolambda "net.orfjackal.retrolambda:retrolambda:2.5.7"
     switchgdx project(':switch-gdx')
 
     implementation files('libs/gdx-tests.jar')
@@ -75,6 +78,24 @@ task transpile(dependsOn: 'build') {
             exclude "*/**/*.c"
             exclude "*/**/*.cpp"
             includeEmptyDirs = false
+        }
+
+        File classpathFile = File.createTempFile("inc-", ".path")
+        classpathFile.withWriter('UTF-8') { writer ->
+            for (String item : configurations.compileClasspath)
+                writer.write("$item\n")
+            writer.write("$buildDir/transpiler_input")
+        }
+        classpathFile.deleteOnExit();
+        javaexec {
+            main = "-jar"
+            args = ["$configurations.retrolambda.singleFile.absolutePath"]
+            jvmArgs = [
+                    "-Dretrolambda.inputDir=$buildDir/transpiler_input",
+                    "-Dretrolambda.classpathFile=${classpathFile.absolutePath}",
+                    '-Dretrolambda.defaultMethods=true',
+                    "-javaagent:$configurations.retrolambda.singleFile.absolutePath"
+            ]
         }
 
         javaexec {

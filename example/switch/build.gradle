@@ -20,14 +20,17 @@ configurations {
     switchgdx {
         transitive = false
     }
+    retrolambda {
+        transitive = false
+    }
     implementation.extendsFrom(switchgdx)
 }
 
 dependencies {
     implementation project(':core')
-    implementation "com.badlogicgames.gdx:gdx:1.10.0"
-    implementation 'com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.1'
-    implementation('com.github.tommyettinger:RegExodus:0.1.13')
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+    retrolambda "net.orfjackal.retrolambda:retrolambda:2.5.7"
 
     // Use latest GitHub commit
     implementation 'com.thelogicmaster.clearwing-vm:runtime:-SNAPSHOT'
@@ -55,6 +58,7 @@ task transpile(dependsOn: 'build') {
             exclude "*/**/*.c"
             exclude "*/**/*.cpp"
             includeEmptyDirs = false
+            duplicatesStrategy = "INCLUDE"
         }
 
         copy {
@@ -66,6 +70,24 @@ task transpile(dependsOn: 'build') {
             exclude "*/**/*.c"
             exclude "*/**/*.cpp"
             includeEmptyDirs = false
+        }
+
+        File classpathFile = File.createTempFile("inc-", ".path")
+        classpathFile.withWriter('UTF-8') { writer ->
+            for (String item : configurations.compileClasspath)
+                writer.write("$item\n")
+            writer.write("$buildDir/transpiler_input")
+        }
+        classpathFile.deleteOnExit();
+        javaexec {
+            main = "-jar"
+            args = ["$configurations.retrolambda.singleFile.absolutePath"]
+            jvmArgs = [
+                    "-Dretrolambda.inputDir=$buildDir/transpiler_input",
+                    "-Dretrolambda.classpathFile=${classpathFile.absolutePath}",
+                    '-Dretrolambda.defaultMethods=true',
+                    "-javaagent:$configurations.retrolambda.singleFile.absolutePath"
+            ]
         }
 
         javaexec {

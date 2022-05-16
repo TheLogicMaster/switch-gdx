@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id "me.tatarka.retrolambda" version "3.7.1"
 }
 
 version = "0.1"

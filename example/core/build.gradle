@@ -1,15 +1,9 @@
-plugins {
-    id 'java'
-}
-
-group 'com.thelogicmaster'
-version '1.0'
-
-repositories {
-    mavenCentral()
-}
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
 
 dependencies {
-    implementation "com.badlogicgames.gdx:gdx:1.10.0"
-    implementation 'com.badlogicgames.gdx-controllers:gdx-controllers-core:2.2.1'
+	api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+	api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+	api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+	api "com.badlogicgames.gdx:gdx:$gdxVersion"
 }
