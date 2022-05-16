@@ -97,7 +97,7 @@ task transpile(dependsOn: 'build') {
                     "$buildDir/transpiler_input",
                     "$buildDir/transpiler_output",
                     "$projectDir/switch.json",
-                    "com.thelogicmaster.test.SwitchLauncher"
+                    "com.thelogicmaster.example.SwitchLauncher"
             ]
         }
 

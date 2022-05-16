@@ -1,6 +1,5 @@
-package com.thelogicmaster.test;
+package com.thelogicmaster.example;
 
-import com.thelogicmaster.example.Example;
 import com.thelogicmaster.switchgdx.SwitchApplication;
 
 public class SwitchLauncher {
