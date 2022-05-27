@@ -260,8 +260,9 @@ task run(dependsOn: transpile) {
         }
         if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
             copy { // Todo: Copy only needed
-                from "C:\\devkitPro\\msys2\\mingw64\\bin\\*.dll"
-                into "$buildDir/${rootProject.name}/build-run"
+                from "C:\\devkitPro\\msys2\\mingw64\\bin"
+                include "*.dll"
+                into "$buildDir\\${rootProject.name}\\build-run"
             }
         }
         exec {
