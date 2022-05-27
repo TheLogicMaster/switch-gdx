@@ -6,10 +6,9 @@ This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the Cod
 It uses a custom fork of the VM named [Clearwing VM](https://github.com/TheLogicMaster/clearwing-vm).
 It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
 on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. See [Tests](TESTS.md)
-for current GDX compatibility.
+for current GDX compatibility and [Libraries](LIBRARIES.md) for library compatibility.
 
 ## Installation
-- Install JDK 8
 ### Linux
 - Install CMake, Ninja, Rsync, Texinfo, SDL2, SDL2_Mixer, GLEW, libffi, zlib, freetype
 - With APT: `sudo apt install build-essential texinfo rsync cmake ninja-build libffi-dev libsdl2-mixer-dev zlib1g-dev libglew-dev libfreetype-dev libcurl4-gnutls-dev`
@@ -65,7 +64,7 @@ the CLion CMake project needs to be reloaded using `Tools/Cmake/Reload CMake Pro
 If using Windows, the devkitPro MinGW toolchain has to be selected under the project build settings.
 
 ## Features implemented
-- Regex (RegExodus)
+- Regex ([RegExodus](https://github.com/tommyettinger/RegExodus))
 - Basic File I/O
 - GL20 bindings
 - GDX Native bindings
@@ -90,6 +89,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Have transpiler detect types needed by GDX collections for array reflection, possibly
 - Error dialogs for uncaught main thread exceptions
 - Additional socket hints such as server backlog
+- Gradle incremental compilation
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)

@@ -4,8 +4,8 @@ plugins {
     id 'java'
 }
 
-group 'com.thelogicmaster'
-version '1.0'
+def appTitle = 'SwitchGDX Example'
+def appAuthor = 'TheLogicMaster'
 
 repositories {
     mavenLocal()
@@ -30,17 +30,11 @@ dependencies {
     implementation project(':core')
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
-    retrolambda "net.orfjackal.retrolambda:retrolambda:2.5.7"
-
-    // Use latest GitHub commit
-    implementation 'com.thelogicmaster.clearwing-vm:runtime:-SNAPSHOT'
-    switchgdx 'com.thelogicmaster:switch-gdx:-SNAPSHOT'
-    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:-SNAPSHOT'
-
-    // Use specified release
-//    implementation 'com.thelogicmaster.clearwing-vm:runtime:0.1'
-//    switchgdx 'com.thelogicmaster:switch-gdx:0.1'
-//    transpiler 'com.thelogicmaster.clearwing-vm:transpiler:0.1'
+    implementation "com.github.tommyettinger:RegExodus:$regExodusVersion"
+    retrolambda "net.orfjackal.retrolambda:retrolambda:$retroLambdaVersion"
+    switchgdx "com.thelogicmaster:switch-gdx:$switchGdxVersion"
+    implementation "com.thelogicmaster.clearwing-vm:runtime:$clearwingVersion"
+    transpiler "com.thelogicmaster.clearwing-vm:transpiler:$clearwingVersion"
 }
 
 task transpile(dependsOn: 'build') {
@@ -51,7 +45,7 @@ task transpile(dependsOn: 'build') {
 
         copy {
             from sourceSets.main.output
-            from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
+            from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
             into "$buildDir/transpiler_input"
             exclude "META-INF", "META-INF/**"
             exclude "*/**/*.h"
@@ -63,7 +57,7 @@ task transpile(dependsOn: 'build') {
 
         copy {
             from sourceSets.main.output
-            from ({ zipTree(configurations.switchgdx.singleFile.absolutePath) })
+            from({ zipTree(configurations.switchgdx.singleFile.absolutePath) })
             into "$buildDir/transpiler_input"
             exclude "META-INF", "META-INF/**"
             exclude "*/**/*.h"
@@ -102,14 +96,14 @@ task transpile(dependsOn: 'build') {
         }
 
         copy {
-            from ("$buildDir/transpiler_output") {
+            from("$buildDir/transpiler_output") {
                 include "*.h"
             }
             into "$buildDir/dist/include"
         }
 
         copy {
-            from ("$buildDir/transpiler_output") {
+            from("$buildDir/transpiler_output") {
                 include "*.c"
                 include "*.cpp"
             }
@@ -117,14 +111,14 @@ task transpile(dependsOn: 'build') {
         }
 
         copy {
-            from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
+            from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
             include "*/**/*.h"
             into "$buildDir/dist/include"
             includeEmptyDirs = false
         }
 
         copy {
-            from { configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)} }
+            from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
             include "*/**/*.c"
             include "*/**/*.cpp"
             into "$buildDir/dist/source"
@@ -132,7 +126,7 @@ task transpile(dependsOn: 'build') {
         }
 
         copy {
-            from ("$buildDir/transpiler_output") {
+            from("$buildDir/transpiler_output") {
                 include "CMakeLists.txt"
                 include "Makefile"
                 include "*.cmake"
@@ -141,7 +135,7 @@ task transpile(dependsOn: 'build') {
         }
 
         copy {
-            from ("$buildDir/transpiler_input") {
+            from("$buildDir/transpiler_input") {
                 exclude "**/*.class"
                 exclude "META-INF", "META-INF/**"
                 exclude "**/*.gwt.xml"
@@ -153,6 +147,11 @@ task transpile(dependsOn: 'build') {
         copy {
             from "$rootDir/assets"
             into "$buildDir/dist/romfs"
+        }
+
+        copy {
+            from "$projectDir/icon.jpg"
+            into "$buildDir/dist"
         }
 
         // Patch to avoid compiler bug
@@ -207,11 +206,10 @@ task transpile(dependsOn: 'build') {
                     '    releaseForReturnInException(threadStateData, cn1LocalsBeginInThread, methodBlockOffset);\n' +
                     '    return result;\n' +
                     '}'
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
                 commandLine 'cmd', '/c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_assets_AssetManager.c'
-            } else {
+            else
                 commandLine 'bash', '-c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_assets_AssetManager.c'
-            }
             workingDir "$buildDir/dist/source"
         }
 
@@ -230,33 +228,34 @@ task transpile(dependsOn: 'build') {
                     '//    gcMarkObject(threadStateData, objInstance->com_badlogic_gdx_utils_JsonValue_prev, force);\n' +
                     '//    __GC_MARK_java_lang_Object(threadStateData, objToMark, force);\n' +
                     '}'
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
                 commandLine 'cmd', '/c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_utils_JsonValue.c'
-            } else {
+            else
                 commandLine 'bash', '-c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_utils_JsonValue.c'
-            }
             workingDir "$buildDir/dist/source"
         }
 
         exec {
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
                 commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
-            } else {
+            else
                 commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
-            }
             workingDir "$buildDir"
         }
     }
 }
+configure(transpile) {
+    group "SwitchGDX"
+    description = "Run the transpiler to generate the C project code"
+}
 
-task run(dependsOn: 'transpile') {
+task run(dependsOn: transpile) {
     doLast {
         exec {
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
                 commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir/${rootProject.name}", '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G \'MSYS Makefiles\' && cmake --build build-run || sleep 50000'
-            } else {
+            else
                 commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
-            }
             workingDir "$buildDir/${rootProject.name}"
         }
         if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
@@ -266,33 +265,74 @@ task run(dependsOn: 'transpile') {
             }
         }
         exec {
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
                 commandLine 'cmd', '/c', 'build-run\\dist.exe'
-            } else {
+            else
                 commandLine 'bash', '-c', './build-run/dist'
-            }
             workingDir "$buildDir/${rootProject.name}"
         }
     }
 }
+configure(run) {
+    group "SwitchGDX"
+    description = "Run with the SwitchGDX backend on desktop"
+}
 
-task deploy(dependsOn: 'transpile') {
+task nro(dependsOn: transpile) {
     doLast {
         exec {
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
                 commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir/${rootProject.name}", '-c', 'make -j8 || sleep 50000'
-            } else {
+            else
                 commandLine 'bash', '-c', 'make -j8'
-            }
             workingDir "$buildDir/${rootProject.name}"
+            environment 'APP_TITLE', appTitle
+            environment 'APP_AUTHOR', appAuthor
+            environment 'APP_VERSION', version
         }
+    }
+}
+configure(nro) {
+    group "SwitchGDX"
+    description = "Build a homebrew NRO"
+}
+
+task deploy(dependsOn: transpile) {
+    doLast {
         exec {
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
                 commandLine 'bash', '-c', "/opt/devkitpro/tools/bin/nxlink --server ./${rootProject.name}.nro"
-            } else {
+            else
                 commandLine 'bash', '-c', "\$DEVKITPRO/tools/bin/nxlink --server ./${rootProject.name}.nro"
-            }
             workingDir "$buildDir/${rootProject.name}"
         }
     }
+}
+configure(deploy) {
+    group "SwitchGDX"
+    description = "Run with the SwitchGDX backend on Switch via NxLink"
+}
+
+task ryujinx(dependsOn: nro) {
+    doLast {
+        Properties properties = new Properties();
+        try {
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        } catch (FileNotFoundException ignored) {
+            throw new Exception('The path to the Ryujinx emulator executable is unset. Set "ryujinxPath" in local.properties file.')
+        }
+        if (!properties.containsKey('ryujinxPath'))
+            throw new Exception('The path to the Ryujinx emulator executable is unset. Set "ryujinxPath" in local.properties file.')
+        exec {
+            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
+                commandLine 'cmd', '/c', "${properties.getProperty("ryujinxPath")} ${rootProject.name}.nro"
+            else
+                commandLine 'bash', '-c', "${properties.getProperty("ryujinxPath")} ${rootProject.name}.nro"
+            workingDir "$buildDir/${rootProject.name}"
+        }
+    }
+}
+configure(ryujinx) {
+    group "SwitchGDX"
+    description = "Run with the SwitchGDX backend on Switch via NxLink"
 }

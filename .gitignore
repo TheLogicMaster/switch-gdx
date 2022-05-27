@@ -3,6 +3,8 @@
 .idea
 .gradle
 
+local.properties
+
 # Compiled class file
 *.class
 

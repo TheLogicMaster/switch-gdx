@@ -43,6 +43,9 @@ SOURCES		:=	source $(wildcard source/*/) $(wildcard source/*/*/) $(wildcard sour
 DATA		:=	data
 INCLUDES	:=	include
 ROMFS       :=	romfs
+APP_TITLE ?= App
+APP_AUTHOR ?= Author
+APP_VERSION ?= 1.0
 
 #---------------------------------------------------------------------------------
 # options for code generation
