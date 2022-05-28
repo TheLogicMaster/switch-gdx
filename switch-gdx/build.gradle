@@ -32,8 +32,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.badlogicgames.gdx:gdx:$gdxVersion"
-    compileOnly "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
     implementation "com.github.tommyettinger:RegExodus:$regExodusVersion"
     implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
