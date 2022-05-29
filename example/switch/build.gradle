@@ -234,7 +234,7 @@ task transpile(dependsOn: 'build') {
 
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
+                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'data' --exclude 'sdmc' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
             else
                 commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
             workingDir "$buildDir"
