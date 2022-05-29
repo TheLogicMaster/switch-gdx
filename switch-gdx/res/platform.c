@@ -27,5 +27,7 @@ JAVA_OBJECT getSystemProperty(CODENAME_ONE_THREAD_STATE, const char *key) {
     if (!strcmp(key, "os.arch"))
         return fromNativeString(threadStateData, "x86_64");
 #endif
+    if (!strcmp(key, "line.separator"))
+        return fromNativeString(threadStateData, "\n");
     return JAVA_NULL;
 }

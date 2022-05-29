@@ -33,7 +33,7 @@ public class SwitchInput implements Input {
 	}
 
 	void update() {
-		currentEventTimeStamp = System.currentTimeMillis();
+		currentEventTimeStamp = System.nanoTime();
 		wasJustTouched = false;
 		getTouchData(touchData);
 
