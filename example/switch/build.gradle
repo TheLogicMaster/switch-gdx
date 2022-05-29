@@ -23,18 +23,15 @@ configurations {
     retrolambda {
         transitive = false
     }
-    implementation.extendsFrom(switchgdx)
 }
 
 dependencies {
-    implementation project(':core')
-    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-    implementation "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
-    implementation "com.github.tommyettinger:RegExodus:$regExodusVersion"
-    retrolambda "net.orfjackal.retrolambda:retrolambda:$retroLambdaVersion"
     switchgdx "com.thelogicmaster:switch-gdx:$switchGdxVersion"
-    implementation "com.thelogicmaster.clearwing-vm:runtime:$clearwingVersion"
     transpiler "com.thelogicmaster.clearwing-vm:transpiler:$clearwingVersion"
+    retrolambda "net.orfjackal.retrolambda:retrolambda:$retroLambdaVersion"
+    implementation project(':core')
+    implementation "com.thelogicmaster:switch-gdx:$switchGdxVersion"
+    implementation "com.thelogicmaster.clearwing-vm:runtime:$clearwingVersion"
 }
 
 task transpile(dependsOn: 'build') {
