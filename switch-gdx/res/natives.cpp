@@ -9,8 +9,11 @@
 #include "tinyfiledialogs.h"
 #include <curl/curl.h>
 #include <chrono>
+#include <SDL.h>
+#include <SDL_mixer.h>
+#include <SDL_gamecontroller.h>
 
-#ifndef __WIN32__
+#if !defined(__WIN32__) && !defined(__WINRT__)
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <netinet/in.h>
@@ -19,6 +22,33 @@
 # include <winsock2.h>
 # include <ws2tcpip.h>
 typedef int socklen_t;
+#endif
+
+#ifdef __WINRT__
+#include "winrt/base.h"
+namespace winrt::impl {
+    template <typename Async>
+    auto wait_for(Async const& async, Windows::Foundation::TimeSpan const& timeout);
+}
+#include <Windows.h>
+#include <winrt/base.h>
+#include <winrt/Windows.Storage.h>
+std::string getLocalPathUWP() {
+    auto path = winrt::Windows::Storage::ApplicationData::Current().LocalFolder().Path();
+    return std::string(path.begin(), path.end());
+}
+
+#define main main
+extern "C" extern int main(int argc, char* args[]);
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
+    AllocConsole();
+    FILE* fpstdin = stdin, * fpstdout = stdout, * fpstderr = stderr;
+    freopen_s(&fpstdin, "CONIN$", "r", stdin);
+    freopen_s(&fpstdout, "CONOUT$", "w", stdout);
+    freopen_s(&fpstderr, "CONOUT$", "w", stderr);
+
+    SDL_WinRTRunApp(main, nullptr);
+}
 #endif
 
 extern "C" {
@@ -40,9 +70,6 @@ extern "C" {
 #include "com_badlogic_gdx_Input_TextInputListener.h"
 #include "com_thelogicmaster_switchgdx_SwitchSocket.h"
 #include "com_thelogicmaster_switchgdx_SwitchServerSocket.h"
-
-#include <SDL.h>
-#include <SDL_mixer.h>
 
 #ifdef __SWITCH__
 # include <switch.h>
@@ -115,7 +142,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
     for (int i = 0; i < 16; i++)
         touches[i * 3] = -1;
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
     WSADATA wsa_data;
     if (WSAStartup(MAKEWORD(2, 2), &wsa_data))
         throwException(threadStateData, __NEW_INSTANCE_java_io_IOException(threadStateData));
@@ -164,14 +191,24 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
 
     SDL_Init(SDL_INIT_AUDIO);
 #else
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
 
     window = SDL_CreateWindow("SwitchGDX", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    SDL_GL_CreateContext(window);
+#ifdef __WINRT__
+    SDL_SetHint(SDL_HINT_OPENGL_ES_DRIVER, "1");
+    SDL_SetHint("SDL_WINRT_HANDLE_BACK_BUTTON", "1");
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#endif
+
+    auto context = SDL_GL_CreateContext(window);
+    SDL_GL_MakeCurrent(window, context);
     SDL_GL_SetSwapInterval(1);
 
     gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress);
@@ -187,7 +224,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_dispose__(CODENAME_ONE_THREAD_STATE) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
     WSACleanup();
 #endif
 
@@ -214,37 +251,37 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_dispose__(CODENAME_ONE_
 static int keyToButton(int key) {
     switch (key) {
         case SDL_SCANCODE_Z:
-            return 1 << 3;
+            return 1 << 3; // Y
         case SDL_SCANCODE_X:
-            return 1 << 1;
+            return 1 << 1; // B
         case SDL_SCANCODE_C:
-            return 1 << 0;
+            return 1 << 0; // A
         case SDL_SCANCODE_V:
-            return 1 << 2;
+            return 1 << 2; // X
         case SDL_SCANCODE_F:
-            return 1 << 4;
+            return 1 << 4; // Left stick
         case SDL_SCANCODE_G:
-            return 1 << 5;
+            return 1 << 5; // Right stick
         case SDL_SCANCODE_Q:
-            return 1 << 6;
+            return 1 << 6; // L
         case SDL_SCANCODE_E:
-            return 1 << 7;
+            return 1 << 7; // R
         case SDL_SCANCODE_R:
-            return 1 << 8;
+            return 1 << 8; // ZL
         case SDL_SCANCODE_T:
-            return 1 << 9;
+            return 1 << 9; // ZR
         case SDL_SCANCODE_N:
-            return 1 << 10;
+            return 1 << 10; // Plus
         case SDL_SCANCODE_M:
-            return 1 << 11;
+            return 1 << 11; // Minus
         case SDL_SCANCODE_UP:
-            return 1 << 13;
+            return 1 << 13; // D-up
         case SDL_SCANCODE_DOWN:
-            return 1 << 15;
+            return 1 << 15; // D-down
         case SDL_SCANCODE_LEFT:
-            return 1 << 12;
+            return 1 << 12; // D-left
         case SDL_SCANCODE_RIGHT:
-            return 1 << 14;
+            return 1 << 14; // D-right
         default:
             return 0;
     }
@@ -270,6 +307,41 @@ static int keyToAxis(int scancode) {
             return 2;
         default:
             return -1;
+    }
+}
+
+static int mapButtonSDL(int button) {
+    switch (button) {
+        case SDL_CONTROLLER_BUTTON_A:
+            return 1 << 0;
+        case SDL_CONTROLLER_BUTTON_B:
+            return 1 << 1;
+        case SDL_CONTROLLER_BUTTON_X:
+            return 1 << 2;
+        case SDL_CONTROLLER_BUTTON_Y:
+            return 1 << 3;
+        case SDL_CONTROLLER_BUTTON_LEFTSTICK:
+            return 1 << 4;
+        case SDL_CONTROLLER_BUTTON_RIGHTSTICK:
+            return 1 << 5;
+        case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
+            return 1 << 6;
+        case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+            return 1 << 7;
+        case SDL_CONTROLLER_BUTTON_START:
+            return 1 << 10;
+        case SDL_CONTROLLER_BUTTON_BACK:
+            return 1 << 11;
+        case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+            return 1 << 12;
+        case SDL_CONTROLLER_BUTTON_DPAD_UP:
+            return 1 << 13;
+        case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+            return 1 << 14;
+        case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+            return 1 << 15;
+        default:
+            return 0;
     }
 }
 #endif
@@ -326,12 +398,44 @@ JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchApplication_update___R_boolean(C
                 buttons &= ~keyToButton(event.key.keysym.scancode);
                 axis = keyToAxis(event.key.keysym.scancode);
                 if (axis > -1 and !event.key.repeat)
-                    joysticks[axis & 0x3] -= axis & 0x4 ? -1 : 1;
+                    joysticks[axis & 0x3] = 0;
+                break;
+            case SDL_CONTROLLERBUTTONDOWN:
+                buttons |= mapButtonSDL(event.cbutton.button);
+                break;
+            case SDL_CONTROLLERBUTTONUP:
+                buttons &= ~mapButtonSDL(event.cbutton.button);
+                break;
+            case SDL_CONTROLLERAXISMOTION:
+                if (event.caxis.axis >= 0 && event.caxis.axis < 4)
+                    joysticks[event.caxis.axis] = (float)(event.caxis.axis & 0x1 ? -1 : 1) * (float)event.caxis.value / 32768.f;
+                for (int i = 0; i < 2; i++)
+                    if (event.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT + i) {
+                        if (event.caxis.value > 512)
+                            buttons |= 1 << (8 + i);
+                        else
+                            buttons &= ~(1 << (8 + i));
+                    }
+                break;
+            case SDL_CONTROLLERDEVICEADDED:
+                SDL_GameControllerOpen(event.cdevice.which);
+                break;
+            case SDL_CONTROLLERDEVICEREMOVED:
+                SDL_GameControllerClose(SDL_GameControllerFromPlayerIndex(event.cdevice.which));
                 break;
         }
 
     SDL_GL_SwapWindow(window);
     return true;
+#endif
+}
+
+JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchFiles_getLocalStoragePath___R_java_lang_String(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
+#ifdef __WINRT__
+    auto path = getLocalPathUWP();
+    return fromNativeString(threadStateData, path.c_str());
+#else
+    return fromNativeString(threadStateData, "data");
 #endif
 }
 
@@ -342,7 +446,7 @@ JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchNet_openURI___java_lang_String_R
     return !webPageCreate(&config, toNativeString(threadStateData, urlObj)) and !webConfigSetWhitelist(&config, "^http*") and !webConfigShow(&config, &reply);
 #else
     std::string url(toNativeString(threadStateData, urlObj));
-# if __WIN32__
+# if defined(__WIN32__) || defined(__WINRT__)
     system(("start " + url).c_str());
 # elif __APPLE__
     system(("open " + url).c_str());
@@ -416,12 +520,14 @@ void throwNativeSocketException(CODENAME_ONE_THREAD_STATE, bool inErrno = false)
     if (errno == ETIMEDOUT)
         error = fromNativeString(threadStateData, "Timed out");
     else {
-#ifdef __WIN32__
+#if defined(__WIN32__)
         if (!inErrno)
             errno = WSAGetLastError();
         char buffer[256];
         FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_MAX_WIDTH_MASK, nullptr, errno, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buffer, sizeof(buffer), nullptr);
         error = fromNativeString(threadStateData, buffer);
+#elif defined(__WINRT__)
+        error = fromNativeString(threadStateData, "Socket error");
 #else
         error = fromNativeString(threadStateData, strerror(errno));
 #endif
@@ -433,7 +539,7 @@ void throwNativeSocketException(CODENAME_ONE_THREAD_STATE, bool inErrno = false)
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchSocket_dispose__(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
     auto switchSocket = (obj__com_thelogicmaster_switchgdx_SwitchSocket *) __cn1ThisObject;
     if (switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
         shutdown(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd, SD_SEND);
         closesocket(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd);
 #else
@@ -444,7 +550,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchSocket_dispose__(CODENAME_ONE_THREA
 }
 
 void setSocketTimeout(int fd, int timeout) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
     DWORD timeoutVal = timeout;
     setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeoutVal, sizeof timeoutVal);
     setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (const char*)&timeoutVal, sizeof timeoutVal);
@@ -493,7 +599,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int
         if (fd < 0)
             goto error;
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
         u_long nonblocking = 1;
         ioctlsocket(fd, FIONBIO, &nonblocking);
 #else
@@ -502,7 +608,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int
 #endif
 
         if (connect(fd, addrInfoIter->ai_addr, (int)addrInfoIter->ai_addrlen)) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
             if (WSAGetLastError() == WSAEWOULDBLOCK) {
 #else
             if (errno == EWOULDBLOCK or errno == EINPROGRESS) {
@@ -534,7 +640,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int
                 if (fd >= 0)
                     break;
             } else {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
                 shutdown(fd, SD_SEND);
                 closesocket(fd);
 #else
@@ -549,7 +655,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int
     if (fd < 0)
         goto error;
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
     {
         u_long nonblocking = 0;
         ioctlsocket(fd, FIONBIO, &nonblocking);
@@ -564,12 +670,12 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchSocket_create___java_lang_String_int
     return fd;
 
     error:
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
     errno = WSAGetLastError();
 #endif
 
     if (fd > 0) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
         shutdown(fd, SD_SEND);
         closesocket(fd);
 #else
@@ -588,7 +694,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchSocket_read___R_int(CODENAME_ONE_THR
     if (!switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd)
         throwException(threadStateData, __NEW_INSTANCE_java_io_IOException(threadStateData));
     if (recv(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd, (char *)&buffer, 1, 0) != 1) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
         errno = WSAGetLastError();
 #endif
         throwNativeSocketException(threadStateData, true);
@@ -602,7 +708,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchSocket_write___int(CODENAME_ONE_THR
     if (!switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd)
         throwException(threadStateData, __NEW_INSTANCE_java_io_IOException(threadStateData));
     if (send(switchSocket->com_thelogicmaster_switchgdx_SwitchSocket_fd, (char *)&buffer, 1, 0) != 1) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
         errno = WSAGetLastError();
 #endif
         throwNativeSocketException(threadStateData);
@@ -627,7 +733,7 @@ JAVA_OBJECT com_thelogicmaster_switchgdx_SwitchSocket_getRemoteAddress___R_java_
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchServerSocket_dispose__(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {
     auto server = (obj__com_thelogicmaster_switchgdx_SwitchServerSocket *) __cn1ThisObject;
     if (server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
         shutdown(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd, SD_SEND);
         closesocket(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd);
 #else
@@ -650,7 +756,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_create___int_boolean_R_
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &reuseAddress, sizeof(int)) < 0)
         goto error;
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
     {
         u_long nonblocking = 1;
         ioctlsocket(fd, FIONBIO, &nonblocking);
@@ -668,12 +774,12 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_create___int_boolean_R_
     return fd;
 
     error:
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
     errno = WSAGetLastError();
 #endif
 
     if (fd > 0) {
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
         shutdown(fd, SD_SEND);
         closesocket(fd);
 #else
@@ -700,7 +806,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_accept___int_R_int(CODE
         fd = accept(server->com_thelogicmaster_switchgdx_SwitchServerSocket_fd, (sockaddr *) &address, &addrLen);
         if (fd >= 0)
             break;
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
         if (WSAGetLastError() != WSAEWOULDBLOCK)
 #else
         if (errno != EAGAIN)
@@ -714,7 +820,7 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchServerSocket_accept___int_R_int(CODE
         throwException(threadStateData, error);
     }
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__WINRT__)
     {
         u_long nonblocking = 0;
         ioctlsocket(fd, FIONBIO, &nonblocking);
@@ -763,7 +869,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_setPosition0___float(CODENAME
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchMusic_dispose0__(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject) {
-    auto &handle = ((obj__com_thelogicmaster_switchgdx_SwitchMusic*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchMusic_handle;
+    auto& handle = ((obj__com_thelogicmaster_switchgdx_SwitchMusic*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchMusic_handle;
     if (!handle)
         return;
     Mix_FreeMusic((Mix_Music *)handle);
@@ -790,7 +896,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_dispose0__(CODENAME_ONE_THREA
 }
 
 JAVA_INT com_thelogicmaster_switchgdx_SwitchSound_play0___boolean_R_int(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_BOOLEAN looping) {
-    return Mix_PlayChannel(-1, (Mix_Chunk *)((obj__com_thelogicmaster_switchgdx_SwitchSound*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle, looping ? -1 : 0);
+    return Mix_PlayChannel(-1, (Mix_Chunk*)((obj__com_thelogicmaster_switchgdx_SwitchSound*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle, looping ? -1 : 0);
 }
 
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_stop0___int(CODENAME_ONE_THREAD_STATE, JAVA_INT channel) {
@@ -1191,6 +1297,8 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchInput_getTextInput___com_badlogic_g
         goto failed;
     com_badlogic_gdx_Input_TextInputListener_input___java_lang_String(threadStateData, listener, fromNativeString(threadStateData, buffer));
     return;
+#elif defined(__WINRT__)
+    goto failed;
 #else
     auto input = tinyfd_inputBox(toNativeString(threadStateData, title), toNativeString(threadStateData, text), "");
     if (!input)

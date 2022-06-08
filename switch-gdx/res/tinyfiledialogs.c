@@ -47,7 +47,7 @@ Thanks for contributions, bug corrections & thorough testing to:
 - Paul Rouget
 */
 
-#ifndef __SWITCH__
+#if !defined(__SWITCH__) && !defined(__WINRT__)
 
 #ifndef __sun
 #ifndef _POSIX_C_SOURCE

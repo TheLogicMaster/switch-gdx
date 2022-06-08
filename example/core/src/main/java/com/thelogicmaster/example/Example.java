@@ -149,14 +149,14 @@ public class Example implements ApplicationListener {
 
 		File file = new File("test.txt");
 		System.out.println("test.txt exists: " + file.exists());
-		try {
-			FileInputStream fileInputStream = new FileInputStream(file);
-			byte[] bytes = new byte[fileInputStream.available()];
-			int read = fileInputStream.read(bytes);
-			System.out.println("Read: " + read + " " + new String(bytes));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			FileInputStream fileInputStream = new FileInputStream(file);
+//			byte[] bytes = new byte[fileInputStream.available()];
+//			int read = fileInputStream.read(bytes);
+//			System.out.println("Read: " + read + " " + new String(bytes));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
 //		file = new File("test2.txt");
 //		try {
@@ -172,9 +172,10 @@ public class Example implements ApplicationListener {
 		prefs.putString("value", "Value set");
 		prefs.flush();
 
-		FileHandle fileHandle = Gdx.files.internal("test.png");
-		System.out.println("test.png path: " + fileHandle.file().getPath());
+		FileHandle fileHandle = Gdx.files.internal("test.txt");
+		System.out.println("test.txt path: " + fileHandle.file().getPath());
 		System.out.println("Exists: " + fileHandle.exists());
+		System.out.println("Contents: " + fileHandle.readString());
 
 		assets = new AssetManager();
 
@@ -384,16 +385,20 @@ public class Example implements ApplicationListener {
 
 		if (controller != null) {
 			Vector3 horizontal = camera.direction.cpy().crs(camera.up).nor().scl(controller.getAxis(2) / 3);
+			horizontal.y = 0;
 			Vector3 vertical = camera.direction.cpy().nor().scl(controller.getAxis(3) / 3);
-			camera.translate(horizontal.add(vertical));
+			if (horizontal.len() > 0.1f || vertical.len() > 0.1f)
+				camera.translate(horizontal.add(vertical));
 
 			if (controller.getButton(0) || Gdx.input.isKeyPressed(Input.Keys.BUTTON_THUMBL))
 				camera.translate(0, 0.1f, 0);
 			else if (controller.getButton(1) || Gdx.input.isKeyJustPressed(Input.Keys.BUTTON_THUMBR))
 				camera.translate(0, -0.1f, 0);
 
-			camera.direction.rotate(camera.up, controller.getAxis(0) * -1);
-			camera.direction.rotate(camera.direction.cpy().crs(camera.up).nor(), controller.getAxis(1));
+			if (Math.abs(controller.getAxis(0)) > 0.1f)
+				camera.direction.rotate(camera.up, controller.getAxis(0) * -1);
+			if (Math.abs(controller.getAxis(1)) > 0.1f)
+				camera.direction.rotate(camera.direction.cpy().crs(camera.up).nor(), controller.getAxis(1));
 
 			camera.update();
 		}

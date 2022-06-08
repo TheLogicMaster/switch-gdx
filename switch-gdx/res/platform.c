@@ -16,11 +16,16 @@ JAVA_OBJECT getOSLanguage(CODENAME_ONE_THREAD_STATE) {
 }
 
 JAVA_OBJECT getSystemProperty(CODENAME_ONE_THREAD_STATE, const char *key) {
-#ifdef __SWITCH__
+#if defined(__SWITCH__)
     if (!strcmp(key, "os.name"))
         return fromNativeString(threadStateData, "horizon");
     if (!strcmp(key, "os.arch"))
         return fromNativeString(threadStateData, "aarch64");
+#elif defined(__WINRT__)
+    if (!strcmp(key, "os.name"))
+        return fromNativeString(threadStateData, "uwp");
+    if (!strcmp(key, "os.arch"))
+        return fromNativeString(threadStateData, "x86_64");
 #else
     if (!strcmp(key, "os.name"))
         return fromNativeString(threadStateData, "unknown");

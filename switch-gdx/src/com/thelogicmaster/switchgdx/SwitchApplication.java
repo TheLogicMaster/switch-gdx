@@ -34,9 +34,12 @@ public class SwitchApplication implements Application {
 	private final Array<Runnable> executedRunnables = new Array<>();
 
 	public static final boolean isSwitch = System.getProperty("os.name").equals("horizon");
+	public static final boolean isUWP = System.getProperty("os.name").equals("uwp");
 
 	public SwitchApplication (ApplicationListener listener) {
 		this.listener = listener;
+
+		Gdx.app = this;
 
 		try {
 			applicationLogger = new SwitchLogger();
@@ -46,7 +49,6 @@ public class SwitchApplication implements Application {
 			net = new SwitchNet();
 			audio = new SwitchAudio();
 
-			Gdx.app = this;
 			Gdx.input = this.getInput();
 			Gdx.audio = this.getAudio();
 			Gdx.files = this.getFiles();

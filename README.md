@@ -2,13 +2,14 @@
 [![Release](https://jitpack.io/v/com.thelogicmaster/switch-gdx.svg)](https://jitpack.io/#com.thelogicmaster/switch-gdx)
 
 ## About
-This is a WIP Nintendo Switch Homebrew LibGDX backend based on LibNX and the CodenameOne [Parpar VM](https://github.com/codenameone/CodenameOne/tree/master/vm). 
+This is a WIP Nintendo Switch and Xbox/UWP Homebrew LibGDX backend based on LibNX and the CodenameOne [Parpar VM](https://github.com/codenameone/CodenameOne/tree/master/vm). 
 It uses a custom fork of the VM named [Clearwing VM](https://github.com/TheLogicMaster/clearwing-vm).
 It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
 on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. See [Tests](TESTS.md)
 for current GDX compatibility and [Libraries](LIBRARIES.md) for library compatibility.
 
 ## Installation
+
 ### Linux
 - Install CMake, Ninja, Rsync, Texinfo, SDL2, SDL2_Mixer, GLEW, libffi, zlib, freetype
 - With APT: `sudo apt install build-essential texinfo rsync cmake ninja-build libffi-dev libsdl2-mixer-dev zlib1g-dev libglew-dev libfreetype-dev libcurl4-gnutls-dev`
@@ -21,6 +22,10 @@ for current GDX compatibility and [Libraries](LIBRARIES.md) for library compatib
 - `pacman -Syu`
 - `pacman -S switch-zlib switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
 - `pacman -S gcc git rsync texinfo mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-curl-gnutls mingw-w64-x86_64-freetype mingw-w64-x86_64-bullet`
+
+### UWP
+- Install git and add to path
+- Install Visual Studio Community 2019
 
 ### libffi
 This is a library that has to be compiled and installed manually for Switch. Run this for Linux normally and on Windows under 
@@ -45,11 +50,14 @@ For now, reference the `example` project for the Gradle setup. If you don't yet 
 no spaces. In your project, add a new Gradle submodule called `switch` and
 copy `switch.json` and `build.gradle` from the `example` project's `switch` directory into the new submodule. Create a new Class called 
 `SwitchLauncher` or whatever you want to call it and add a main method that simply creates a new `SwitchApplication` instance
-that takes your `ApplicationListener` as a parameter. Edit `build.gradle` to update the main class name and artifact IDs. 
+that takes your `ApplicationListener` as a parameter. Edit `build.gradle` to update the main class name, artifact IDs, and
+application title/author info. 
 Ensure that the core project has `sourceCompatibility` set no higher than 1.8 for now.
 The `transpile` task does just that and outputs the C project into the `<project>/switch/build/<project>` directory. `run` executes
 the transpiler and runs the native PC backend. `deploy` does the same but deploys to a Switch via NXLink. Ensure that the path
-to the project directory doesn't contain any spaces. 
+to the project directory doesn't contain any spaces. `ryujinx` runs the generated Switch homebrew NRO in the Ryujinx 
+emulator if installed and `ryujinxPath` is set in `local.properties`. `uwp` creates and opens a Visual Studio project
+for Xbox/UWP.
 
 ## Debugging
 The project can be debugged as a normal C project with your IDE of choice. CLion works out of the box with
@@ -90,6 +98,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Error dialogs for uncaught main thread exceptions
 - Additional socket hints such as server backlog
 - Gradle incremental compilation
+- Improve platform detection to help with external file paths and such
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
@@ -105,9 +114,13 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Changing any String literals forces a full recompilation
 - Socket server only supports IPv4
 - Restarting a program that uses sockets without fully restarting the Switch app leads to a crash
+- The UWP project generation has a bug where the project has to be manually rebuilt in Visual Studio for the assets to be properly copied
+- The UWP project requires a custom build of SDL2_mixer since the VCPKG library doesn't support UWP, for some reason. 
+This requires downloading the SDL2_mixer and SDL2 source and building the UWP subproject, adding the necessary linker input libraries
+and adding MPG123.lib from VCPKG for MP3 support. 
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so patch for now (Probably related to setjmp/try-catch)
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
-- Flick gesture detection is broken
 - GC bug where it tries to dispose of primitive array contents (JSON test)
+- The UWP port has 3D rendering/clipping issues

@@ -46,7 +46,7 @@ public class SwitchFileHandle extends FileHandle {
 	@Override
 	public File file () {
 		if (type == Files.FileType.Internal)
-			return new File(SwitchApplication.isSwitch ? "romfs:" : "romfs", file.getPath());
+			return new File(SwitchApplication.isSwitch ? "romfs:" : (SwitchApplication.isUWP ? "" : "romfs"), file.getPath());
 		if (type == Files.FileType.Local)
 			return new File(Gdx.files.getLocalStoragePath(), file.getPath());
 		return super.file();

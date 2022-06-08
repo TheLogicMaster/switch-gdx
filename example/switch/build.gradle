@@ -127,6 +127,8 @@ task transpile(dependsOn: 'build') {
                 include "CMakeLists.txt"
                 include "Makefile"
                 include "*.cmake"
+                include "*.cmd"
+                include "SDL2_mixer.*"
             }
             into "$buildDir/dist"
         }
@@ -136,6 +138,9 @@ task transpile(dependsOn: 'build') {
                 exclude "**/*.class"
                 exclude "META-INF", "META-INF/**"
                 exclude "**/*.gwt.xml"
+                exclude "*.c"
+                exclude "*.cpp"
+                exclude "*.h"
             }
             into "$buildDir/dist/romfs/classpath"
             includeEmptyDirs = false
@@ -207,7 +212,7 @@ task transpile(dependsOn: 'build') {
                 commandLine 'cmd', '/c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_assets_AssetManager.c'
             else
                 commandLine 'bash', '-c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_assets_AssetManager.c'
-            workingDir "$buildDir/dist/source"
+            workingDir "$buildDir${File.separator}dist${File.separator}source"
         }
 
         // Temporary patch to prevent crash, probably causes memory leaks
@@ -229,14 +234,14 @@ task transpile(dependsOn: 'build') {
                 commandLine 'cmd', '/c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_utils_JsonValue.c'
             else
                 commandLine 'bash', '-c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_utils_JsonValue.c'
-            workingDir "$buildDir/dist/source"
+            workingDir "$buildDir${File.separator}dist${File.separator}source"
         }
 
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'data' --exclude 'sdmc' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
+                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'data' --exclude 'sdmc' --exclude 'build-run' --exclude 'build-uwp' --exclude '.idea' dist/ ${rootProject.name}"
             else
-                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
+                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'data' --exclude 'sdmc' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
             workingDir "$buildDir"
         }
     }
@@ -250,10 +255,10 @@ task run(dependsOn: transpile) {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir/${rootProject.name}", '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G \'MSYS Makefiles\' && cmake --build build-run || sleep 50000'
+                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir${File.separator}${rootProject.name}", '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G \'MSYS Makefiles\' && cmake --build build-run || sleep 50000'
             else
                 commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
-            workingDir "$buildDir/${rootProject.name}"
+            workingDir "$buildDir${File.separator}${rootProject.name}"
         }
         if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
             copy { // Todo: Copy only needed
@@ -267,7 +272,7 @@ task run(dependsOn: transpile) {
                 commandLine 'cmd', '/c', 'build-run\\dist.exe'
             else
                 commandLine 'bash', '-c', './build-run/dist'
-            workingDir "$buildDir/${rootProject.name}"
+            workingDir "$buildDir${File.separator}${rootProject.name}"
         }
     }
 }
@@ -280,10 +285,10 @@ task nro(dependsOn: transpile) {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir/${rootProject.name}", '-c', 'make -j8 || sleep 50000'
+                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir${File.separator}${rootProject.name}", '-c', 'make -j8 || sleep 50000'
             else
                 commandLine 'bash', '-c', 'make -j8'
-            workingDir "$buildDir/${rootProject.name}"
+            workingDir "$buildDir${File.separator}${rootProject.name}"
             environment 'APP_TITLE', appTitle
             environment 'APP_AUTHOR', appAuthor
             environment 'APP_VERSION', version
@@ -302,7 +307,7 @@ task deploy(dependsOn: transpile) {
                 commandLine 'bash', '-c', "/opt/devkitpro/tools/bin/nxlink --server ./${rootProject.name}.nro"
             else
                 commandLine 'bash', '-c', "\$DEVKITPRO/tools/bin/nxlink --server ./${rootProject.name}.nro"
-            workingDir "$buildDir/${rootProject.name}"
+            workingDir "$buildDir${File.separator}${rootProject.name}"
         }
     }
 }
@@ -326,11 +331,24 @@ task ryujinx(dependsOn: nro) {
                 commandLine 'cmd', '/c', "${properties.getProperty("ryujinxPath")} ${rootProject.name}.nro"
             else
                 commandLine 'bash', '-c', "${properties.getProperty("ryujinxPath")} ${rootProject.name}.nro"
-            workingDir "$buildDir/${rootProject.name}"
+            workingDir "$buildDir${File.separator}${rootProject.name}"
         }
     }
 }
 configure(ryujinx) {
     group "SwitchGDX"
     description = "Run with the SwitchGDX backend on Switch via NxLink"
+}
+
+task uwp(dependsOn: transpile) {
+    doLast {
+        exec {
+            commandLine 'cmd', '/c', "call uwp.cmd"
+            workingDir "$buildDir${File.separator}${rootProject.name}"
+        }
+    }
+}
+configure(uwp) {
+    group "SwitchGDX"
+    description = "Generate the UWP project and open Visual Studio"
 }
