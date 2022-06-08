@@ -2,7 +2,7 @@
 [![Release](https://jitpack.io/v/com.thelogicmaster/switch-gdx.svg)](https://jitpack.io/#com.thelogicmaster/switch-gdx)
 
 ## About
-This is a WIP Nintendo Switch and Xbox/UWP Homebrew LibGDX backend based on LibNX and the CodenameOne [Parpar VM](https://github.com/codenameone/CodenameOne/tree/master/vm). 
+This is a WIP Nintendo Switch Homebrew and Xbox/UWP LibGDX backend based on LibNX and the CodenameOne [Parpar VM](https://github.com/codenameone/CodenameOne/tree/master/vm). 
 It uses a custom fork of the VM named [Clearwing VM](https://github.com/TheLogicMaster/clearwing-vm).
 It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
 on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. See [Tests](TESTS.md)
@@ -94,6 +94,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - GL30 (Requires regenerating glad2 online)
 - Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
 - Bullet
+- Controller remapping, analog trigger support
 - Have transpiler detect types needed by GDX collections for array reflection, possibly
 - Error dialogs for uncaught main thread exceptions
 - Additional socket hints such as server backlog

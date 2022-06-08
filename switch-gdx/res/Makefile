@@ -40,7 +40,6 @@ include $(DEVKITPRO)/libnx/switch_rules
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source $(wildcard source/*/) $(wildcard source/*/*/) $(wildcard source/*/*/*/) $(wildcard source/*/*/*/*/)
-DATA		:=	data
 INCLUDES	:=	include
 ROMFS       :=	romfs
 APP_TITLE ?= App
