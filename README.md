@@ -24,7 +24,7 @@ for current GDX compatibility and [Libraries](LIBRARIES.md) for library compatib
 - `pacman -S gcc git rsync texinfo mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-curl-gnutls mingw-w64-x86_64-freetype mingw-w64-x86_64-bullet`
 
 ### UWP
-- Install git and add to path
+- Install [git](https://git-scm.com/downloads) and add to path
 - Install Visual Studio Community 2019
 
 ### libffi
@@ -89,6 +89,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - FreeType
 - Box2D
 - GDX Networking
+- Early Xbox/UWP port
 
 ## Todo
 - GL30 (Requires regenerating glad2 online)
@@ -100,6 +101,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Additional socket hints such as server backlog
 - Gradle incremental compilation
 - Improve platform detection to help with external file paths and such
+- Reflection error handling
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
@@ -125,3 +127,4 @@ and adding MPG123.lib from VCPKG for MP3 support.
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
 - GC bug where it tries to dispose of primitive array contents (JSON test)
 - The UWP port has 3D rendering/clipping issues
+- There's a Clearwing bug that causes Artemis sorting of bags to break (Bomberman glitch)

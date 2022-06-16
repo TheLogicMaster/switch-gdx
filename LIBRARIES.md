@@ -1,4 +1,4 @@
-Fix example package name# SwitchGDX Library Compatibility
+# SwitchGDX Library Compatibility
 Libraries that don't have native components should work by default, but may require creating entries in the switch.json config
 file to prevent classes used by reflection (Any types used by GDX Array, for example) being optimized away. Any library that uses
 native code must have bindings for the Clearwing VM written by hand or utilize the jnigen fork. 
@@ -31,7 +31,8 @@ Fully supported. Requires the following added to switch.json:
     "com.artemis.ComponentTypeFactory.ComponentTypeListener",
     "com.artemis.EntitySubscription",
     "com.artemis.Component",
-    "com.artemis.Aspect"
+    "com.artemis.Aspect",
+    "com.artemis.Entity"
   ]
 }
 ```
@@ -55,3 +56,13 @@ Fully supported
 
 ## [GDX VFX](https://github.com/crashinvaders/gdx-vfx)
 Fully supported
+
+## [Ashley](https://github.com/libgdx/ashley)
+Fully supported. Requires the following entry added to switch.json:
+```json
+{
+  "nonOptimized": [
+    "com.badlogic.ashley.core.Entity"
+  ]
+}
+```

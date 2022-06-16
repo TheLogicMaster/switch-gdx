@@ -269,9 +269,9 @@ task run(dependsOn: transpile) {
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', 'build-run\\dist.exe'
+                commandLine 'cmd', '/c', 'build-run\\SwitchGDX.exe'
             else
-                commandLine 'bash', '-c', './build-run/dist'
+                commandLine 'bash', '-c', './build-run/SwitchGDX'
             workingDir "$buildDir${File.separator}${rootProject.name}"
         }
     }
