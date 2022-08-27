@@ -92,7 +92,8 @@ static EGLDisplay display;
 static EGLContext context;
 static EGLSurface surface;
 
-static PadState pad;
+static PadState combinedPad;
+static PadState pads[8];
 
 static int nxlinkSock = -1;
 static bool socketInit;
@@ -149,8 +150,12 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
 #endif
 
 #ifdef __SWITCH__
-    padConfigureInput(1, HidNpadStyleSet_NpadStandard);
-    padInitializeDefault(&pad);
+    padConfigureInput(8, HidNpadStyleSet_NpadStandard);
+    padInitializeAny(&combinedPad);
+
+    padInitializeDefault(&pads[0]);
+    for (int i = 1; i < 8; i++)
+        padInitialize(&pads[i], static_cast<HidNpadIdType>(HidNpadIdType_No1 + i));
 
     setInitialize();
 
@@ -216,7 +221,7 @@ JAVA_VOID com_thelogicmaster_switchgdx_SwitchApplication_init__(CODENAME_ONE_THR
 
     Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG);
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096);
-    Mix_AllocateChannels(16);
+    Mix_AllocateChannels(32);
     Mix_HookMusicFinished(onMusicFinished);
     Mix_ChannelFinished(onSoundFinished);
 
@@ -344,14 +349,96 @@ static int mapButtonSDL(int button) {
             return 0;
     }
 }
+#else
+static u64 remapPadButtons(u64 buttons, u32 style) {
+    u64 mapped = buttons;
+
+    if (style & HidNpadStyleTag_NpadJoyLeft) {
+        mapped &= ~(
+            HidNpadButton_Left | HidNpadButton_Right | HidNpadButton_Up | HidNpadButton_Down |
+            HidNpadButton_StickLLeft | HidNpadButton_StickLRight | HidNpadButton_StickLUp | HidNpadButton_StickLDown |
+            HidNpadButton_LeftSL | HidNpadButton_LeftSR
+        );
+
+        if (buttons & HidNpadButton_Left)
+            mapped |= HidNpadButton_B;
+        if (buttons & HidNpadButton_Down)
+            mapped |= HidNpadButton_A;
+        if (buttons & HidNpadButton_Up)
+            mapped |= HidNpadButton_Y;
+        if (buttons & HidNpadButton_Right)
+            mapped |= HidNpadButton_X;
+
+        if (buttons & HidNpadButton_StickLLeft)
+            mapped |= HidNpadButton_StickLDown;
+        if (buttons & HidNpadButton_StickLDown)
+            mapped |= HidNpadButton_StickLRight;
+        if (buttons & HidNpadButton_StickLRight)
+            mapped |= HidNpadButton_StickLUp;
+        if (buttons & HidNpadButton_StickLUp)
+            mapped |= HidNpadButton_StickLLeft;
+
+        if (buttons & HidNpadButton_LeftSL)
+            mapped |= HidNpadButton_L;
+        if (buttons & HidNpadButton_LeftSR)
+            mapped |= HidNpadButton_R;
+    } else if (style & HidNpadStyleTag_NpadJoyRight) {
+        mapped &= ~(
+            HidNpadButton_A | HidNpadButton_B | HidNpadButton_X | HidNpadButton_Y |
+            HidNpadButton_StickLLeft | HidNpadButton_StickLRight | HidNpadButton_StickLUp | HidNpadButton_StickLDown |
+            HidNpadButton_LeftSL | HidNpadButton_LeftSR
+        );
+
+        if (buttons & HidNpadButton_A)
+            mapped |= HidNpadButton_B;
+        if (buttons & HidNpadButton_X)
+            mapped |= HidNpadButton_A;
+        if (buttons & HidNpadButton_B)
+            mapped |= HidNpadButton_Y;
+        if (buttons & HidNpadButton_Y)
+            mapped |= HidNpadButton_X;
+
+        if (buttons & HidNpadButton_StickRLeft)
+            mapped |= HidNpadButton_StickRUp;
+        if (buttons & HidNpadButton_StickRDown)
+            mapped |= HidNpadButton_StickRLeft;
+        if (buttons & HidNpadButton_StickRRight)
+            mapped |= HidNpadButton_StickRDown;
+        if (buttons & HidNpadButton_StickRUp)
+            mapped |= HidNpadButton_StickRRight;
+
+        if (buttons & HidNpadButton_RightSL)
+            mapped |= HidNpadButton_L;
+        if (buttons & HidNpadButton_RightSR)
+            mapped |= HidNpadButton_R;
+    }
+
+    return mapped;
+}
+
+static void remapPadAxes(float *axes, u32 style) {
+    if (style & HidNpadStyleTag_NpadJoyLeft) {
+        float temp = axes[0];
+        axes[0] = -axes[1];
+        axes[1] = temp;
+    } else if(style & HidNpadStyleTag_NpadJoyRight) {
+        axes[0] = axes[3];
+        axes[1] = -axes[2];
+        axes[2] = 0;
+        axes[3] = 0;
+    }
+}
 #endif
 
 JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchApplication_update___R_boolean(CODENAME_ONE_THREAD_STATE) {
 #ifdef __SWITCH__
-    padUpdate(&pad);
-    u64 kDown = padGetButtonsDown(&pad);
+    padUpdate(&combinedPad);
+    u64 kDown = padGetButtonsDown(&combinedPad);
     if (kDown & HidNpadButton_Plus)
         return false;
+
+    for (int i = 0; i < 8; i++)
+        padUpdate(&pads[i]);
 
     HidTouchScreenState touchState;
     if (hidGetTouchScreenStates(&touchState, 1)) {
@@ -899,6 +986,10 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchSound_play0___boolean_R_int(CODENAME
     return Mix_PlayChannel(-1, (Mix_Chunk*)((obj__com_thelogicmaster_switchgdx_SwitchSound*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle, looping ? -1 : 0);
 }
 
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_setLooping0___int_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT  __cn1ThisObject, JAVA_INT channel, JAVA_BOOLEAN looping) {
+    Mix_PlayChannel(channel, (Mix_Chunk*)((obj__com_thelogicmaster_switchgdx_SwitchSound*)__cn1ThisObject)->com_thelogicmaster_switchgdx_SwitchSound_handle, looping ? -1 : 0);
+}
+
 JAVA_VOID com_thelogicmaster_switchgdx_SwitchSound_stop0___int(CODENAME_ONE_THREAD_STATE, JAVA_INT channel) {
     Mix_HaltChannel(channel);
 }
@@ -1253,25 +1344,50 @@ JAVA_INT com_thelogicmaster_switchgdx_SwitchGraphics_getHeight___R_int(CODENAME_
     return 720;
 }
 
-JAVA_INT com_thelogicmaster_switchgdx_SwitchControllerManager_getButtons___R_int(CODENAME_ONE_THREAD_STATE) {
+JAVA_INT com_thelogicmaster_switchgdx_SwitchControllerManager_getButtons___int_R_int(CODENAME_ONE_THREAD_STATE, JAVA_INT controller) {
 #ifdef __SWITCH__
-    return padGetButtons(&pad);
+    auto &pad = controller == -1 ? combinedPad : pads[controller];
+    return remapPadButtons(padGetButtons(&pad), padGetStyleSet(&pad));
 #else
     return buttons;
 #endif
 }
 
-JAVA_VOID com_thelogicmaster_switchgdx_SwitchControllerManager_getAxes___float_1ARRAY(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT axes) {
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchControllerManager_getAxes___int_float_1ARRAY(CODENAME_ONE_THREAD_STATE, JAVA_INT controller, JAVA_OBJECT axes) {
     auto array = (float *) ((JAVA_ARRAY) axes)->data;
 #ifdef __SWITCH__
+    const auto &pad = controller == -1 ? combinedPad : pads[controller];
     auto stickLeft = padGetStickPos(&pad, 0);
     auto stickRight = padGetStickPos(&pad, 1);
     array[0] = (float)stickLeft.x / JOYSTICK_MAX;
     array[1] = (float)stickLeft.y / JOYSTICK_MAX;
     array[2] = (float)stickRight.x / JOYSTICK_MAX;
     array[3] = (float)stickRight.y / JOYSTICK_MAX;
+    remapPadAxes(array, padGetStyleSet(&pad));
+    array[1] *= -1;
+    array[3] *= -1;
 #else
     memcpy(array, joysticks, sizeof(joysticks));
+#endif
+}
+
+JAVA_BOOLEAN com_thelogicmaster_switchgdx_SwitchControllerManager_isConnected___int_R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_INT controller) {
+#ifdef __SWITCH__
+    return pads[controller].active_handheld or pads[controller].active_id_mask;
+#else
+    return controller == 0;
+#endif
+}
+
+JAVA_VOID com_thelogicmaster_switchgdx_SwitchControllerManager_remapControllers___int_int_boolean_boolean(CODENAME_ONE_THREAD_STATE, JAVA_INT min, JAVA_INT max, JAVA_BOOLEAN dualJoy, JAVA_BOOLEAN singleMode) {
+#ifdef __SWITCH__
+    HidLaControllerSupportArg arg;
+    hidLaCreateControllerSupportArg(&arg);
+    arg.hdr.player_count_min = min;
+    arg.hdr.player_count_max = max;
+    arg.hdr.enable_permit_joy_dual = dualJoy;
+    arg.hdr.enable_single_mode = singleMode;
+    hidLaShowControllerSupportForSystem(nullptr, &arg, false);
 #endif
 }
 

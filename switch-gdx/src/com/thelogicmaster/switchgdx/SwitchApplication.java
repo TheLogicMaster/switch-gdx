@@ -15,6 +15,7 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.Timer;
 
 public class SwitchApplication implements Application {
 
@@ -72,6 +73,7 @@ public class SwitchApplication implements Application {
 				audio.update(graphics.getDeltaTime());
 				input.update();
 				controllerManager.update();
+				Timer.instance().update();
 				executeRunnables();
 				listener.render();
 			}
@@ -83,9 +85,7 @@ public class SwitchApplication implements Application {
 			try {
 				if (Thread.currentThread().getUncaughtExceptionHandler() != null)
 					Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
-			} catch (Exception ignored){}
-			try {
-				if (Thread.getDefaultUncaughtExceptionHandler() != null)
+				else if (Thread.getDefaultUncaughtExceptionHandler() != null)
 					Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
 			} catch (Exception ignored){}
 

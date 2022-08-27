@@ -300,7 +300,7 @@ configure(nro) {
     description = "Build a homebrew NRO"
 }
 
-task deploy(dependsOn: transpile) {
+task deploy(dependsOn: nro) {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())

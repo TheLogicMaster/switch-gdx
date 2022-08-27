@@ -94,6 +94,11 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 		return new Instancer[] {new SwitchInstancer() {
 			@Override
 			public GdxTest instance () {
+				return new SwitchControllerTest();
+			}
+		}, new SwitchInstancer() {
+			@Override
+			public GdxTest instance () {
 				return new SwitchInputTest();
 			}
 		}, new SwitchInstancer() {

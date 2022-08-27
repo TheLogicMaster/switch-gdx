@@ -2,15 +2,23 @@ package com.thelogicmaster.switchgdx;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.IntIntMap;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.ReflectionPool;
 
 public class SwitchSound implements Sound {
 
+	private static class SoundInstance {
+		int channel;
+		boolean looping;
+	}
+
 	private long handle;
 
-	private final IntIntMap channelMap = new IntIntMap();
+	private final IntMap<SoundInstance> instanceMap = new IntMap<>();
 	private boolean disposed;
 	private int id;
+	private final Pool<SoundInstance> soundPool = new ReflectionPool<>(SoundInstance.class, 32);
 
 	public SwitchSound (FileHandle file) {
 		create(file.file().getPath());
@@ -21,7 +29,15 @@ public class SwitchSound implements Sound {
 	}
 
 	void onSoundFinished(int channel) {
-		channelMap.remove(channel, 0);
+		IntMap.Entry<SoundInstance> instanceEntry = null;
+		for (IntMap.Entry<SoundInstance> entry: instanceMap.entries())
+			if (entry.value.channel == channel) {
+				instanceEntry = entry;
+				break;
+			}
+		if (instanceEntry == null || instanceEntry.value.looping)
+			return;
+		soundPool.free(instanceMap.remove(instanceEntry.key));
 	}
 
 	private long play(float volume, float pitch, float pan, boolean looping) {
@@ -29,8 +45,11 @@ public class SwitchSound implements Sound {
 		setVolume0(channel, volume);
 		setPitch0(channel, pitch);
 		setPan0(channel, pan);
-		channelMap.put(id++, channel);
-		return channel;
+		SoundInstance instance = soundPool.obtain();
+		instanceMap.put(id, instance);
+		instance.channel = channel;
+		instance.looping = looping;
+		return id++;
 	}
 
 	@Override
@@ -65,21 +84,23 @@ public class SwitchSound implements Sound {
 
 	@Override
 	public void stop () {
-		for (IntIntMap.Entry entry : new IntIntMap.Entries(channelMap))
-			stop0(entry.value);
-		channelMap.clear();
+		for (IntMap.Entry<SoundInstance> entry : new IntMap.Entries<SoundInstance>(instanceMap)) {
+			stop0(entry.value.channel);
+			soundPool.free(entry.value);
+		}
+		instanceMap.clear();
 	}
 
 	@Override
 	public void pause () {
-		for (IntIntMap.Entry entry: new IntIntMap.Entries(channelMap))
-			pause0(entry.value);
+		for (IntMap.Entry<SoundInstance> entry : new IntMap.Entries<SoundInstance>(instanceMap))
+			pause0(entry.value.channel);
 	}
 
 	@Override
 	public void resume () {
-		for (IntIntMap.Entry entry: new IntIntMap.Entries(channelMap))
-			resume0(entry.value);
+		for (IntMap.Entry<SoundInstance> entry : new IntMap.Entries<SoundInstance>(instanceMap))
+			resume0(entry.value.channel);
 	}
 
 	@Override
@@ -94,46 +115,52 @@ public class SwitchSound implements Sound {
 
 	@Override
 	public void stop (long soundId) {
-		if (channelMap.containsKey((int)soundId)) {
-			stop0(channelMap.get((int)soundId, -1));
-			channelMap.remove((int)soundId, 0);
+		if (instanceMap.containsKey((int)soundId)) {
+			stop0(instanceMap.get((int)soundId, null).channel);
+			SoundInstance removed = instanceMap.remove((int)soundId);
+			soundPool.free(removed);
 		}
 	}
 
 	@Override
 	public void pause (long soundId) {
-		if (channelMap.containsKey((int)soundId))
-			pause0(channelMap.get((int)soundId, -1));
+		if (instanceMap.containsKey((int)soundId))
+			pause0(instanceMap.get((int)soundId).channel);
 	}
 
 	@Override
 	public void resume (long soundId) {
-		if (channelMap.containsKey((int)soundId))
-			resume0(channelMap.get((int)soundId, -1));
+		if (instanceMap.containsKey((int)soundId))
+			resume0(instanceMap.get((int)soundId).channel);
 	}
 
 	@Override
 	public void setLooping (long soundId, boolean looping) {
-		// Not possible with SDL2_MIXER
+		// It's not possible to change looping flag, so restart sound...
+		SoundInstance instance = instanceMap.get((int)soundId);
+		if (instance != null && instance.looping != looping) {
+			setLooping0(instance.channel, looping);
+			instance.looping = looping;
+		}
 	}
 
 	@Override
 	public void setPitch (long soundId, float pitch) {
 		// Todo: Actually implement effect
-		if (channelMap.containsKey((int)soundId))
-			setPitch0(channelMap.get((int)soundId, -1), pitch);
+		if (instanceMap.containsKey((int)soundId))
+			setPitch0(instanceMap.get((int)soundId).channel, pitch);
 	}
 
 	@Override
 	public void setVolume (long soundId, float volume) {
-		if (channelMap.containsKey((int)soundId))
-			setVolume0(channelMap.get((int)soundId, -1), volume);
+		if (instanceMap.containsKey((int)soundId))
+			setVolume0(instanceMap.get((int)soundId).channel, volume);
 	}
 
 	@Override
 	public void setPan (long soundId, float pan, float volume) {
-		if (channelMap.containsKey((int)soundId)) {
-			int channel = channelMap.get((int)soundId, -1);
+		if (instanceMap.containsKey((int)soundId)) {
+			int channel = instanceMap.get((int)soundId).channel;
 			setPan0(channel, pan);
 			setVolume0(channel, volume);
 		}
@@ -144,6 +171,8 @@ public class SwitchSound implements Sound {
 	private native void dispose0();
 
 	private native int play0(boolean looping);
+
+	private native void setLooping0(int channel, boolean looping);
 
 	private static native void stop0(int channel);
 

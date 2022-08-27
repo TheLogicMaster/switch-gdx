@@ -10,7 +10,8 @@ public class SwitchInput implements Input {
 	private static final int[] SWITCH_KEYS = new int[] {
 		Keys.BUTTON_A, Keys.BUTTON_B, Keys.BUTTON_X, Keys.BUTTON_Y,
 		Keys.DPAD_UP, Keys.DPAD_DOWN, Keys.DPAD_LEFT, Keys.DPAD_RIGHT,
-		Keys.BUTTON_THUMBL, Keys.BUTTON_THUMBR, Keys.BUTTON_SELECT, Keys.BUTTON_START
+		Keys.BUTTON_THUMBL, Keys.BUTTON_THUMBR, Keys.BUTTON_SELECT, Keys.BUTTON_START,
+		Keys.BUTTON_L1, Keys.BUTTON_L2, Keys.BUTTON_R1, Keys.BUTTON_R2
 	};
 
 	private InputProcessor inputProcessor;
@@ -397,6 +398,14 @@ public class SwitchInput implements Input {
 			return 4;
 		case Keys.BUTTON_THUMBR:
 			return 5;
+		case Keys.BUTTON_L1:
+			return 6;
+		case Keys.BUTTON_L2:
+			return 8;
+		case Keys.BUTTON_R1:
+			return 7;
+		case Keys.BUTTON_R2:
+			return 9;
 		default:
 			return -1;
 		}

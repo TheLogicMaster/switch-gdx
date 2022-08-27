@@ -42,9 +42,9 @@ Fully supported. Requires the following added to switch.json in addition to the 
 ```json
 {
   "nonOptimized": [
-    "games.rednblack.editor.renderer.data.*",
-    "games.rednblack.editor.renderer.components.*",
-    "games.rednblack.hyperrunner.component.*",
+    "games.rednblack.editor.renderer.data.**",
+    "games.rednblack.editor.renderer.components.**",
+    "games.rednblack.hyperrunner.component.**",
     "games.rednblack.editor.renderer.systems.strategy.InterpolationSystem"
   ]
 }
@@ -63,6 +63,17 @@ Fully supported. Requires the following entry added to switch.json:
 {
   "nonOptimized": [
     "com.badlogic.ashley.core.Entity"
+  ]
+}
+```
+
+## [VisUI](https://github.com/kotcrab/vis-ui)
+Mostly supported. File chooser stuff won't work and will cause compilation errors if used. Requires
+the following switch.json entry:
+```json
+{
+  "nonOptimized": [
+    "com.kotcrab.vis.ui.**Style"
   ]
 }
 ```

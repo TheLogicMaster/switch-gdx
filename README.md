@@ -6,7 +6,8 @@ This is a WIP Nintendo Switch Homebrew and Xbox/UWP LibGDX backend based on LibN
 It uses a custom fork of the VM named [Clearwing VM](https://github.com/TheLogicMaster/clearwing-vm).
 It's early in development and only works for simple GDX applications. It also provides a CMake project configuration for natively debugging applications 
 on a PC. It's similar to RoboVM, except it generates C code which is then compiled for the specific target. See [Tests](TESTS.md)
-for current GDX compatibility and [Libraries](LIBRARIES.md) for library compatibility.
+for current GDX compatibility and [Libraries](LIBRARIES.md) for library compatibility. 
+See the SwitchGDX [thread](https://discord.com/channels/348229412858101762/965372515285352468) on the LibGDX Discord server.
 
 ## Installation
 
@@ -78,7 +79,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - GDX Native bindings
 - Buffers (Only direct buffers and ByteBuffer wrappers are supported)
 - Synchronous AssetManager (GWT)
-- Single controller gdx-controllers support
+- gdx-controllers support for all Switch controller configurations
 - GDX Preferences
 - Default Yuzu keyboard mapping for switch pro-controller emulation
 - GDX Input multitouch with PC touch emulation
@@ -93,15 +94,17 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 
 ## Todo
 - GL30 (Requires regenerating glad2 online)
-- Switch specific Java APIs to enable switch unique features (Probably needed for controller remapping, for example)
+- Switch specific Java APIs to enable switch unique features (Needed for controller remapping, for example)
 - Bullet
-- Controller remapping, analog trigger support
+- Controller remapping, vibration, analog trigger support
 - Have transpiler detect types needed by GDX collections for array reflection, possibly
 - Error dialogs for uncaught main thread exceptions
 - Additional socket hints such as server backlog
 - Gradle incremental compilation
 - Improve platform detection to help with external file paths and such
-- Reflection error handling
+- String literal lookup table for better incremental compilation
+- I18N
+- Sound effect pitch control
 
 ## Notes
 - Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
@@ -121,10 +124,12 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - The UWP project requires a custom build of SDL2_mixer since the VCPKG library doesn't support UWP, for some reason. 
 This requires downloading the SDL2_mixer and SDL2 source and building the UWP subproject, adding the necessary linker input libraries
 and adding MPG123.lib from VCPKG for MP3 support. 
+- An additional patch is needed in the switch build.gradle for Kotlin (See [TriPeaks](https://github.com/TheLogicMaster/tripeaks-switchgdx))
+- When using Joycons individually, the inputs will be rotated horizontally. Controllers must be remapped from the home menu for now. 
+`Controllers#getCurrentController` returns a controller representing all controller input, rather than the last controller.
 
 ## Current Status
 - Compiler bug in com_badlogic_gdx_assets_AssetManager_update___R_boolean, so patch for now (Probably related to setjmp/try-catch)
 - Switch crash in __GC_MARK_com_badlogic_gdx_utils_JsonValue, so comment out for now
 - GC bug where it tries to dispose of primitive array contents (JSON test)
 - The UWP port has 3D rendering/clipping issues
-- There's a Clearwing bug that causes Artemis sorting of bags to break (Bomberman glitch)

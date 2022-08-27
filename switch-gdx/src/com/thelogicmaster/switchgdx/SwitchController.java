@@ -8,11 +8,17 @@ import com.badlogic.gdx.utils.Array;
 
 public class SwitchController implements Controller {
 
-	private final Array<ControllerListener> listeners = new Array<>();
+	final Array<ControllerListener> listeners = new Array<>();
 	final float[] axes = new float[4];
 	final float[] prevAxes = new float[4];
 	int buttons;
 	int prevButtons;
+	int id;
+	boolean disposed;
+
+	SwitchController(int id) {
+		this.id = id;
+	}
 
 	boolean getButtonPressed(int buttonCode) {
 		return (buttons & (1 << buttonCode)) != 0 && (prevButtons & (1 << buttonCode)) == 0;
@@ -23,11 +29,17 @@ public class SwitchController implements Controller {
 	}
 
 	boolean isAnyButtonPressed() {
+		// Todo: Mask joystick direction buttons
 		return buttons != 0;
 	}
 
 	boolean isAnyButtonJustPressed() {
 		return (buttons & ~prevButtons) != 0;
+	}
+
+	void dispose() {
+		id = Controller.PLAYER_IDX_UNSET;
+		disposed = true;
 	}
 
 	@Override
@@ -47,7 +59,7 @@ public class SwitchController implements Controller {
 
 	@Override
 	public String getUniqueId () {
-		return "Switch Controller";
+		return "Switch Controller " + id;
 	}
 
 	@Override
@@ -67,7 +79,7 @@ public class SwitchController implements Controller {
 
 	@Override
 	public boolean isConnected () {
-		return true;
+		return !disposed;
 	}
 
 	@Override
@@ -92,12 +104,12 @@ public class SwitchController implements Controller {
 
 	@Override
 	public boolean supportsPlayerIndex () {
-		return false;
+		return true;
 	}
 
 	@Override
 	public int getPlayerIndex () {
-		return Controller.PLAYER_IDX_UNSET;
+		return id;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.thelogicmaster.switchgdx;
 
 import com.badlogic.gdx.Audio;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.audio.Music;
@@ -50,12 +51,16 @@ public class SwitchAudio implements Audio {
 	}
 
 	private static void onMusicFinished() {
-		for (SwitchMusic music: new Array.ArrayIterator<>(musics))
-			music.onMusicFinished();
+		Gdx.app.postRunnable(() -> {
+			for (SwitchMusic music: new Array.ArrayIterator<>(musics))
+				music.onMusicFinished();
+		});
 	}
 
 	private static void onSoundFinished(int channel) {
-		for (SwitchSound sound: new Array.ArrayIterator<>(sounds))
-			sound.onSoundFinished(channel);
+		Gdx.app.postRunnable(() -> {
+			for (SwitchSound sound: new Array.ArrayIterator<>(sounds))
+				sound.onSoundFinished(channel);
+		});
 	}
 }

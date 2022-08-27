@@ -27,12 +27,12 @@ public class SwitchInputTest extends GdxTest {
 		shapeRenderer.set(ShapeRenderer.ShapeType.Line);
 		shapeRenderer.circle(200, 720 - 200, 100);
 		shapeRenderer.set(Controllers.getCurrent().getButton(mapping.buttonLeftStick) ? ShapeRenderer.ShapeType.Filled : ShapeRenderer.ShapeType.Line);
-		shapeRenderer.circle(200 + 50 * Controllers.getCurrent().getAxis(mapping.axisLeftX), 720 - 200 + 50 * Controllers.getCurrent().getAxis(mapping.axisLeftY), 50);
+		shapeRenderer.circle(200 + 50 * Controllers.getCurrent().getAxis(mapping.axisLeftX), 720 - 200 - 50 * Controllers.getCurrent().getAxis(mapping.axisLeftY), 50);
 
 		shapeRenderer.set(ShapeRenderer.ShapeType.Line);
 		shapeRenderer.circle(1280 - 200, 200, 100);
 		shapeRenderer.set(Controllers.getCurrent().getButton(mapping.buttonRightStick) ? ShapeRenderer.ShapeType.Filled : ShapeRenderer.ShapeType.Line);
-		shapeRenderer.circle(1280 - 200 + 50 * Controllers.getCurrent().getAxis(mapping.axisRightX), 200 + 50 * Controllers.getCurrent().getAxis(mapping.axisRightY), 50);
+		shapeRenderer.circle(1280 - 200 + 50 * Controllers.getCurrent().getAxis(mapping.axisRightX), 200 - 50 * Controllers.getCurrent().getAxis(mapping.axisRightY), 50);
 
 		shapeRenderer.set(Controllers.getCurrent().getButton(mapping.buttonDpadUp) ? ShapeRenderer.ShapeType.Filled : ShapeRenderer.ShapeType.Line);
 		shapeRenderer.circle(200, 200 + 50, 25);
