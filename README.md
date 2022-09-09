@@ -91,6 +91,7 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Box2D
 - GDX Networking
 - Early Xbox/UWP port
+- Lambda, method reference, and default method support
 
 ## Todo
 - GL30 (Requires regenerating glad2 online)
@@ -107,7 +108,6 @@ If using Windows, the devkitPro MinGW toolchain has to be selected under the pro
 - Sound effect pitch control
 
 ## Notes
-- Requires retrolambda for lambda support (Use pre-v7 Gradle wrapper)
 - Exceptions thrown without a try-catch block are ignored (Maybe adding try-catch block in thread init code, in addition to main function)
 - Concurrent access to files is more limited on Switch where it might normally work on PC, so ensure files are closed properly
 - Sound effects are limited to OGG and WAV, Music supports MP3, OGG, and WAV

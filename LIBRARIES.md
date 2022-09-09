@@ -15,6 +15,19 @@ Supported and used internally, but only currently supports the Switch default si
 ## [RegExodus](https://github.com/tommyettinger/RegExodus)
 Fully supported and used internally for regex
 
+## [TenPatch](https://github.com/raeleus/TenPatch)
+Fully supported. Requires the following added to switch.json:
+```json
+{
+  "nonOptimized": [
+    "com.ray3k.tenpatch.TenPatchDrawable"
+  ]
+}
+```
+
+## [Colorful GDX](https://github.com/tommyettinger/colorful-gdx)
+Fully supported
+
 ## [Artemis-ODB](https://github.com/junkdog/artemis-odb)
 Fully supported. Requires the following added to switch.json:
 ```json
@@ -53,6 +66,8 @@ Fully supported. Requires the following added to switch.json in addition to the 
 ## [ScreenManager](https://github.com/crykn/libgdx-screenmanager)
 Fully supported
 
+## [ControllerScene2D](https://github.com/MrStahlfelge/gdx-controllerutils/wiki/Button-operable-Scene2d)
+Fully supported
 
 ## [GDX VFX](https://github.com/crashinvaders/gdx-vfx)
 Fully supported

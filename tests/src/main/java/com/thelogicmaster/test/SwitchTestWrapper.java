@@ -81,7 +81,6 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			Skin skin = (Skin)skinField.get(this);
 
 			scrollPane.setStyle(skin.get(ScrollPane.ScrollPaneStyle.class));
-			scrollPane.setFlickScroll(false);
 			scrollPane.setScrollBarPositions(false, true);
 			scrollPane.setFadeScrollBars(false);
 		} catch (Exception e) {

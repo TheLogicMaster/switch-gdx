@@ -20,15 +20,11 @@ configurations {
     switchgdx {
         transitive = false
     }
-    retrolambda {
-        transitive = false
-    }
 }
 
 dependencies {
     switchgdx "com.thelogicmaster:switch-gdx:$switchGdxVersion"
     transpiler "com.thelogicmaster.clearwing-vm:transpiler:$clearwingVersion"
-    retrolambda "net.orfjackal.retrolambda:retrolambda:$retroLambdaVersion"
     implementation project(':core')
     implementation "com.thelogicmaster:switch-gdx:$switchGdxVersion"
     implementation "com.thelogicmaster.clearwing-vm:runtime:$clearwingVersion"
@@ -61,24 +57,6 @@ task transpile(dependsOn: 'build') {
             exclude "*/**/*.c"
             exclude "*/**/*.cpp"
             includeEmptyDirs = false
-        }
-
-        File classpathFile = File.createTempFile("inc-", ".path")
-        classpathFile.withWriter('UTF-8') { writer ->
-            for (String item : configurations.compileClasspath)
-                writer.write("$item\n")
-            writer.write("$buildDir/transpiler_input")
-        }
-        classpathFile.deleteOnExit();
-        javaexec {
-            main = "-jar"
-            args = ["$configurations.retrolambda.singleFile.absolutePath"]
-            jvmArgs = [
-                    "-Dretrolambda.inputDir=$buildDir/transpiler_input",
-                    "-Dretrolambda.classpathFile=${classpathFile.absolutePath}",
-                    '-Dretrolambda.defaultMethods=true',
-                    "-javaagent:$configurations.retrolambda.singleFile.absolutePath"
-            ]
         }
 
         javaexec {
