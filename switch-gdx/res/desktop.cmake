@@ -16,6 +16,7 @@ find_package(Threads REQUIRED)
 find_package(FFI REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(CURL REQUIRED)
+find_package(ZZip REQUIRED)
 
 add_definitions(-DNOJNI)
 
@@ -27,8 +28,8 @@ if(THREADS_HAVE_PTHREAD_ARG)
   target_compile_options(SwitchGDX PUBLIC "-pthread")
 endif()
 
-target_include_directories(SwitchGDX PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_mixer_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS} ${FFI_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${CURL_INCLUDE_DIRS})
-target_link_libraries(SwitchGDX ${SDL2_LIBRARIES} ${SDL2_mixer_LIBRARIES} ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES} stdc++fs ${FFI_LIBRARIES} ${FREETYPE_LIBRARIES} ${CURL_LIBRARIES})
+target_include_directories(SwitchGDX PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_mixer_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS} ${FFI_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${CURL_INCLUDE_DIRS} ${ZZip_INCLUDE_DIRS})
+target_link_libraries(SwitchGDX ${SDL2_LIBRARIES} ${SDL2_mixer_LIBRARIES} ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES} stdc++fs ${FFI_LIBRARIES} ${FREETYPE_LIBRARIES} ${CURL_LIBRARIES} ${ZZip_LIBRARIES})
 if(CMAKE_THREAD_LIBS_INIT)
   target_link_libraries(SwitchGDX "${CMAKE_THREAD_LIBS_INIT}")
 endif()
