@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.0)
+project(SwitchGDX)
+
+if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+	include(uwp.cmake)
+elseif(${SWITCH})
+	include(switch.cmake)
+else()
+	include(desktop.cmake)
+endif()

@@ -1,24 +1,16 @@
 {
-    "nonOptimized": [
-        "java.nio.DoubleBuffer",
-        "java.lang.reflect.Field",
-        "java.lang.reflect.Type",
-        "com.badlogic.gdx.graphics.g3d.model.Node",
-        "com.badlogic.gdx.scenes.scene2d.Stage.TouchFocus",
-        "com.badlogic.gdx.scenes.scene2d.Actor",
-        "com.badlogic.gdx.graphics.g2d.TextureRegion",
-        "com.badlogic.gdx.graphics.g2d.TextureAtlas",
-        "com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion",
-        "com.badlogic.gdx.maps.tiled.TiledMap",
-        "com.badlogic.gdx.assets.AssetDescriptor",
-        "com.badlogic.gdx.utils.XmlReader.Element",
-        "com.badlogic.gdx.graphics.Texture",
-        "com.badlogic.gdx.graphics.g3d.particles.ParticleController",
-        "com.badlogic.gdx.graphics.g3d.Renderable",
-        "com.badlogic.gdx.graphics.g3d.particles.renderers.BillboardControllerRenderData",
-        "com.badlogic.gdx.graphics.g3d.particles.influencers.RegionInfluencer.AspectTextureRegion",
-        "com.badlogic.gdx.graphics.g3d.particles.influencers.Influencer",
-        "com.badlogic.gdx.graphics.g3d.particles.ParallelArray.Channel",
-        "com.badlogic.gdx.physics.box2d.World"
-    ]
+    "mainClass": "com.thelogicmaster.test.SwitchLauncher",
+    "reflective": [
+        "com.badlogic.gdx.tests.JsonTest$*",
+        "com.badlogic.gdx.tests.AnnotationTest$*",
+        "com.badlogic.gdx.tests.ReflectionCorrectnessTest$*",
+        "com.badlogic.gdx.tests.AbstractTestWrapper",
+        "com.badlogic.gdx.utils.*Array",
+        "com.badlogic.gdx.utils.*Set",
+        "com.badlogic.gdx.utils.*Map"
+    ],
+    "useStackTraces": true,
+    "useLineNumbers": true,
+    "useValueChecks": true,
+    "useStackCookies": true
 }

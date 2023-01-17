@@ -82,13 +82,7 @@ public class SwitchApplication implements Application {
 				lifecycleListener.dispose();
 			listener.dispose();
 		} catch (Throwable t) {
-			try {
-				if (Thread.currentThread().getUncaughtExceptionHandler() != null)
-					Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
-				else if (Thread.getDefaultUncaughtExceptionHandler() != null)
-					Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
-			} catch (Exception ignored){}
-
+			System.out.println("Uncaught Exception:");
 			t.printStackTrace();
 			System.err.println("Message: " + t.getMessage());
 			Throwable cause = t.getCause();

@@ -3,6 +3,7 @@ package com.thelogicmaster.test;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.tests.conformance.AudioSoundAndMusicIsolationTest;
 import com.badlogic.gdx.tests.extensions.FreeTypeAtlasTest;
 import com.badlogic.gdx.tests.extensions.FreeTypeDisposeTest;
 import com.badlogic.gdx.tests.extensions.FreeTypeFontLoaderTest;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.tests.extensions.FreeTypeMetricsTest;
 import com.badlogic.gdx.tests.extensions.FreeTypePackTest;
 import com.badlogic.gdx.tests.extensions.FreeTypeTest;
 import com.badlogic.gdx.tests.extensions.InternationalFontsTest;
+import com.badlogic.gdx.tests.gles2.VertexArrayTest;
+import com.badlogic.gdx.tests.math.OctreeTest;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
 import com.badlogic.gdx.tests.*;
@@ -110,7 +113,23 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
+				return new AudioSoundAndMusicIsolationTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new Gdx2DTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new OctreeTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
 				return new ThreadTest();
+			}
+		}, new SwitchInstancer() {
+			public GdxTest instance () {
+				return new VertexArrayTest();
 			}
 		}, new SwitchInstancer() {
 			public GdxTest instance () {
@@ -960,7 +979,8 @@ public class SwitchTestWrapper extends AbstractTestWrapper {
 			public GdxTest instance () {
 				return new KinematicBodyTest();
 			}
-		}};
+		}
+		};
 	}
 
 	private abstract static class SwitchInstancer implements Instancer {

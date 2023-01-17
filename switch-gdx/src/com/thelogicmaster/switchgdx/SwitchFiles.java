@@ -46,7 +46,7 @@ public class SwitchFiles implements Files {
 
 	@Override
 	public boolean isExternalStorageAvailable () {
-		return SwitchApplication.isSwitch;
+		return true;
 	}
 
 	@Override

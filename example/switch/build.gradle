@@ -27,98 +27,51 @@ dependencies {
     transpiler "com.thelogicmaster.clearwing-vm:transpiler:$clearwingVersion"
     implementation project(':core')
     implementation "com.thelogicmaster:switch-gdx:$switchGdxVersion"
-    implementation "com.thelogicmaster.clearwing-vm:runtime:$clearwingVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
 }
 
 task transpile(dependsOn: 'build') {
     doLast {
-        delete "$buildDir/transpiler_input"
-        delete "$buildDir/transpiler_output"
         delete "$buildDir/dist"
 
-        copy {
-            from sourceSets.main.output
-            from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-            into "$buildDir/transpiler_input"
-            exclude "META-INF", "META-INF/**"
-            exclude "*/**/*.h"
-            exclude "*/**/*.c"
-            exclude "*/**/*.cpp"
-            includeEmptyDirs = false
-            duplicatesStrategy = "INCLUDE"
-        }
-
-        copy {
-            from sourceSets.main.output
-            from({ zipTree(configurations.switchgdx.singleFile.absolutePath) })
-            into "$buildDir/transpiler_input"
-            exclude "META-INF", "META-INF/**"
-            exclude "*/**/*.h"
-            exclude "*/**/*.c"
-            exclude "*/**/*.cpp"
-            includeEmptyDirs = false
-        }
+        var libs = []
+        configurations.runtimeClasspath.asList().stream()
+                .filter(file -> !file.isDirectory() && file.absolutePath != configurations.switchgdx.singleFile.absolutePath)
+                .forEach(file -> libs.add(file.absolutePath))
 
         javaexec {
             main = "-jar"
-            args = [
-                    "$configurations.transpiler.singleFile.absolutePath",
-                    "$buildDir/transpiler_input",
-                    "$buildDir/transpiler_output",
-                    "$projectDir/switch.json",
-                    "com.thelogicmaster.example.SwitchLauncher"
+            args = ["$configurations.transpiler.singleFile.absolutePath", "--input"] + libs + [
+                    "$configurations.switchgdx.singleFile.absolutePath",
+                    "$buildDir/classes",
+                    "$rootDir/core/build/classes",
+                    "--output", "$buildDir/dist",
+                    "--source", "$projectDir/src/main/java", "$rootDir/core/src/main/java",
+                    "--config", "$projectDir/switch.json"
             ]
         }
 
         copy {
-            from("$buildDir/transpiler_output") {
-                include "*.h"
-            }
-            into "$buildDir/dist/include"
-        }
-
-        copy {
-            from("$buildDir/transpiler_output") {
-                include "*.c"
-                include "*.cpp"
-            }
-            into "$buildDir/dist/source"
-        }
-
-        copy {
             from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-            include "*/**/*.h"
-            into "$buildDir/dist/include"
+            include "*.cpp", "**/*.cpp"
+            include "*.hpp", "**/*.hpp"
+            include "*.h", "**/*.h"
+            include "*.c", "**/*.c"
+            into "$buildDir/dist/src"
             includeEmptyDirs = false
         }
 
         copy {
-            from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-            include "*/**/*.c"
-            include "*/**/*.cpp"
-            into "$buildDir/dist/source"
-            includeEmptyDirs = false
-        }
-
-        copy {
-            from("$buildDir/transpiler_output") {
-                include "CMakeLists.txt"
-                include "Makefile"
-                include "*.cmake"
-                include "*.cmd"
-                include "SDL2_mixer.*"
-            }
-            into "$buildDir/dist"
-        }
-
-        copy {
-            from("$buildDir/transpiler_input") {
+            from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
                 exclude "**/*.class"
                 exclude "META-INF", "META-INF/**"
                 exclude "**/*.gwt.xml"
-                exclude "*.c"
-                exclude "*.cpp"
-                exclude "*.h"
+                exclude "*.cpp", "**/*.cpp"
+                exclude "*.hpp", "**/*.hpp"
+                exclude "*.h", "**/*.h"
+                exclude "*.c", "**/*.c"
+                exclude "switchgdx/**"
             }
             into "$buildDir/dist/romfs/classpath"
             includeEmptyDirs = false
@@ -134,92 +87,22 @@ task transpile(dependsOn: 'build') {
             into "$buildDir/dist"
         }
 
-        // Patch to avoid compiler bug
-        exec {
-            environment "expression", "JAVA_BOOLEAN\\W+com_badlogic_gdx_assets_AssetManager_update___R_boolean\\(CODENAME_ONE_THREAD_STATE,\\W+JAVA_OBJECT\\W+__cn1ThisObject\\)\\W+{.*?}"
-            environment "replacement", '' +
-                    'JAVA_BOOLEAN com_badlogic_gdx_assets_AssetManager_update___R_boolean(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT __cn1ThisObject) {\n' +
-                    '    DEFINE_INSTANCE_METHOD_STACK(2, 2, 0, 3091, 172);\n' +
-                    '    monitorEnterBlock(threadStateData, __cn1ThisObject);\n' +
-                    '    locals[0].data.o = __cn1ThisObject;\n' +
-                    '    locals[0].type = CN1_TYPE_OBJECT;\n' +
-                    '    volatile int restoreToL516329661cn1_class_id_java_lang_Throwable1;\n' +
-                    '    int tryBlockOffsetL516329661cn1_class_id_java_lang_Throwable1;\n' +
-                    '    DEFINE_CATCH_BLOCK(catch_L516329661cn1_class_id_java_lang_Throwable1, label_L1486954672, restoreToL516329661cn1_class_id_java_lang_Throwable1);\n\n' +
-                    '    tryBlockOffsetL516329661cn1_class_id_java_lang_Throwable1 = threadStateData->tryBlockOffset;\n' +
-                    '    BEGIN_TRY(cn1_class_id_java_lang_Throwable, catch_L516329661cn1_class_id_java_lang_Throwable1);\n' +
-                    '    restoreToL516329661cn1_class_id_java_lang_Throwable1 = threadStateData->threadObjectStackOffset;\n\n' +
-                    '    __CN1_DEBUG_INFO(421);\n' +
-                    '    if (get_field_com_badlogic_gdx_utils_Array_size(get_field_com_badlogic_gdx_assets_AssetManager_tasks(__cn1ThisObject)) == 0) {\n' +
-                    '        while (1) {\n' +
-                    '            __CN1_DEBUG_INFO(423);\n' +
-                    '            if (get_field_com_badlogic_gdx_utils_Array_size(get_field_com_badlogic_gdx_assets_AssetManager_loadQueue(__cn1ThisObject)) == 0 ||\n' +
-                    '                get_field_com_badlogic_gdx_utils_Array_size(get_field_com_badlogic_gdx_assets_AssetManager_tasks(__cn1ThisObject)) != 0)\n' +
-                    '                break;\n' +
-                    '            __CN1_DEBUG_INFO(424);\n' +
-                    '            com_badlogic_gdx_assets_AssetManager_nextTask__(threadStateData, __cn1ThisObject);\n' +
-                    '        }\n' +
-                    '        __CN1_DEBUG_INFO(426);\n' +
-                    '        if (get_field_com_badlogic_gdx_utils_Array_size(get_field_com_badlogic_gdx_assets_AssetManager_tasks(__cn1ThisObject)) == 0) {\n' +
-                    '            END_TRY(2);\n' +
-                    '            monitorExitBlock(threadStateData, __cn1ThisObject);\n' +
-                    '            releaseForReturnInException(threadStateData, cn1LocalsBeginInThread, methodBlockOffset);\n' +
-                    '            return JAVA_TRUE;\n' +
-                    '        }\n' +
-                    '    }\n' +
-                    '    __CN1_DEBUG_INFO(428);\n' +
-                    '    int result = com_badlogic_gdx_assets_AssetManager_updateTask___R_boolean(threadStateData, __cn1ThisObject) &&\n' +
-                    '                 get_field_com_badlogic_gdx_utils_Array_size(get_field_com_badlogic_gdx_assets_AssetManager_loadQueue(__cn1ThisObject)) == 0 &&\n' +
-                    '                 get_field_com_badlogic_gdx_utils_Array_size(get_field_com_badlogic_gdx_assets_AssetManager_tasks(__cn1ThisObject)) == 0;\n' +
-                    '    END_TRY(2);\n' +
-                    '    monitorExitBlock(threadStateData, __cn1ThisObject);\n' +
-                    '    releaseForReturnInException(threadStateData, cn1LocalsBeginInThread, methodBlockOffset);\n' +
-                    '    return result;\n\n' +
-                    '    label_L1486954672:\n' +
-                    '    __CN1_DEBUG_INFO(429);\n' +
-                    '    BC_ASTORE(1);\n' +
-                    '    __CN1_DEBUG_INFO(430);\n' +
-                    '    /* CustomInvoke */com_badlogic_gdx_assets_AssetManager_handleTaskError___java_lang_Throwable(threadStateData, __cn1ThisObject, locals[1].data.o);\n' +
-                    '    __CN1_DEBUG_INFO(431);\n' +
-                    '    result = get_field_com_badlogic_gdx_utils_Array_size(get_field_com_badlogic_gdx_assets_AssetManager_loadQueue(__cn1ThisObject)) == 0;\n' +
-                    '    monitorExitBlock(threadStateData, __cn1ThisObject);\n' +
-                    '    releaseForReturnInException(threadStateData, cn1LocalsBeginInThread, methodBlockOffset);\n' +
-                    '    return result;\n' +
-                    '}'
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_assets_AssetManager.c'
-            else
-                commandLine 'bash', '-c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_assets_AssetManager.c'
-            workingDir "$buildDir${File.separator}dist${File.separator}source"
+        copy {
+            from({ zipTree("$configurations.switchgdx.singleFile.absolutePath") }) {
+                include "switchgdx/project/**"
+                eachFile { fcd ->
+                    fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(2))
+                }
+            }
+            into "$buildDir/dist"
         }
-
-        // Temporary patch to prevent crash, probably causes memory leaks
-        exec {
-            environment "expression", 'void\\W+__GC_MARK_com_badlogic_gdx_utils_JsonValue\\(CODENAME_ONE_THREAD_STATE,\\W+JAVA_OBJECT\\W+objToMark,\\W+JAVA_BOOLEAN\\W+force\\)\\W+{.*?}'
-            environment "replacement", '' +
-                    'void __GC_MARK_com_badlogic_gdx_utils_JsonValue(CODENAME_ONE_THREAD_STATE, JAVA_OBJECT objToMark, JAVA_BOOLEAN force) {\n' +
-                    '//    struct obj__com_badlogic_gdx_utils_JsonValue* objInstance = (struct obj__com_badlogic_gdx_utils_JsonValue*)objToMark;\n' +
-                    '//    gcMarkObject(threadStateData, objInstance->com_badlogic_gdx_utils_JsonValue_type, force);\n' +
-                    '//    gcMarkObject(threadStateData, objInstance->com_badlogic_gdx_utils_JsonValue_stringValue, force);\n' +
-                    '//    gcMarkObject(threadStateData, objInstance->com_badlogic_gdx_utils_JsonValue_name, force);\n' +
-                    '//    gcMarkObject(threadStateData, objInstance->com_badlogic_gdx_utils_JsonValue_child, force);\n' +
-                    '//    gcMarkObject(threadStateData, objInstance->com_badlogic_gdx_utils_JsonValue_parent, force);\n' +
-                    '//    gcMarkObject(threadStateData, objInstance->com_badlogic_gdx_utils_JsonValue_next, force);\n' +
-                    '//    gcMarkObject(threadStateData, objInstance->com_badlogic_gdx_utils_JsonValue_prev, force);\n' +
-                    '//    __GC_MARK_java_lang_Object(threadStateData, objToMark, force);\n' +
-                    '}'
-            if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_utils_JsonValue.c'
-            else
-                commandLine 'bash', '-c', 'perl -pi -e \'BEGIN{undef \$/;} s/$ENV{expression}/$ENV{replacement}/smg\' com_badlogic_gdx_utils_JsonValue.c'
-            workingDir "$buildDir${File.separator}dist${File.separator}source"
-        }
+        delete "$buildDir/dist/switchgdx"
 
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'data' --exclude 'sdmc' --exclude 'build-run' --exclude 'build-uwp' --exclude '.idea' dist/ ${rootProject.name}"
+                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude '/cmake-build-*' --exclude '/data' --exclude '/sdmc' --exclude '/build-uwp' --exclude '/.idea' dist/ ${rootProject.name}"
             else
-                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude 'cmake-build-debug' --exclude 'build' --exclude 'data' --exclude 'sdmc' --exclude 'build-run' --exclude '.idea' dist/ ${rootProject.name}"
+                commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude '/cmake-build-*' --exclude '/data' --exclude '/sdmc' --exclude '/.idea' dist/ ${rootProject.name}"
             workingDir "$buildDir"
         }
     }
@@ -233,23 +116,24 @@ task run(dependsOn: transpile) {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir${File.separator}${rootProject.name}", '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G \'MSYS Makefiles\' && cmake --build build-run || sleep 50000'
+                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir${File.separator}${rootProject.name}", '-c',
+                        'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B cmake-build-run -G \'MSYS Makefiles\' && cmake --build cmake-build-run || sleep 50000'
             else
-                commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build-run -G Ninja && cmake --build build-run'
+                commandLine 'bash', '-c', 'cmake -DCMAKE_BUILD_TYPE=Debug -S . -B cmake-build-run -G Ninja && cmake --build cmake-build-run'
             workingDir "$buildDir${File.separator}${rootProject.name}"
         }
         if (DefaultNativePlatform.currentOperatingSystem.isWindows()) {
             copy { // Todo: Copy only needed
                 from "C:\\devkitPro\\msys2\\mingw64\\bin"
                 include "*.dll"
-                into "$buildDir\\${rootProject.name}\\build-run"
+                into "$buildDir\\${rootProject.name}\\cmake-build-run"
             }
         }
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', 'build-run\\SwitchGDX.exe'
+                commandLine 'cmd', '/c', 'cmake-build-run\\SwitchGDX.exe'
             else
-                commandLine 'bash', '-c', './build-run/SwitchGDX'
+                commandLine 'bash', '-c', './cmake-build-run/SwitchGDX'
             workingDir "$buildDir${File.separator}${rootProject.name}"
         }
     }
@@ -263,9 +147,10 @@ task nro(dependsOn: transpile) {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir${File.separator}${rootProject.name}", '-c', 'make -j8 || sleep 50000'
+                commandLine 'C:\\devkitPro\\msys2\\msys2_shell.cmd', '-mingw64', '-where', "$buildDir${File.separator}${rootProject.name}", '-c',
+                        'cmake --toolchain DevkitA64Libnx.cmake -B cmake-build-switch . && cmake --build cmake-build-switch -j8 || sleep 50000'
             else
-                commandLine 'bash', '-c', 'make -j8'
+                commandLine 'bash', '-c', 'cmake --toolchain DevkitA64Libnx.cmake -B cmake-build-switch . && cmake --build cmake-build-switch -j8'
             workingDir "$buildDir${File.separator}${rootProject.name}"
             environment 'APP_TITLE', appTitle
             environment 'APP_AUTHOR', appAuthor
@@ -282,9 +167,9 @@ task deploy(dependsOn: nro) {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'bash', '-c', "/opt/devkitpro/tools/bin/nxlink --server ./${rootProject.name}.nro"
+                commandLine 'bash', '-c', "/opt/devkitpro/tools/bin/nxlink --server ./cmake-build-switch/${rootProject.name}.nro"
             else
-                commandLine 'bash', '-c', "\$DEVKITPRO/tools/bin/nxlink --server ./${rootProject.name}.nro"
+                commandLine 'bash', '-c', "\$DEVKITPRO/tools/bin/nxlink --server ./cmake-build-switch/${rootProject.name}.nro"
             workingDir "$buildDir${File.separator}${rootProject.name}"
         }
     }
@@ -306,9 +191,9 @@ task ryujinx(dependsOn: nro) {
             throw new Exception('The path to the Ryujinx emulator executable is unset. Set "ryujinxPath" in local.properties file.')
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', "${properties.getProperty("ryujinxPath")} ${rootProject.name}.nro"
+                commandLine 'cmd', '/c', "${properties.getProperty("ryujinxPath")} ./cmake-build-switch/${rootProject.name}.nro"
             else
-                commandLine 'bash', '-c', "${properties.getProperty("ryujinxPath")} ${rootProject.name}.nro"
+                commandLine 'bash', '-c', "${properties.getProperty("ryujinxPath")} ./cmake-build-switch/${rootProject.name}.nro"
             workingDir "$buildDir${File.separator}${rootProject.name}"
         }
     }

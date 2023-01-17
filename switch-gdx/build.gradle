@@ -2,7 +2,6 @@ plugins {
     id 'java-library'
 }
 
-version = "0.2"
 group = 'com.thelogicmaster'
 
 apply plugin: 'maven-publish'

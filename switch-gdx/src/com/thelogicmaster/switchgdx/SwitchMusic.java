@@ -64,6 +64,7 @@ public class SwitchMusic implements Music {
 		if (!playing)
 			return;
 		playing = false;
+		position = 0;
 		stop0();
 	}
 

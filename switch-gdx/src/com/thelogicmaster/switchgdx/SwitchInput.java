@@ -104,11 +104,12 @@ public class SwitchInput implements Input {
 
 		System.arraycopy(touchData, 0, previousTouchData, 0, MAX_TOUCHES * 3);
 
+		SwitchController currentController = (SwitchController)SwitchControllerManager.getInstance().getCurrentController();
 		for (int key: SWITCH_KEYS) {
 			int button = keyToButton(key);
-			if (((SwitchController)Controllers.getCurrent()).getButtonPressed(button) && inputProcessor != null)
+			if (currentController.getButtonPressed(button) && inputProcessor != null)
 				inputProcessor.keyDown(key);
-			if (((SwitchController)Controllers.getCurrent()).getButtonReleased(button) && inputProcessor != null)
+			if (currentController.getButtonReleased(button) && inputProcessor != null)
 				inputProcessor.keyUp(key);
 		}
 	}

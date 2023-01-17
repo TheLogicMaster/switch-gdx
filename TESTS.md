@@ -5,17 +5,18 @@
 - Action: Works
 - Affine2: Works
 - Alpha: Works
-- Animation3D: JSON deserialization error, stack corruption
+- Animation3D: Works
 - Animation: Works
 - Anisotropy: Works
-- Annotation: Annotations not yet implemented
-- AssetManager: Crashes on I18N stuff
+- Annotation: Works
+- AssetManager: Works
 - AtlasIssue: Works
 - AudioDevice: Not yet implemented
 - AudioRecorder: Not yet implemented
+- AudioSoundAndMusicIsolationTest: Works
 - Basic3DScene: Works
 - Basic3D: Works
-- Benchmark3D: Occasional errors with deserialization
+- Benchmark3D: Works
 - BigMesh: Works
 - BitmapFontAlignment: Works
 - BitmapFontAtlasRegion: Works
@@ -29,7 +30,7 @@
 - Box2DTestCollection: Works
 - Bresenham2: Works
 - BufferUtils: Works
-- Collections: Map hashing doesn't work, needs method optimization fix
+- Collections: Works (Fails due to test not fetching overloaded Methods properly)
 - Color: Works
 - ComplexAction: Works
 - Container: Works
@@ -42,31 +43,32 @@
 - DelaunayTriangulator: Works
 - DeltaTime: Works
 - DisplayMode: Works
-- Download: Not yet implemented
+- Download: Works
 - Dpi: Works
 - DragAndDrop: Works
-- ETC1: "Couldn't load pkm file"
+- ETC1: Works
 - EdgeDetection: Works
-- Exit: Doesn't work
+- Exit: Works
 - ExternalMusic: Works
-- Files: Fails due to Classpath workaround
+- Files: Works
 - FilterPerformance: Works
 - FloatTexture: GL30 not yet implemented
 - Fog: Works
 - FrameBufferCubemap: Works
 - FrameBuffer: Works
 - FramebufferToTexture: Works
-- FreeTypeAtlas: Font has incorrect background
+- FreeTypeAtlas: Works
 - FreeTypeDispose: Heap usage not yet implemented
-- FreeTypeFontLoader: Font has incorrect background
-- FreeTypeIncremental: Font has incorrect background
-- FreeTypeMetrics: Font has incorrect background
-- FreeType: Font has incorrect background
-- FreeTypePack: Font has incorrect background
+- FreeTypeFontLoader: Works
+- FreeTypeIncremental: Works
+- FreeTypeMetrics: Works
+- FreeType: Works
+- FreeTypePack: Works
+- Gdx2DTest: Works
 - GLES30: Works
 - GLProfilerError: Can't test without keyboard support
 - GWTLossyPremultipliedAlpha: Works
-- GestureDetector: Flinging values are way too high
+- GestureDetector: Works
 - GroupCuling: Works
 - GroupFade: Works
 - Group: Works
@@ -81,15 +83,15 @@
 - IndexBufferObjectShader: Works
 - InstancedRendering: GL30 not yet supported
 - IntegerBitmapFont: Works
-- InternationalFonts: Font has blue background
+- InternationalFonts: Works
 - Interpolation: Works
 - IntersectorOverlapConvexPolygons: Works
 - InverseKinematics: Works
 - IsometricTile: Works
 - Issue: Works
 - JniGen: Works
-- Json: Works with occasional primitive array related GC crashes
-- KTX: Crash
+- Json: Works
+- KTX: Works
 - LabelScale: Works
 - Label: Works
 - LifeCycle: Works
@@ -101,15 +103,16 @@
 - MeshShader: Works
 - MipMap2D: Works
 - MipMap: Works
-- ModelCache: Mostly works, causes intermittent crashes related to GC/serialization
+- ModelCache: Works
 - ModelLoader: Works
 - Model: Works
 - MoveSprite: Works
 - MultipleRenderTarget: GL30 not yet implemented
 - Multitouch: Works
-- Music: Plays fine, but tracking/stopping doesn't work correctly
-- NetAPI: GC related crash on GET Text
+- Music: Works
+- NetAPI: Works
 - NinePatch: Works
+- OctreeTest: Works
 - OpenBrowser: Works
 - Parallax: Works
 - ParticleControllerInfluencerSingle: Works
@@ -123,10 +126,10 @@
 - PixelPerfect: Works
 - PixelsPerInch: Works, but not accurate for Switch yet
 - PixmapBlending: Works
-- PixmapPackerIO: DeflaterOutputStream blocks indefinitely
+- PixmapPackerIO: Works
 - PixmapPacker: Works
 - Pixmap: Works
-- PNG: FileHandle parent crash
+- PNG: Works
 - PolarAcceleration: Works
 - PolygonRegion: Works
 - PolygonSprite: Works
@@ -136,8 +139,8 @@
 - ProjectiveTexture: Works
 - QuadTreeFloatNearest: Works
 - QuadTreeFloat: Works
-- ReflectionCorrectness: Doesn't work
-- Reflection: Doesn't work
+- ReflectionCorrectness: Works
+- Reflection: Works
 - Rotation: Works
 - RunnablePost: Works
 - Scene2d: Works
@@ -148,7 +151,7 @@
 - ScrollPaneWithDynamicScrolling: Works
 - Select: Works
 - Sensor: Orientation input not yet implemented
-- ShaderCollection: Serialization crash/stack corruption
+- ShaderCollection: Works
 - ShaderMultitexture: Works
 - Shader: Works
 - ShadowMapping: Works
@@ -161,7 +164,7 @@
 - SimpleVertexShader: Works
 - Skeleton: Works
 - SortedSprite: Works
-- Sound: Basic functionality works, pitch not implemented, panning doesn't work, stop has delay
+- Sound: Works (Pitch not yet implemented)
 - SpriteBatchOriginScale: Works
 - SpriteBatchRotation: Works
 - SpriteBatchShader: Works
@@ -184,33 +187,34 @@
 - TextureArray: GL30 not yet implemented
 - TextureAtlas: Works
 - TextureData: Works
-- TextureDownload: Networking not yet implemented
+- TextureDownload: Java networking not yet implemented
 - TextureRegion3D: Works
-- Thread: Bug with try-catch/synchronized block nesting
+- Thread: Works
 - TideMapAssetManager: Works
 - TideMapDirectLoader: Works
 - Tile: Works
 - TileMapAnimationLoading: Works
-- TiledMapAssetManager: Doesn't work
-- TiledMapAtlasAssetManager: Doesn't work
+- TiledMapAssetManager: Works
+- TiledMapAtlasAssetManager: Works
 - TiledMapBench: Works
 - TiledMapDirectLoader: Works
 - TiledMapGroupLayer: Works
-- TiledMapLayerOffset: Doesn't work
+- TiledMapLayerOffset: Works
 - TiledMapModifiedExternalTileset: Works
 - TiledMapObjectLoading: Works
 - TimeUtils: Works
 - Touchpad: Works
 - TreeTest: Works
-- UBJsonTest: Crash on GC
+- UBJsonTest: Works
 - UI: Works
 - UtfFont: Works
 - VBOWithVAOPerformance: GL30 not yet implemented
 - Vector2d: Works
+- VertexArrayTest: Works
 - VertexBufferObjectShader: Works
 - Vibrator: Not yet implemented
 - ViewportTest1: Works (Can't switch viewports without space bar)
 - ViewportTest2: Works (Can't switch viewports without space bar)
 - ViewportTest3: Works (Can't switch viewports without space bar)
-- Voxel: Works, but long load time due to buffer implementation
+- Voxel: Works
 - YDownTest: Works

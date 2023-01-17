@@ -1,0 +1,17 @@
+#pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+}
+#endif
+
+extern const uint8_t @__HOMEBREW_BINARY_FILE@_end[];
+
+extern const uint8_t @__HOMEBREW_BINARY_FILE@[];
+
+extern const uint32_t @__HOMEBREW_BINARY_FILE@_size;

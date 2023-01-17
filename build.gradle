@@ -1,3 +1,8 @@
+configure(allprojects) {
+    apply plugin: 'java-library'
+    sourceCompatibility = 1.8
+}
+
 allprojects {
-    version = "0.2"
+    version = "2.0.0" + (System.env.JITPACK ? "" : "-dev")
 }

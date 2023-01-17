@@ -53,6 +53,13 @@ public class SwitchFileHandle extends FileHandle {
 	}
 
 	@Override
+	public boolean isDirectory() {
+		if (path().startsWith("classpath/"))
+			return false;
+		return super.isDirectory();
+	}
+
+	@Override
 	public ByteBuffer map (FileChannel.MapMode mode) {
 		throw new GdxRuntimeException("Cannot map files in Switch backend");
 	}
