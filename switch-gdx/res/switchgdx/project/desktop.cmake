@@ -23,7 +23,7 @@ file(GLOB_RECURSE SRCS src/*.cpp src/*.c)
 include_directories(src)
 add_executable(SwitchGDX ${SRCS})
 
-target_compile_options(SwitchGDX PRIVATE -Wno-return-type -Wno-invalid-offsetof)
+target_compile_options(SwitchGDX PRIVATE -Wno-return-type)
 
 target_include_directories(SwitchGDX PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2_mixer_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS} ${CURL_INCLUDE_DIRS} ${ZZip_INCLUDE_DIRS})
 target_link_libraries(SwitchGDX ${SDL2_LIBRARIES} ${SDL2_mixer_LIBRARIES} ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES} stdc++fs ${FREETYPE_LIBRARIES} ${CURL_LIBRARIES} ${ZZip_LIBRARIES})

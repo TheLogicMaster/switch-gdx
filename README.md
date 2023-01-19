@@ -10,7 +10,7 @@ server for support.
 
 **Pixel Wheels and Shattered Pixel Dungeon Ports**
 ![Pixel Wheels](media/PixelWheels.png)
-![Pixel Wheels](media/ShatteredPixel.png)
+![Shattered Pixel Dungeon](media/ShatteredPixel.png)
 
 ## Features
 - Full GDX Reflection support
@@ -75,17 +75,17 @@ In addition to the C++ dependencies, JDK 16 is required. Rsync is used for incre
 for building the generated C++ project.
 
 ### Linux
-- Install CMake, Ninja, Rsync, Texinfo, SDL2, SDL2_Mixer, GLEW, zlib, freetype, curl
+- Install CMake, Ninja, Rsync, Texinfo, SDL2, SDL2_Mixer, GLEW, zlib, Freetype, curl, Bullet
 - With APT: `sudo apt install build-essential texinfo rsync cmake ninja-build libsdl2-mixer-dev zlib1g-dev libglew-dev libfreetype-dev libcurl4-gnutls-dev`
 - Install [devkitPro pacman](https://github.com/devkitPro/pacman/releases/tag/v1.0.2)
-- `dkp-pacman -S switch-zlib switch-sdl2 switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
+- `dkp-pacman -S switch-zlib switch-zziplib switch-sdl2 switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
 
 ### Windows
 - Install [devkitPro Updater](https://github.com/devkitPro/installer/releases/latest) with Switch packages selected
 - Open MSYS2 two from the start menu
 - `pacman -Syu`
-- `pacman -S switch-zlib switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
-- `pacman -S gcc git rsync texinfo mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-curl-gnutls mingw-w64-x86_64-freetype mingw-w64-x86_64-bullet`
+- `pacman -S switch-zlib switch-zziplib switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
+- `pacman -S gcc git rsync texinfo mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-curl-gnutls mingw-w64-x86_64-freetype mingw-w64-x86_64-zziplib mingw-w64-x86_64-zlib mingw-w64-x86_64-bullet`
 
 ### UWP
 - Install [git](https://git-scm.com/downloads) and add to path

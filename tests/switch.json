@@ -12,5 +12,6 @@
     "useStackTraces": true,
     "useLineNumbers": true,
     "useValueChecks": true,
-    "useStackCookies": true
+    "useStackCookies": true,
+    "useLeakCheck": false
 }

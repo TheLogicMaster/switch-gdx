@@ -16,7 +16,7 @@ file(GLOB_RECURSE SRCS src/*.cpp src/*.c)
 include_directories(src)
 add_executable(${PROJECT_NAME} ${SRCS})
 
-target_compile_options(${PROJECT_NAME} PRIVATE -Wno-invalid-offsetof -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-unused-label -Wno-unused-function)
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable -Wno-unused-label -Wno-unused-function)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
         APP_TITLE "$ENV{APP_TITLE}"
