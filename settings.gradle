@@ -1,5 +1,5 @@
 include 'switch-gdx'
 
-if (new File("tests/libs").exists()) {
+if (new File("$rootDir/tests/libs").exists()) {
     include 'tests'
 }
