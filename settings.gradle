@@ -1,5 +1,5 @@
 include 'switch-gdx'
 
-if (!System.env.JITPACK) {
+if (new File("tests/libs").exists()) {
     include 'tests'
 }

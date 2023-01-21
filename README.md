@@ -128,9 +128,11 @@ network.
 ### UWP
 The UWP task opens Visual Studio, where the project settings need to be adjusted for the signing certificate and remote 
 deployment options for running on an Xbox console in devkit mode. Running a debug build should be as simple as building
-the project and running it, though it likely needs to be rebuilt to for the assets to be copied over. The first time 
+the project and running it. There's a bug where the UWP project needs to be manually rebuilt to for the assets to be 
+copied over into the UWP build directory. The first time 
 the task is run will be quite slow, as it needs to install the VCPKG dependencies into `<home_dir>/.SwitchGDX`. If this
-first task gets interrupted before finishing, deleting the vcpkg directory and trying again may be necessary.
+first task gets interrupted before finishing, deleting the vcpkg directory and trying again may be necessary. Currently,
+for Release builds to link successfully, the debug runtime library (/MDd) needs to be used. 
 
 ## Debugging
 The project can be debugged as a normal C++ project with your IDE of choice. CLion works out of the box with
@@ -155,17 +157,16 @@ the directory to the `Path` doesn't seem to be sufficient.
 ## Test Suite
 The `tests` module is for running the GDX test suite and verifying GDX functionality. See [Tests](TESTS.md) for working
 features. Building the test module requires building the tests module JAR in the libgdx repo and putting it in 
-`tests/libs`, in addition to the lwjgl3 test module JAR for the required assets. The `tests` module is disabled for 
-Jitpack builds but enabled normally, so disabling it in `settings.gradle` is probably necessary for the project to 
-compile without the GDX test JARs.
+`tests/libs`, in addition to the lwjgl3 test module JAR for the required assets. The `tests` module is disabled if the 
+`tests/libs` directory doesn't exist to not break JitPack builds and such.
 
 ## Notes
 - Concurrent access to files is more limited on Switch where it might normally work on PC, so ensure files are closed properly
-- For Switch, all threads need to be joined manually, or it will crash on exit. Any program threads must be manually stopped/joined on dispose.
+- For Switch, all threads need to be joined manually, or it will crash on exit or when ran a second time. Any program 
+threads must be manually stopped/joined on dispose.
 - If using SNAPSHOT Gradle dependency (Not recommended), refresh Gradle dependencies using the Intellij Gradle menu to not use cached versions and update to the latest.
 - The UWP project generation has a bug where the project has to be manually rebuilt in Visual Studio for the assets to be properly copied
 - The UWP project requires a custom build of SDL2_mixer since the VCPKG library doesn't support UWP, for some reason. 
-This requires downloading the SDL2_mixer and SDL2 source and building the UWP subproject, adding the necessary linker input libraries
-and adding MPG123.lib from VCPKG for MP3 support. 
+This requires downloading the SDL2_mixer and SDL2 source and building the UWP subproject to update it.
 - When using Joycons individually, the inputs will be rotated horizontally. Controllers must be remapped from the home menu for now. 
-`Controllers#getCurrentController` returns a controller representing all controller input, rather than the last controller.
+- `Controllers#getCurrentController` returns a controller representing all controller input, rather than the last controller.

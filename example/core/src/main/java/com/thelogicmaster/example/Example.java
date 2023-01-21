@@ -386,7 +386,7 @@ public class Example implements ApplicationListener {
 		if (controller != null) {
 			Vector3 horizontal = camera.direction.cpy().crs(camera.up).nor().scl(controller.getAxis(2) / 3);
 			horizontal.y = 0;
-			Vector3 vertical = camera.direction.cpy().nor().scl(controller.getAxis(3) / 3);
+			Vector3 vertical = camera.direction.cpy().nor().scl(-controller.getAxis(3) / 3);
 			if (horizontal.len() > 0.1f || vertical.len() > 0.1f)
 				camera.translate(horizontal.add(vertical));
 
@@ -398,7 +398,7 @@ public class Example implements ApplicationListener {
 			if (Math.abs(controller.getAxis(0)) > 0.1f)
 				camera.direction.rotate(camera.up, controller.getAxis(0) * -1);
 			if (Math.abs(controller.getAxis(1)) > 0.1f)
-				camera.direction.rotate(camera.direction.cpy().crs(camera.up).nor(), controller.getAxis(1));
+				camera.direction.rotate(camera.direction.cpy().crs(camera.up).nor(), -controller.getAxis(1));
 
 			camera.update();
 		}

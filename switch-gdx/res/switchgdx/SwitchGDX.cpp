@@ -494,7 +494,7 @@ jbool SwitchApplication::SM_update_R_boolean() {
                 break;
             case SDL_CONTROLLERAXISMOTION:
                 if (event.caxis.axis >= 0 && event.caxis.axis < 4)
-                    joysticks[event.caxis.axis] = (float)(event.caxis.axis & 0x1 ? -1 : 1) * (float)event.caxis.value / 32768.f;
+                    joysticks[event.caxis.axis] = (float)event.caxis.value / 32768.f;
                 for (int i = 0; i < 2; i++)
                     if (event.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT + i) {
                         if (event.caxis.value > 512)
