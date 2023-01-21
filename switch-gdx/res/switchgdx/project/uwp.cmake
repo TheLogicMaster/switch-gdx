@@ -43,7 +43,7 @@ if(WIN32)
   target_link_libraries(SwitchGDX PRIVATE wsock32 ws2_32)
 endif()
 
-target_link_libraries(SwitchGDX PRIVATE unofficial::angle::libEGL unofficial::angle::libGLESv2 SDL2::SDL2 ZLIB::ZLIB CURL::libcurl libffi ${VCPKG_ROOT}/installed/x64-uwp/lib/freetype.lib ../SDL2_mixer ${VCPKG_ROOT}/installed/x64-uwp/lib/mpg123.lib)
+target_link_libraries(SwitchGDX PRIVATE unofficial::angle::libEGL unofficial::angle::libGLESv2 SDL2::SDL2 ZLIB::ZLIB CURL::libcurl libffi ${VCPKG_ROOT}/installed/x64-uwp/lib/zzip.lib ${VCPKG_ROOT}/installed/x64-uwp/lib/freetype.lib ../SDL2_mixer ${VCPKG_ROOT}/installed/x64-uwp/lib/mpg123.lib)
 
 target_link_libraries(SwitchGDX PRIVATE WindowsApp.lib rpcrt4.lib onecoreuap.lib kernel32.lib)
 set_target_properties(SwitchGDX PROPERTIES VS_GLOBAL_MinimalCoreWin "true")

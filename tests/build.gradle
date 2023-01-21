@@ -112,7 +112,7 @@ task transpile(dependsOn: 'build') {
 
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'cmd', '/c', "rsync -crh --delete --checksum --exclude '/cmake-build-*' --exclude '/data' --exclude '/sdmc' --exclude '/build-uwp' --exclude '/.idea' dist/ ${project.name}"
+                commandLine 'cmd', '/c', "C:\\devkitPro\\msys2\\usr\\bin\\rsync -crh --delete --checksum --exclude '/cmake-build-*' --exclude '/data' --exclude '/sdmc' --exclude '/build-uwp' --exclude '/.idea' dist/ ${project.name}"
             else
                 commandLine 'bash', '-c', "rsync -crh --delete --checksum --exclude '/cmake-build-*' --exclude '/data' --exclude '/sdmc' --exclude '/.idea' dist/ ${project.name}"
             workingDir "$buildDir"
@@ -179,7 +179,7 @@ task deploy(dependsOn: nro) {
     doLast {
         exec {
             if (DefaultNativePlatform.currentOperatingSystem.isWindows())
-                commandLine 'bash', '-c', "/opt/devkitpro/tools/bin/nxlink --server ./cmake-build-switch/${project.name}.nro"
+                commandLine 'C:\\devkitPro\\msys2\\usr\\bin\\bash', '-c', "/opt/devkitpro/tools/bin/nxlink --server ./cmake-build-switch/${project.name}.nro"
             else
                 commandLine 'bash', '-c', "\$DEVKITPRO/tools/bin/nxlink --server ./cmake-build-switch/${project.name}.nro"
             workingDir "$buildDir${File.separator}${project.name}"

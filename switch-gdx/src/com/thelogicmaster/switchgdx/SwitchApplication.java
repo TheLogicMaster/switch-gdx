@@ -66,9 +66,17 @@ public class SwitchApplication implements Application {
 			running = true;
 			listener.create();
 
-			listener.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			int width = 0, height = 0;
 
 			while (running && update()) {
+				int currentWidth = graphics.getWidth();
+				int currentHeight = graphics.getHeight();
+				if (currentWidth != width || currentHeight != height) {
+					width = currentWidth;
+					height = currentHeight;
+					listener.resize(width, height);
+				}
+
 				graphics.update();
 				audio.update(graphics.getDeltaTime());
 				input.update();

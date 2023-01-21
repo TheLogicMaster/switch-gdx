@@ -59,7 +59,6 @@ These are some LibGDX games that have been ported using SwitchGDX.
 - GL30
 - Set main thread exception handler to show error dialog
 - Fix sockets
-- Ensure UWP builds still work
 - VSCode project support
 
 ## Limitations
@@ -107,7 +106,8 @@ jnigen style native code inlining also needs to be added to the transpiler argum
 as [libraries](LIBRARIES.md) are concerned, if they require using GDX reflection, then those classes need to be added
 to the `switch.json` `"reflective"` class pattern list. The list of verified libraries details the needed config 
 entries. To enable the Ryujinx emulator, download/install it then set `ryujinxPath` in the `local.properties` file 
-(Create if needed).
+(Create if needed). Make sure Java Home points to Java 16 or select a Java 16 JDK as the Gradle JDK in Intellij build 
+settings. Ensure that the project itself compiles with the Java 8 language level. 
 
 ## Usage
 All the main tasks are present in the `switchgdx` Gradle group in the `switch` submodule. The first time transpiling
@@ -119,6 +119,18 @@ transpiling into one directory then using rsync to only copy the changed files i
 - __deploy__: Build NRO, then deploy to a Switch over LAN using NxLink
 - __ryujinx__: Build NRO, then run in Ryujinx emulator
 - __uwp__: Transpile, then open UWP project in Visual Studio
+
+### Deploying to Switch
+Ensure that the Homebrew Launcher is opened to the NetLoader before running the deploy task. By default, it tries
+pinging the Switch to find it, but manually specifying the IP in the nxlink command may be necessary depending on the 
+network.
+
+### UWP
+The UWP task opens Visual Studio, where the project settings need to be adjusted for the signing certificate and remote 
+deployment options for running on an Xbox console in devkit mode. Running a debug build should be as simple as building
+the project and running it, though it likely needs to be rebuilt to for the assets to be copied over. The first time 
+the task is run will be quite slow, as it needs to install the VCPKG dependencies into `<home_dir>/.SwitchGDX`. If this
+first task gets interrupted before finishing, deleting the vcpkg directory and trying again may be necessary.
 
 ## Debugging
 The project can be debugged as a normal C++ project with your IDE of choice. CLion works out of the box with

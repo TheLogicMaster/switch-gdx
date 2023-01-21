@@ -43,7 +43,7 @@
 #include <curl/curl.h>
 #include <chrono>
 #include <SDL.h>
-#include <SDL_mixer.h>
+#include "switchgdx/SDL_mixer.h"
 #include <SDL_gamecontroller.h>
 
 using namespace com::badlogic::gdx;
@@ -197,7 +197,7 @@ void SwitchApplication::SM_init() {
 #else
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
 
-    window = SDL_CreateWindow("SwitchGDX", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("SwitchGDX", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 
@@ -216,8 +216,6 @@ void SwitchApplication::SM_init() {
     SDL_GL_SetSwapInterval(1);
 
     gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress);
-    if (!GLAD_GL_ES_VERSION_2_0)
-        printf("Failed to load OpenGL 2.0\n");
 #endif
 
     Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG);
@@ -521,7 +519,7 @@ jbool SwitchApplication::SM_update_R_boolean() {
 jstring SwitchFiles::M_getLocalStoragePath_R_java_lang_String() {
 #ifdef __WINRT__
     auto path = getLocalPathUWP();
-    return vm::getNativeString(path.c_str());
+    return vm::createString(path.c_str());
 #else
     return vm::createString("data");
 #endif
@@ -1361,11 +1359,15 @@ shared_ptr<ByteBuffer> com::badlogic::gdx::graphics::glutils::ETC1::SM_encodeIma
 }
 
 jint SwitchGraphics::M_getWidth_R_int() {
-    return 1280;
+    int width;
+    SDL_GetWindowSize(window, &width, nullptr);
+    return width;
 }
 
 jint SwitchGraphics::M_getHeight_R_int() {
-    return 720;
+    int height;
+    SDL_GetWindowSize(window, nullptr, &height);
+    return height;
 }
 
 jint SwitchControllerManager::SM_getButtons_R_int(jint controller) {
