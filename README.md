@@ -78,18 +78,20 @@ for building the generated C++ project.
 - Install CMake, Ninja, Rsync, Texinfo, SDL2, SDL2_Mixer, GLEW, zlib, Freetype, curl, Bullet
 - With APT: `sudo apt install build-essential texinfo rsync cmake ninja-build libsdl2-mixer-dev zlib1g-dev libglew-dev libfreetype-dev libcurl4-gnutls-dev`
 - Install [devkitPro pacman](https://github.com/devkitPro/pacman/releases/tag/v1.0.2)
-- `dkp-pacman -S switch-zlib switch-zziplib switch-sdl2 switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
+- `dkp-pacman -S switch-zlib switch-libvorbis switch-zziplib switch-sdl2 switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
 
 ### Windows
-- Install [devkitPro Updater](https://github.com/devkitPro/installer/releases/latest) with Switch packages selected
-- Open MSYS2 two from the start menu
+- Install [devkitPro Updater](https://github.com/devkitPro/installer/releases/latest) with Switch packages selected (Leave downloaded files)
+- Open MSYS2 from the start menu
 - `pacman -Syu`
-- `pacman -S switch-zlib switch-zziplib switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
-- `pacman -S gcc git rsync texinfo mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-curl-gnutls mingw-w64-x86_64-freetype mingw-w64-x86_64-zziplib mingw-w64-x86_64-zlib mingw-w64-x86_64-bullet`
+- `pacman -S switch-zlib switch-libvorbis switch-zziplib switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
+- `pacman -S gcc git rsync cmake mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake texinfo mingw-w64-x86_64-glew mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-curl-gnutls mingw-w64-x86_64-freetype mingw-w64-x86_64-zziplib mingw-w64-x86_64-zlib mingw-w64-x86_64-bullet`
 
 ### UWP
+- Follow `Windows` steps above
 - Install [git](https://git-scm.com/downloads) and add to path
-- Install Visual Studio Community 2019
+- Install Visual Studio Community 2019 with UWP/C++ support
+- Remove the devKitPro MinGW bin directory from `Path` in _Environment Variables_, or it will mess with vcpkg
 
 ## Project Setup
 For reference, there's an `example` project provided with the needed Gradle config to build a SwitchGDX project. If you
@@ -133,6 +135,10 @@ Exception being thrown, setting a breakpoint at the throw statement can be quite
 easily add print-lines like a library, `printf` combined with `vm::getNativeString` can also be helpful to print out a
 Java string, potentially obtained from `Object#toString`. In CLion, `vm::getNativeString` can also be evaluated while
 debugging, which is often extremely useful for dynamically inspecting values without recompiling.
+### Windows
+On Windows, if you change the working directory in CLion, it doesn't seem to find the required shared libraries, so
+manually copying the DLLs from `C:\devkitPro\msys2\mingw64\bin` into the executable directory may be necessary. Adding
+the directory to the `Path` doesn't seem to be sufficient.
 
 ## Test Suite
 The `tests` module is for running the GDX test suite and verifying GDX functionality. See [Tests](TESTS.md) for working

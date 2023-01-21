@@ -216,6 +216,8 @@ void SwitchApplication::SM_init() {
     SDL_GL_SetSwapInterval(1);
 
     gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress);
+    if (!GLAD_GL_ES_VERSION_2_0)
+        printf("Failed to load OpenGL 2.0\n");
 #endif
 
     Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG);
