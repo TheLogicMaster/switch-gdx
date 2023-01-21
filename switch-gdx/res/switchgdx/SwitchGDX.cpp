@@ -1360,13 +1360,23 @@ shared_ptr<ByteBuffer> com::badlogic::gdx::graphics::glutils::ETC1::SM_encodeIma
 
 jint SwitchGraphics::M_getWidth_R_int() {
     int width;
+#ifdef __SWITCH__
+//    eglQuerySurface(display, surface, EGL_WIDTH, &width);
+    return 1280;
+#else
     SDL_GetWindowSize(window, &width, nullptr);
+#endif
     return width;
 }
 
 jint SwitchGraphics::M_getHeight_R_int() {
     int height;
+#ifdef __SWITCH__
+//    eglQuerySurface(display, surface, EGL_HEIGHT, &height);
+    return 720;
+#else
     SDL_GetWindowSize(window, nullptr, &height);
+#endif
     return height;
 }
 

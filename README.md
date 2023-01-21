@@ -53,13 +53,15 @@ These are some LibGDX games that have been ported using SwitchGDX.
 - Bullet bindings
 - Multithreaded AssetManager support
 - Switch-specific API (Controller remapping)
-- Controller analog stick support, remapping API, rumble
+- Controller analog trigger support, remapping API, rumble
 - I18N non-simple
 - Sound effect pitch control
 - GL30
 - Set main thread exception handler to show error dialog
 - Fix sockets
 - VSCode project support
+- Keyboard input support
+- Mac OS support
 
 ## Limitations
 See the [Clearwing](https://github.com/TheLogicMaster/clearwing-vm) documentation for the limitations inherent to the "VM"
@@ -104,7 +106,7 @@ directory with the `SwitchLauncher` source class. The module needs to be added t
 the title and author variables and the asset copy paths, if not in `core/assets`. Any source paths to be used with the
 jnigen style native code inlining also needs to be added to the transpiler arguments in `switch/build.gradle`. As far
 as [libraries](LIBRARIES.md) are concerned, if they require using GDX reflection, then those classes need to be added
-to the `switch.json` `"reflective"` class pattern list. The list of verified libraries details the needed config 
+to the `switch.json` `reflective` class pattern list. The list of verified libraries details the needed config 
 entries. To enable the Ryujinx emulator, download/install it then set `ryujinxPath` in the `local.properties` file 
 (Create if needed). Make sure Java Home points to Java 16 or select a Java 16 JDK as the Gradle JDK in Intellij build 
 settings. Ensure that the project itself compiles with the Java 8 language level. 
