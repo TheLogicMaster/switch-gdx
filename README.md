@@ -76,7 +76,7 @@ for building the generated C++ project.
 
 ### Linux
 - Install CMake, Ninja, Rsync, Texinfo, SDL2, SDL2_Mixer, GLEW, zlib, Freetype, curl, Bullet
-- With APT: `sudo apt install build-essential texinfo rsync cmake ninja-build libsdl2-mixer-dev zlib1g-dev libglew-dev libfreetype-dev libcurl4-gnutls-dev`
+- With APT: `sudo apt install build-essential texinfo rsync cmake ninja-build libsdl2-mixer-dev zlib1g-dev libglew-dev libfreetype-dev libcurl4-gnutls-dev libzzip-dev`
 - Install [devkitPro pacman](https://github.com/devkitPro/pacman/releases/tag/v1.0.2)
 - `dkp-pacman -S switch-zlib switch-libvorbis switch-zziplib switch-sdl2 switch-sdl2_mixer switch-freetype switch-glad switch-curl switch-bulletphysics dkp-toolchain-vars`
 
