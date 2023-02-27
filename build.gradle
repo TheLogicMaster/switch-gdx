@@ -4,5 +4,5 @@ configure(allprojects) {
 }
 
 allprojects {
-    version = "2.0.0" + (System.env.JITPACK ? "" : "-dev")
+    version = "2.1.0" + (System.env.JITPACK ? "" : "-dev")
 }

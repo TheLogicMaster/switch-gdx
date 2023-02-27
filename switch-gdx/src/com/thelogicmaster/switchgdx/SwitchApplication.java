@@ -37,7 +37,13 @@ public class SwitchApplication implements Application {
 	public static final boolean isSwitch = System.getProperty("os.name").equals("horizon");
 	public static final boolean isUWP = System.getProperty("os.name").equals("uwp");
 
-	public SwitchApplication (ApplicationListener listener) {
+	public SwitchApplication(ApplicationListener listener) {
+		this(listener, new Config());
+	}
+
+	public SwitchApplication (ApplicationListener listener, Config config) {
+		init(config.vsync);
+
 		this.listener = listener;
 
 		Gdx.app = this;
@@ -262,11 +268,7 @@ public class SwitchApplication implements Application {
 		lifecycleListeners.removeValue(listener, true);
 	}
 
-	static {
-		init();
-	}
-
-	private static native void init ();
+	private static native void init (boolean vsync);
 
 	private static native boolean update ();
 
@@ -286,6 +288,26 @@ public class SwitchApplication implements Application {
 		@Override
 		public void setContents (String content) {
 
+		}
+	}
+
+	public static class Config {
+
+		private boolean vsync = true;
+
+		public Config() {
+		}
+
+		public Config(boolean vsync) {
+			this.vsync = vsync;
+		}
+
+		public boolean getVsync() {
+			return vsync;
+		}
+
+		public void setVsync(boolean vsync) {
+			this.vsync = vsync;
 		}
 	}
 }

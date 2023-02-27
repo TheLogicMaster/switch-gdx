@@ -68,7 +68,6 @@ See the [Clearwing](https://github.com/TheLogicMaster/clearwing-vm) documentatio
 - Only one Music instance can play at a time
 - Sound effects are limited to OGG and WAV, Music supports MP3, OGG, and WAV
 - Reflection is disabled by default, use the `reflective` `switch.json` config option to enable it for specific classes
-- Project folder paths can't contain spaces due to _Make_ not supporting them
 - Socket server only supports IPv4
 
 ## Installation

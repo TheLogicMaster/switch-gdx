@@ -4,7 +4,7 @@ if not defined DevEnvDir (
 if not exist ".\build-uwp" mkdir .\build-uwp
 if not exist "%USERPROFILE%\.SwitchGDX\" mkdir "%USERPROFILE%\.SwitchGDX"
 if not exist "%USERPROFILE%\.SwitchGDX\vcpkg\" (
-	git clone https://github.com/Microsoft/vcpkg "%USERPROFILE%\.SwitchGDX\vcpkg"
+	git clone -b 2022.10.19 https://github.com/Microsoft/vcpkg "%USERPROFILE%\.SwitchGDX\vcpkg"
 	call "%USERPROFILE%\.SwitchGDX\vcpkg\bootstrap-vcpkg.bat"
 )
 

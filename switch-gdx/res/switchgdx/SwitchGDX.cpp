@@ -138,7 +138,7 @@ void onSoundFinished(int channel) {
     SwitchAudio::SM_onSoundFinished(channel);
 }
 
-void SwitchApplication::SM_init() {
+void SwitchApplication::SM_init(jbool vsync) {
     for (int i = 0; i < 16; i++)
         touches[i * 3] = -1;
 
@@ -213,7 +213,7 @@ void SwitchApplication::SM_init() {
 
     auto context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, context);
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(vsync ? 1 : 0);
 
     gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress);
 #endif
